@@ -1,5 +1,5 @@
 import { BentoDemo } from "@/components/bento-features";
-import { Icons } from "@/components/icons";
+import { Icons } from "@/components/more-icons";
 import BlurIn from "@/components/magicui/blur-in";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import ShineBorder from "@/components/magicui/shine-border";

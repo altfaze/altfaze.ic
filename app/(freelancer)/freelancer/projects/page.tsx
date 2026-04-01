@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/more-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Project {
@@ -116,7 +116,7 @@ export default function ProjectsPage() {
         </Card>
       ) : (
         <div className="grid gap-4">
-          {projects.map(project => (
+          {(Array.isArray(projects) ? projects : []).map(project => (
             <Card key={project.id} className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -167,6 +167,3 @@ export default function ProjectsPage() {
       )}
     </div>
   )
-}
-  )
-}

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/more-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Template {
@@ -68,7 +68,7 @@ export default function TemplatesPage() {
     }
   }
 
-  const filteredTemplates = templates.filter(t =>
+  const filteredTemplates = (Array.isArray(templates) ? templates : []).filter(t =>
     t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.category.toLowerCase().includes(searchTerm.toLowerCase())
   )
@@ -152,7 +152,5 @@ export default function TemplatesPage() {
         </div>
       )}
     </div>
-  )
-}
   )
 }

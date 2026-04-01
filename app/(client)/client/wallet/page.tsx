@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/more-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Transaction {
@@ -129,7 +129,7 @@ export default function WalletPage() {
           </Card>
         ) : (
           <div className="space-y-2">
-            {transactions.map(tx => (
+            {(Array.isArray(transactions) ? transactions : []).map(tx => (
               <Card key={tx.id} className="hover:shadow-sm transition-shadow">
                 <CardContent className="pt-4 pb-4">
                   <div className="flex items-center justify-between">
@@ -160,7 +160,5 @@ export default function WalletPage() {
         )}
       </div>
     </div>
-  )
-}
   )
 }

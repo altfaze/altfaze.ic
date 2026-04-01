@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/more-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export default function UploadPage() {
@@ -181,6 +181,3 @@ export default function UploadPage() {
       </Card>
     </div>
   )
-}
-  )
-}

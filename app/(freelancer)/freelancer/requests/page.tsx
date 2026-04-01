@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/more-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Request {
@@ -100,7 +100,7 @@ export default function RequestsPage() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {requests.map(request => (
+          {(Array.isArray(requests) ? requests : []).map(request => (
             <Card key={request.id} className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -147,6 +147,3 @@ export default function RequestsPage() {
       )}
     </div>
   )
-}
-  )
-}

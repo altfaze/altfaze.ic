@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/more-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Project {
@@ -57,7 +57,7 @@ export default function WorkPage() {
     }
   }
 
-  const filteredProjects = projects.filter(p =>
+  const filteredProjects = (Array.isArray(projects) ? projects : []).filter(p =>
     (p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.description.toLowerCase().includes(searchTerm.toLowerCase())) &&
     (!filterCategory || p.category === filterCategory)
@@ -156,6 +156,3 @@ export default function WorkPage() {
       )}
     </div>
   )
-}
-  )
-}

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Icons } from "@/components/icons"
+import { Icons } from "@/components/more-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface Freelancer {
@@ -74,7 +74,7 @@ export default function HirePage() {
     }
   }
 
-  const filteredFreelancers = freelancers.filter(f =>
+  const filteredFreelancers = (Array.isArray(freelancers) ? freelancers : []).filter(f =>
     (f.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
     (f.title?.toLowerCase() || "").includes(searchTerm.toLowerCase())
   )
