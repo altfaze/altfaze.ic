@@ -39,11 +39,24 @@ export default function ProjectsPage() {
     }
   }, [status])
 
+  // Refetch data when page becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && status === "authenticated") {
+        fetchProjects()
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
+  }, [status])
+
   const fetchProjects = async () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await fetch("/api/projects")
+      // Add cache-busting timestamp to force fresh data
+      const response = await fetch(`/api/projects?t=${Date.now()}`)
       if (!response.ok) throw new Error("Failed to load projects")
       const data = await response.json()
       setProjects(data.data || [])

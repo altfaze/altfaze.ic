@@ -53,9 +53,15 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
           description: 'Account created. Redirecting to login...',
         });
 
-        setTimeout(() => {
-          router.push('/login');
-        }, 1000);
+        // Clear form
+        setEmail('');
+        setPassword('');
+        setName('');
+        setMobile('');
+        setIsLoading(false);
+
+        // Replace history and redirect
+        router.replace('/login');
       } else {
         // Login
         const result = await signIn('credentials', {
@@ -83,7 +89,17 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
           description: 'Logged in successfully',
         });
 
-        router.push('/onboard');
+        // Clear form
+        setEmail('');
+        setPassword('');
+        setName('');
+        setMobile('');
+        setIsLoading(false);
+
+        // Replace history and redirect to onboard
+        setTimeout(() => {
+          router.replace('/onboard');
+        }, 500);
       }
     } catch (error: any) {
       console.error('[AUTH_ERROR]', error);

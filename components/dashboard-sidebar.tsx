@@ -22,62 +22,65 @@ export function DashboardSidebar() {
 
   const role = session?.user?.role || "CLIENT"
 
+  // Determine base path based on role
+  const basePath = role === "FREELANCER" ? "/freelancer" : "/client"
+
   const navItems: SidebarNavItem[] = [
     {
-      href: "/dashboard",
+      href: basePath,
       title: "Dashboard",
       icon: <Icons.dashboard className="h-4 w-4" />,
     },
     {
-      href: "/dashboard/hire",
+      href: `${basePath}/hire`,
       title: "Hire Freelancer",
       icon: <Icons.briefcase className="h-4 w-4" />,
       roles: ["CLIENT"],
     },
     {
-      href: "/dashboard/work",
+      href: `${basePath}/work`,
       title: "Find Work",
       icon: <Icons.search className="h-4 w-4" />,
       roles: ["FREELANCER"],
     },
     {
-      href: "/dashboard/templates",
+      href: `${basePath}/templates`,
       title: "Templates",
       icon: <Icons.package className="h-4 w-4" />,
     },
     {
-      href: "/dashboard/projects",
+      href: `${basePath}/projects`,
       title: "My Projects",
       icon: <Icons.folder className="h-4 w-4" />,
     },
     {
-      href: "/dashboard/upload",
+      href: `${basePath}/upload`,
       title: "Upload Project",
       icon: <Icons.upload className="h-4 w-4" />,
       roles: ["FREELANCER"],
     },
     {
-      href: "/dashboard/ai-help",
+      href: `${basePath}/ai-help`,
       title: "AI Help",
       icon: <Icons.sparkles className="h-4 w-4" />,
     },
     {
-      href: "/dashboard/requests",
+      href: `${basePath}/requests`,
       title: "Requests",
       icon: <Icons.bell className="h-4 w-4" />,
     },
     {
-      href: "/dashboard/wallet",
+      href: `${basePath}/wallet`,
       title: "Wallet & Payments",
       icon: <Icons.creditCard className="h-4 w-4" />,
     },
     {
-      href: "/dashboard/offers",
+      href: `${basePath}/offers`,
       title: "Discounts & Offers",
       icon: <Icons.gift className="h-4 w-4" />,
     },
     {
-      href: "/dashboard/settings",
+      href: `${basePath}/settings`,
       title: "Settings",
       icon: <Icons.settings className="h-4 w-4" />,
     },
@@ -93,7 +96,7 @@ export function DashboardSidebar() {
   return (
     <div className="flex h-full flex-col gap-4 border-r border-border bg-background py-4">
       <div className="px-4">
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href={basePath} className="flex items-center gap-2">
           <div className="rounded-md bg-primary p-2">
             <Icons.logo className="h-5 w-5 text-primary-foreground" />
           </div>

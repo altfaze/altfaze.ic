@@ -40,11 +40,24 @@ export default function TemplatesPage() {
     }
   }, [status])
 
+  // Refetch data when page becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && status === "authenticated") {
+        fetchTemplates()
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
+  }, [status])
+
   const fetchTemplates = async () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await fetch("/api/templates?limit=20")
+      // Add cache-busting timestamp to force fresh data
+      const response = await fetch(`/api/templates?limit=20&t=${Date.now()}`)
       if (!response.ok) throw new Error("Failed to load templates")
       const data = await response.json()
       setTemplates(data.data || [])

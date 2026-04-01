@@ -58,12 +58,14 @@ export default function OnboardPage() {
         router.refresh()
         
         // Wait for session to update, then redirect
-        console.log("🔵 [ONBOARD_FRONTEND] Waiting 1 second before redirect...")
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        console.log("🔵 [ONBOARD_FRONTEND] Waiting 500ms before redirect...")
+        await new Promise(resolve => setTimeout(resolve, 500))
         
         const redirectUrl = role === "CLIENT" ? "/client" : "/freelancer"
         console.log("🟢 [ONBOARD_FRONTEND] Redirecting to:", redirectUrl)
-        router.push(redirectUrl)
+        
+        // Use replace to clear navigation history
+        router.replace(redirectUrl)
       } else {
         const errorData = await response.json().catch(() => ({ error: "Unknown error" }))
         console.error("❌ [ONBOARD_FRONTEND] API Error:", response.status, errorData)

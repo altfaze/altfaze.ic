@@ -36,11 +36,24 @@ export default function WalletPage() {
     }
   }, [status])
 
+  // Refetch data when page becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && status === "authenticated") {
+        fetchWalletData()
+      }
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
+  }, [status])
+
   const fetchWalletData = async () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await fetch("/api/wallet")
+      // Add cache-busting timestamp to force fresh data
+      const response = await fetch(`/api/wallet?t=${Date.now()}`)
       if (!response.ok) throw new Error("Failed to load wallet")
       const data = await response.json()
       setBalance(data.balance || 0)
