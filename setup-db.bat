@@ -1,5 +1,5 @@
 @echo off
-REM ATXEP Database Setup Script for Windows
+REM ALTFaze Database Setup Script for Windows
 REM Initializes database and runs migrations
 
 setlocal enabledelayedexpansion

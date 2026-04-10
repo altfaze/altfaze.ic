@@ -155,3 +155,4 @@ export async function GET(req: NextRequest) {
     console.error('[PAYMENTS_GET_ERROR]', error)
     return handleApiError(error)
   }
+}

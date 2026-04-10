@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           // Check if account is suspended
-          if (user.isSuspended) {
+          if ((user as any).isSuspended) {
             throw new Error('This account has been suspended. Please contact support.')
           }
           // If user has no password, they signed up with OAuth only
@@ -129,7 +129,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name
         session.user.image = token.picture
         session.user.username = token.username as string | undefined
-        session.user.role = token.role as string
+        session.user.role = (token.role as string) || 'CLIENT'
       }
 
       return session
@@ -149,10 +149,10 @@ export const authOptions: NextAuthOptions = {
           })
           if (dbUser) {
             token.id = dbUser.id
-            token.username = dbUser.username
-            token.role = dbUser.role
+            token.username = dbUser.username || ''
+            token.role = dbUser.role || 'CLIENT'
             // Check if account is suspended
-            if (dbUser.isSuspended) {
+            if ((dbUser as any).isSuspended) {
               return { ...token, isSuspended: true }
             }
           }

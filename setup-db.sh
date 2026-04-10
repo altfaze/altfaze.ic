@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# ATXEP Database Setup Script
+# ALTFaze Database Setup Script
 # Initializes database and runs migrations
 
 set -e  # Exit on error
 
 echo "================================"
-echo "ATXEP Database Setup"
+echo "ALTFaze Database Setup"
 echo "================================"
 
 # Check if .env.local exists

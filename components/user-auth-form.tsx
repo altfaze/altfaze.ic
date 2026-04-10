@@ -17,7 +17,13 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuthFormProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [name, setName] = React.useState<string>('');
+  const [email, setEmail] = React.useState<string>('');
+  const [password, setPassword] = React.useState<string>('');
+  const [mobile, setMobile] = React.useState<string>('');
+  const [error, setError] = React.useState<string>('');
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
