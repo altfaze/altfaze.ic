@@ -27,7 +27,7 @@ function MobileNav() {
     onOpenChange={setOpen}
   >
     <Icons.logo className="mr-2 h-6 w-6" />
-    <span className="font-bold">ATXEP</span>
+    <span className="font-bold">ALTFaze</span>
   </MobileLink>
   );
 }

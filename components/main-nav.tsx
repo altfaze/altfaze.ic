@@ -22,7 +22,7 @@ const components: { title: string; href: string; description: string }[] = [
     title: "Features",
     href: "/#features",
     description:
-      "Explore all the powerful features that make ATXEP the best platform for managing your work.",
+      "Explore all the powerful features that make ALTFaze the best platform for managing your work.",
   },
 ];
 
@@ -33,7 +33,7 @@ export function MainNav() {
     <div className="mr-4 md:flex">
       <Link href="/" className="lg:mr-6 sm:mr-0 flex items-center gap-2">
         <Icons.logo className="h-6 w-6 hidden lg:block md:block" />
-        <span className="font-bold hidden lg:block md:block">ATXEP</span>
+        <span className="font-bold hidden lg:block md:block">ALTFaze</span>
         <Badge className="hidden lg:block md:block">Beta</Badge>
       </Link>
       <NavigationMenu className="hidden lg:block">

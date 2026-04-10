@@ -12,8 +12,8 @@ interface ClientLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: 'Client Dashboard | ATXEP',
-  description: 'Manage your projects, hire freelancers, and track progress on ATXEP',
+  title: 'Client Dashboard | ALTFaze',
+  description: 'Manage your projects, hire freelancers, and track progress on ALTFaze',
 }
 
 export default async function ClientLayout({ 

@@ -12,8 +12,8 @@ interface FreelancerLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: 'Freelancer Dashboard | ATXEP',
-  description: 'Manage your profile, view job offers, and track earnings on ATXEP',
+  title: 'Freelancer Dashboard | ALTFaze',
+  description: 'Manage your profile, view job offers, and track earnings on ALTFaze',
 }
 
 export default async function FreelancerLayout({ 
