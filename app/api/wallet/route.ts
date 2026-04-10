@@ -1,13 +1,8 @@
 import { NextRequest } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAuth, handleApiError } from '@/lib/auth-middleware'
-<<<<<<< HEAD
-import { successResponse, ValidationError } from '@/lib/api'
-import { getUserActivityLogs } from '@/lib/activity'
-=======
 import { successResponse, errorResponse, isValidAmount } from '@/lib/api-utils'
 import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
->>>>>>> 6562c65 (Fixing All The Problems & Adding The Exception Handling)
 
 /**
  * GET /api/wallet
@@ -15,13 +10,6 @@ import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
  */
 export async function GET(req: NextRequest) {
   try {
-<<<<<<< HEAD
-    const { userId } = await requireAuth(req)
-
-    const searchParams = req.nextUrl.searchParams
-    const limit = parseInt(searchParams.get('limit') || '20')
-    const page = parseInt(searchParams.get('page') || '1')
-=======
     const limited = !(await rateLimit(req, 'api', API_RATE_LIMIT.limit, API_RATE_LIMIT.window))
     if (limited) {
       return errorResponse(429, 'Too many requests. Please try again later.')
@@ -32,7 +20,6 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams
     const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100)
     const page = Math.max(parseInt(searchParams.get('page') || '1'), 1)
->>>>>>> 6562c65 (Fixing All The Problems & Adding The Exception Handling)
     const offset = (page - 1) * limit
 
     // Get user wallet data
@@ -50,24 +37,6 @@ export async function GET(req: NextRequest) {
     })
 
     if (!user) {
-<<<<<<< HEAD
-      throw new ValidationError('User not found')
-    }
-
-    // Get transactions (payments and earnings)
-    const transactions = await db.transaction.findMany({
-      where: {
-        OR: [{ userId }, { senderId: userId }, { receiverId: userId }],
-      },
-      select: {
-        id: true,
-        type: true,
-        amount: true,
-        netAmount: true,
-        commission: true,
-        status: true,
-        description: true,
-=======
       return errorResponse(404, 'User not found')
     }
 
@@ -182,111 +151,50 @@ export async function POST(req: NextRequest) {
   }
 }
 >>>>>>> 6562c65 (Fixing All The Problems & Adding The Exception Handling)
-        createdAt: true,
-        senderId: true,
-        receiverId: true,
-        projectId: true,
-        templateId: true,
-      },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      skip: offset,
-    })
-
-    const transactionsTotal = await db.transaction.count({
-      where: {
-        OR: [{ userId }, { senderId: userId }, { receiverId: userId }],
-      },
-    })
-
-    // Get recent activity
-    const activities = await getUserActivityLogs(userId, 10, 0)
-
-    return successResponse(
-      {
-        wallet: {
-          userId: user.id,
-          balance: user.walletBalance?.toNumber() || 0,
-          totalSpent: user.totalSpent?.toNumber() || 0,
-          totalEarned: user.totalEarned?.toNumber() || 0,
-        },
-        transactions: transactions.map((t) => ({
-          id: t.id,
-          type: t.type,
-          amount: t.amount?.toNumber() || 0,
-          netAmount: t.netAmount?.toNumber() || null,
-          commission: t.commission?.toNumber() || null,
-          status: t.status,
-          description: t.description,
-          createdAt: t.createdAt,
-          senderId: t.senderId,
-          receiverId: t.receiverId,
-          projectId: t.projectId,
-          templateId: t.templateId,
-        })),
-        pagination: {
-          page,
-          limit,
-          total: transactionsTotal,
-          hasMore: offset + limit < transactionsTotal,
-        },
-        recentActivity: activities,
-      },
-      200,
-      'Wallet retrieved'
-    )
-  } catch (error) {
-    console.error('Get wallet error:', error)
-    return handleApiError(error)
-  }
-}
 
 /**
- * POST /api/wallet/add-balance
- * Add funds to wallet (admin operation - in production, use Stripe)
+ * POST /api/wallet
+ * Add funds to wallet
  */
 export async function POST(req: NextRequest) {
   try {
+    const limited = !(await rateLimit(req, 'api', API_RATE_LIMIT.limit, API_RATE_LIMIT.window))
+    if (limited) {
+      return errorResponse(429, 'Too many requests. Please try again later.')
+    }
+
     const { userId } = await requireAuth(req)
     const body = await req.json()
     const { amount, description } = body
 
-    if (!amount || amount <= 0) {
-      throw new ValidationError('Invalid amount')
+    // Validation
+    if (!isValidAmount(amount, 0.01)) {
+      return errorResponse(400, 'Valid amount is required (minimum 0.01)')
     }
 
-    const user = await db.$transaction(async (tx) => {
-      // Update wallet balance
-      const updatedUser = await tx.user.update({
-        where: { id: userId },
-        data: {
-          walletBalance: { increment: amount },
-        },
-      })
-
-      // Create transaction record
-      await tx.transaction.create({
-        data: {
-          userId,
-          type: 'EARNING',
-          amount,
-          status: 'COMPLETED',
-          description: description || 'Wallet top-up',
-        },
-      })
-
-      return updatedUser
+    // Create wallet addition transaction
+    const transaction = await db.transaction.create({
+      data: {
+        userId,
+        type: 'PAYMENT',
+        amount: parseFloat(amount),
+        status: 'PENDING',
+        description: description || 'Wallet top-up',
+      },
     })
 
     return successResponse(
       {
-        balance: user.walletBalance?.toNumber() || 0,
+        transactionId: transaction.id,
+        amount: transaction.amount.toNumber(),
+        status: transaction.status,
+        message: 'Proceed with payment to complete wallet top-up',
       },
-      200,
-      'Wallet balance updated'
+      201,
+      'Wallet transaction initialized'
     )
   } catch (error) {
-    console.error('Add wallet balance error:', error)
+    console.error('[WALLET_POST_ERROR]', error)
     return handleApiError(error)
   }
 }
