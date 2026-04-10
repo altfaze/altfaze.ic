@@ -50,17 +50,6 @@ export async function GET(req: NextRequest) {
         take: limit,
         skip: offset,
       }),
-    const [requests, total] = await Promise.all([
-      db.request.findMany({
-        where,
-        include: {
-          sender: { select: { id: true, name: true, email: true, image: true } },
-          receiver: { select: { id: true, name: true, email: true, image: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-        take: limit,
-        skip: offset,
-      }),
       db.request.count({ where }),
     ])
 
@@ -249,9 +238,6 @@ export async function PATCH(req: NextRequest) {
     return handleApiError(error)
   }
 }
->>>>>>> 6562c65 (Fixing All The Problems & Adding The Exception Handling)
-
-    return successResponse(
       {
         requests: requests.map((r) => ({
           id: r.id,

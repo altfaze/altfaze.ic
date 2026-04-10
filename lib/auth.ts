@@ -79,8 +79,6 @@ export const authOptions: NextAuthOptions = {
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID || '',
       clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
-      clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
->>>>>>> 6562c65 (Fixing All The Problems & Adding The Exception Handling)
       allowDangerousEmailAccountLinking: true,
     }),
   ],
@@ -137,122 +135,31 @@ export const authOptions: NextAuthOptions = {
       return session
     },
 
-    async jwt({ token, user, account }) {
-      // On initial sign in, set basic values
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id
         token.email = user.email
-        token.name = user.name
-        token.picture = user.image
       }
 
-      // On every token refresh, load user data from DB (but don't update)
-      if (token.email) {
-        try {
-          const normalizedEmail = String(token.email).toLowerCase().trim()
-          const dbUser = await db.user.findUnique({
-            where: { email: normalizedEmail },
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              image: true,
-              username: true,
-              role: true,
-              isSuspended: true,
-            },
-          })
-
-          if (dbUser) {
-            // Check if user is suspended
-            if (dbUser.isSuspended) {
-              // Invalidate token by returning null
-              return {} as any
-            }
-
-            token.id = dbUser.id
-            token.name = dbUser.name
-            token.email = dbUser.email
-            token.picture = dbUser.image
-            token.username = dbUser.username || nanoid(10)
-            token.role = dbUser.role || 'CLIENT'
-          }
-        } catch (error) {
-          console.error('[JWT] Error loading user data:', error)
-          // Continue with existing token data if lookup fails
-        }
-      }
-
-      return token
-    },
-  },
-  events: {
-    async signOut({ token }) {
+      // Load user data from DB
       try {
-        // Log sign out event
-        if (token?.email) {
-          console.log('[AUTH] User signed out:', token.email)
+        if (token.email) {
+          const dbUser = await db.user.findUnique({
+            where: { email: token.email },
+          })
+          if (dbUser) {
+            token.id = dbUser.id
+            token.username = dbUser.username
+            token.role = dbUser.role
+            // Check if account is suspended
+            if (dbUser.isSuspended) {
+              return { ...token, isSuspended: true }
+            }
+          }
         }
       } catch (error) {
-        console.error('[AUTH] SignOut event error:', error)
-      }
-    },
-  },
-}
-
-/**
- * Helper to get user session server-side
- */
-export async function getAuthSession() {
-  return await getServerSession(authOptions)
-}
-
-      }
-    },
-
-    async session({ token, session }) {
->>>>>>> 6562c65 (Fixing All The Problems & Adding The Exception Handling)
-      if (token) {
-        session.user.id = token.id
-        session.user.name = token.name
-        session.user.email = token.email
-        session.user.image = token.picture
-        session.user.username = token.username
-        session.user.role = token.role as string
-      }
-
-      return session
-    },
-
-    async jwt({ token, user, account }) {
-      // On initial sign in, set basic values
-      if (user) {
-        token.id = user.id
-        token.email = user.email
-        token.name = user.name
-        token.picture = user.image
-      }
-
-      // On every token refresh, load user data from DB (but don't update)
-      if (token.email) {
-        try {
-          const normalizedEmail = token.email.toLowerCase().trim()
-          const dbUser = await db.user.findUnique({
-            where: { email: normalizedEmail },
-          })
-
-          if (dbUser) {
-            token.id = dbUser.id
-            token.name = dbUser.name
-            token.email = dbUser.email
-            token.picture = dbUser.image
-            token.username = dbUser.username || nanoid(10)
-            token.role = dbUser.role || 'CLIENT'
-          }
-        } catch (error) {
-          console.error('[JWT] Error loading user data:', error)
-          // Continue with existing token data if lookup fails
-        }
+        console.error('[JWT] Error loading user data:', error)
+        // Continue with existing token data if lookup fails
       }
 
       return token
