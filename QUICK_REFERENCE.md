@@ -1,4 +1,4 @@
-# ATXEP Quick Reference
+# ALTFaze Quick Reference
 
 ## 📚 Documentation
 - **Setup**: [SETUP_GUIDE.md](./SETUP_GUIDE.md) - Start here
@@ -178,7 +178,7 @@ All routes under `/dashboard/*` require:
 ## ⚙️ Environment Variables
 
 ```env
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3002
 NEXTAUTH_SECRET=your_secret
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
@@ -221,7 +221,7 @@ DATABASE_URL=postgresql://...
 2. Create: `.env.local` with OAuth credentials
 3. Setup: PostgreSQL database
 4. Run: `pnpm install && pnpm dev`
-5. Test: OAuth flow at `http://localhost:3000`
+5. Test: OAuth flow at `http://localhost:3002`
 
 ---
 

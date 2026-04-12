@@ -1,4 +1,4 @@
-# ATXEP Setup Guide
+# ALTFaze Setup Guide
 
 ## 🚀 Quick Start
 
@@ -8,7 +8,7 @@ Create a `.env.local` file in the project root:
 
 ```env
 # NextAuth Configuration
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3002
 NEXTAUTH_SECRET=$(openssl rand -base64 32)
 
 # Google OAuth
@@ -23,7 +23,7 @@ GITHUB_CLIENT_SECRET=your_github_client_secret_here
 
 # Database
 # Using PostgreSQL locally or on cloud
-DATABASE_URL=postgresql://user:password@localhost:5432/atxep
+DATABASE_URL=postgresql://user:password@localhost:5432/ALTFaze
 
 # Stripe (Optional for now)
 STRIPE_SECRET_KEY=sk_test_your_key_here
@@ -37,16 +37,16 @@ STRIPE_PUBLISHABLE_KEY=pk_test_your_key_here
 2. Create a new project
 3. Enable Google+ API
 4. Create OAuth 2.0 credentials (Web Application)
-5. Add authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
+5. Add authorized redirect URI: `http://localhost:3002/api/auth/callback/google`
 6. Copy Client ID and Client Secret to `.env.local`
 
 #### GitHub OAuth Setup
 1. Go to [GitHub Settings > Developer settings](https://github.com/settings/developers)
 2. Click "New OAuth App"
 3. Fill in:
-   - Application name: ATXEP
-   - Homepage URL: http://localhost:3000
-   - Authorization callback URL: http://localhost:3000/api/auth/callback/github
+   - Application name: ALTFaze
+   - Homepage URL: http://localhost:3002
+   - Authorization callback URL: http://localhost:3002/api/auth/callback/github
 4. Copy Client ID and Client Secret to `.env.local`
 
 ### Step 3: Database Setup
@@ -64,10 +64,10 @@ brew install postgresql@15
 brew services start postgresql@15
 
 # Create database
-createdb atxep
+createdb ALTFaze
 
 # Update DATABASE_URL in .env.local
-DATABASE_URL=postgresql://localhost/atxep
+DATABASE_URL=postgresql://localhost/ALTFaze
 ```
 
 #### Option B: Cloud Database (Recommended)
@@ -103,14 +103,14 @@ npx prisma studio
 pnpm dev
 ```
 
-The app will be available at: **http://localhost:3000**
+The app will be available at: **http://localhost:3002**
 
 ---
 
 ## 🧪 Testing the Platform
 
 ### Test Flow
-1. **Visit**: http://localhost:3000
+1. **Visit**: http://localhost:3002
 2. **Click**: "Get Started" or go to `/login`
 3. **Sign in**: Choose Google or GitHub
 4. **Onboard**: Select CLIENT or FREELANCER role
@@ -143,14 +143,14 @@ This opens a web interface at http://localhost:5555
 
 ### Issue: "OAuth redirect URI mismatch"
 **Solution**: Ensure OAuth callback URLs match:
-- Google: `http://localhost:3000/api/auth/callback/google`
-- GitHub: `http://localhost:3000/api/auth/callback/github`
+- Google: `http://localhost:3002/api/auth/callback/google`
+- GitHub: `http://localhost:3002/api/auth/callback/github`
 
 ### Issue: "Cannot connect to database"
 **Solution**: 
 - Check DATABASE_URL is correct
 - Verify PostgreSQL is running
-- Try creating database manually: `createdb atxep`
+- Try creating database manually: `createdb ALTFaze`
 
 ### Issue: "Prisma migration failed"
 **Solution**: 
@@ -159,8 +159,8 @@ This opens a web interface at http://localhost:5555
 npx prisma migrate reset
 
 # Or manually fix: recreate database
-dropdb atxep
-createdb atxep
+dropdb ALTFaze
+createdb ALTFaze
 npx prisma migrate deploy
 ```
 

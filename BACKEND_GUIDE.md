@@ -1,6 +1,6 @@
-# ATXEP Production Backend System
+# ALTFaze Production Backend System
 
-A complete production-grade backend implementation for ATXEP platform with real payment processing, commission logic, and wallet management.
+A complete production-grade backend implementation for ALTFaze platform with real payment processing, commission logic, and wallet management.
 
 ## 🏗️ Architecture Overview
 
@@ -24,11 +24,11 @@ Backend System
 
 ```env
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/atxep
+DATABASE_URL=postgresql://user:password@localhost:5432/ALTFaze
 
 # NextAuth
 NEXTAUTH_SECRET=your-secret-key-min-32-chars
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3002
 
 # OAuth Providers
 GOOGLE_CLIENT_ID=your-google-client-id
@@ -42,7 +42,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 
 # Application
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3002
 ```
 
 ## 🗄️ Database Schema
@@ -437,7 +437,7 @@ await logPaymentCompletion(userId, amount, description, transactionId)
 
 1. **Create Checkout Session**:
    ```bash
-   curl -X POST http://localhost:3000/api/payments/checkout \
+   curl -X POST http://localhost:3002/api/payments/checkout \
      -H "Content-Type: application/json" \
      -d '{
        "freelancerId": "freelancer-user-id",

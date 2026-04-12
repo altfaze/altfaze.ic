@@ -1,6 +1,6 @@
-# ATXEP Deployment Guide
+# ALTFaze Deployment Guide
 
-Complete guide for deploying ATXEP to production.
+Complete guide for deploying ALTFaze to production.
 
 ## Deployment Options
 
@@ -18,7 +18,7 @@ git push origin main
 1. Go to [vercel.com](https://vercel.com)
 2. Select "Import Project"
 3. Connect your GitHub repository
-4. Select the atxep project
+4. Select the ALTFaze project
 
 #### Step 3: Environment Variables
 In Vercel project settings, add environment variables:
@@ -72,8 +72,8 @@ sudo apt install -y git
 #### Step 2: Application Setup
 ```bash
 # Create application directory
-mkdir -p /var/www/atxep
-cd /var/www/atxep
+mkdir -p /var/www/ALTFaze
+cd /var/www/ALTFaze
 
 # Clone repository
 git clone <repository-url> .
@@ -98,12 +98,12 @@ npx prisma migrate deploy
 cat > ecosystem.config.js << 'EOF'
 module.exports = {
   apps: [{
-    name: 'atxep',
+    name: 'ALTFaze',
     script: './node_modules/.bin/next',
     args: 'start',
     env: {
       NODE_ENV: 'production',
-      PORT: 3000
+      PORT: 3002
     },
     instances: 'max',
     exec_mode: 'cluster',
@@ -128,12 +128,12 @@ pm2 save
 #### Step 4: Nginx Configuration
 ```bash
 # Create Nginx config
-sudo nano /etc/nginx/sites-available/atxep
+sudo nano /etc/nginx/sites-available/ALTFaze
 ```
 
 ```nginx
-upstream atxep {
-    server 127.0.0.1:3000 max_fails=5 fail_timeout=60s;
+upstream ALTFaze {
+    server 127.0.0.1:3002 max_fails=5 fail_timeout=60s;
 }
 
 server {
@@ -171,7 +171,7 @@ server {
 
     # Proxy to Next.js
     location / {
-        proxy_pass http://atxep;
+        proxy_pass http://ALTFaze;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -186,7 +186,7 @@ server {
 
 Enable site:
 ```bash
-sudo ln -s /etc/nginx/sites-available/atxep /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/ALTFaze /etc/nginx/sites-enabled/
 sudo rm /etc/nginx/sites-enabled/default
 sudo nginx -t  # Test config
 sudo systemctl restart nginx
@@ -208,26 +208,26 @@ sudo systemctl start certbot.timer
 #### Step 6: Database Backups
 ```bash
 # Create backup script
-mkdir -p /var/backups/atxep
-cat > /var/backups/atxep/backup.sh << 'EOF'
+mkdir -p /var/backups/ALTFaze
+cat > /var/backups/ALTFaze/backup.sh << 'EOF'
 #!/bin/bash
 DATE=$(date +%Y%m%d_%H%M%S)
-pg_dump atxep_db > /var/backups/atxep/atxep_$DATE.sql.gz
+pg_dump ALTFaze_db > /var/backups/ALTFaze/ALTFaze_$DATE.sql.gz
 # Keep only last 7 days
-find /var/backups/atxep -name "atxep_*.sql.gz" -mtime +7 -delete
+find /var/backups/ALTFaze -name "ALTFaze_*.sql.gz" -mtime +7 -delete
 EOF
 
-chmod +x /var/backups/atxep/backup.sh
+chmod +x /var/backups/ALTFaze/backup.sh
 
 # Schedule daily backups
-echo "0 2 * * * /var/backups/atxep/backup.sh" | sudo crontab -
+echo "0 2 * * * /var/backups/ALTFaze/backup.sh" | sudo crontab -
 ```
 
 ## Environment Variables Reference
 
 ```env
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/atxep_db
+DATABASE_URL=postgresql://user:password@localhost:5432/ALTFaze_db
 
 # NextAuth (IMPORTANT: Generate new for production)
 NEXTAUTH_SECRET=<32+ character random string>
@@ -247,7 +247,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxx
 # Application
 NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://your-domain.com
-NEXT_PUBLIC_SITE_NAME=ATXEP
+NEXT_PUBLIC_SITE_NAME=ALTFaze
 
 # Optional: Email Service
 RESEND_API_KEY=re_xxx
@@ -275,7 +275,7 @@ curl https://your-domain.com/api/payments/checkout -H "Authorization: Bearer YOU
 ### Logs
 ```bash
 # Application logs
-pm2 logs atxep
+pm2 logs ALTFaze
 
 # Nginx logs
 sudo tail -f /var/log/nginx/access.log
@@ -291,7 +291,7 @@ npm update
 npm run build
 
 # Restart
-pm2 restart atxep
+pm2 restart ALTFaze
 ```
 
 ### Database Maintenance
@@ -300,10 +300,10 @@ pm2 restart atxep
 du -sh /var/lib/postgresql/
 
 # Vacuum (cleanup)
-psql atxep_db -c "VACUUM FULL ANALYZE"
+psql ALTFaze_db -c "VACUUM FULL ANALYZE"
 
 # Check index health
-psql atxep_db -c "SELECT * FROM pg_indexes;"
+psql ALTFaze_db -c "SELECT * FROM pg_indexes;"
 ```
 
 ## Troubleshooting
@@ -311,7 +311,7 @@ psql atxep_db -c "SELECT * FROM pg_indexes;"
 ### Application won't start
 ```bash
 # Check logs
-pm2 logs atxep
+pm2 logs ALTFaze
 
 # Verify environment variables
 echo $DATABASE_URL
@@ -409,17 +409,17 @@ sudo systemctl enable fail2ban
 ### Recovery Procedure
 ```bash
 # Restore database from backup
-psql atxep_db < /var/backups/atxep/atxep_YYYYMMDD_HHMMSS.sql.gz
+psql ALTFaze_db < /var/backups/ALTFaze/ALTFaze_YYYYMMDD_HHMMSS.sql.gz
 
 # Verify restore
 npx prisma db execute --stdin << <<< "SELECT COUNT(*) FROM users;"
 
 # Restart application
-pm2 restart atxep
+pm2 restart ALTFaze
 ```
 
 ---
 
 **Deployment successful!** 🎉
 
-Your ATXEP application is now running in production. Monitor logs, set up alerts, and enjoy!
+Your ALTFaze application is now running in production. Monitor logs, set up alerts, and enjoy!

@@ -4,9 +4,13 @@ import { Metadata } from "next"
 import { getCurrentUser } from "@/lib/session"
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
 import { ModeToggle } from "@/components/toggle"
+import { db } from "@/lib/db"
 
-{/* @ts-ignore */}
+// Force dynamic rendering - check auth at request time
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
+// @ts-ignore
 interface ClientLayoutProps {
   children?: React.ReactNode
 }
@@ -19,19 +23,50 @@ export const metadata: Metadata = {
 export default async function ClientLayout({ 
   children, 
 }: ClientLayoutProps) {
-  const user = await getCurrentUser()
+  try {
+    const user = await getCurrentUser()
+    console.log('[CLIENT_LAYOUT] User retrieved:', { id: user?.id, email: user?.email, role: user?.role })
 
-  if (!user) {
-    redirect('/login')
-  }
+    if (!user) {
+      console.warn('[CLIENT_LAYOUT] ❌ No user found - redirecting to login')
+      return redirect('/login')
+    }
 
-  // Check if user is CLIENT role - if no role, redirect to onboard
-  if (!user.role) {
-    redirect('/onboard')
-  }
+    // Check if user has a role
+    if (!user.role) {
+      console.warn('[CLIENT_LAYOUT] ⚠️ User has no role set - checking database...')
+      // Double-check database to ensure role wasn't just set
+      if (user.email) {
+        const dbUser = await db.user.findUnique({
+          where: { email: user.email },
+          select: { role: true }
+        })
+        if (!dbUser?.role) {
+          console.warn('[CLIENT_LAYOUT] ⚠️ Database also shows no role - redirecting to onboard for role selection')
+          return redirect('/onboard')
+        }
+        console.log('[CLIENT_LAYOUT] ✅ Role found in database:', dbUser.role)
+        user.role = dbUser.role
+      } else {
+        console.warn('[CLIENT_LAYOUT] ⚠️ No email in user - redirecting to onboard')
+        return redirect('/onboard')
+      }
+    }
 
-  if (user.role !== 'CLIENT') {
-    redirect('/freelancer')
+    // Verify user has CLIENT role
+    if (user.role !== 'CLIENT') {
+      console.warn('[CLIENT_LAYOUT] ⚠️ User has wrong role:', user.role, '- redirecting to freelancer dashboard')
+      return redirect(`/freelancer/my-dashboard`)
+    }
+    
+    console.log('[CLIENT_LAYOUT] ✅ CLIENT role verified - rendering dashboard')
+  } catch (error) {
+    console.error('[CLIENT_LAYOUT] ❌ Exception in layout:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    })
+    // Re-throw to let Next.js handle it
+    throw error
   }
 
   return (

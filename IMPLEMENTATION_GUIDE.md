@@ -1,8 +1,8 @@
-# ATXEP - Production-Grade SaaS Platform Implementation Guide
+# ALTFaze - Production-Grade SaaS Platform Implementation Guide
 
 ## 🎯 Project Overview
 
-ATXEP is a hybrid SaaS platform combining:
+ALTFaze is a hybrid SaaS platform combining:
 - **Freelance Marketplace** (like Upwork)
 - **Template Marketplace** (like Envato)
 - **Project Builder + AI Assistant System**
@@ -280,7 +280,7 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
 DATABASE_URL=your_postgresql_url
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3002
 NEXTAUTH_SECRET=your_secret
 ```
 
@@ -301,7 +301,7 @@ NEXTAUTH_SECRET=your_secret
 ### Transaction Flow
 ```
 Client Payment → Platform (5% commission) → Freelancer Wallet
-₹1000 → ₹50 ATXEP + ₹950 Freelancer
+₹1000 → ₹50 ALTFaze + ₹950 Freelancer
 ```
 
 ### Wallet Management
@@ -535,7 +535,7 @@ middleware.ts (Updated)
 ### Environment Setup Example
 ```env
 # NextAuth
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3002
 NEXTAUTH_SECRET=your-secret-key-here
 
 # OAuth Providers
@@ -545,7 +545,7 @@ GITHUB_CLIENT_ID=your-github-client-id
 GITHUB_CLIENT_SECRET=your-github-client-secret
 
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/atxep"
+DATABASE_URL="postgresql://user:password@localhost:5432/ALTFaze"
 
 # Stripe (when implemented)
 STRIPE_SECRET_KEY=sk_test_...
@@ -556,7 +556,7 @@ STRIPE_PUBLISHABLE_KEY=pk_test_...
 
 ## 🎉 Summary
 
-ATXEP is now a fully-featured SaaS platform with:
+ALTFaze is now a fully-featured SaaS platform with:
 
 ✅ **Authentication**: Google & GitHub OAuth  
 ✅ **User Management**: Role-based access (CLIENT/FREELANCER)  

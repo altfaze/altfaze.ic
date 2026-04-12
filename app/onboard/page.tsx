@@ -2,23 +2,34 @@
 
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/more-icons"
 
+// Force dynamic rendering for auth pages
+export const dynamic = "force-dynamic"
+
 export default function OnboardPage() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [selectedRole, setSelectedRole] = useState<"CLIENT" | "FREELANCER" | null>(null)
+  const [error, setError] = useState<string>("")
+  const [isClient, setIsClient] = useState(false)
 
-  if (status === "unauthenticated") {
-    router.push("/login")
-    return null
-  }
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
-  if (status === "loading") {
+  useEffect(() => {
+    if (isClient && status === "unauthenticated") {
+      router.replace("/login")
+    }
+  }, [status, isClient, router])
+
+  if (!isClient || status === "loading") {
     return (
       <div className="container flex h-screen w-screen flex-col items-center justify-center">
         <div className="animate-spin">
@@ -28,14 +39,24 @@ export default function OnboardPage() {
     )
   }
 
+  if (status === "unauthenticated") {
+    return null
+  }
+
   const handleRoleSelection = async (role: "CLIENT" | "FREELANCER") => {
     console.log("🔵 [ONBOARD_FRONTEND] Role selection clicked:", role)
     
+    if (!session?.user?.email) {
+      setError("No session found. Please log in again.")
+      return
+    }
+
     try {
       setLoading(true)
+      setError("")
       setSelectedRole(role)
 
-      console.log("🔵 [ONBOARD_FRONTEND] Sending request to API...")
+      console.log("🔵 [ONBOARD_FRONTEND] Sending role to API:", role)
       const response = await fetch("/api/users/onboard", {
         method: "POST",
         headers: {
@@ -43,41 +64,87 @@ export default function OnboardPage() {
         },
         body: JSON.stringify({
           role,
-          name: session?.user.name,
+          name: session?.user?.name || "User",
         }),
       })
 
       console.log("🔵 [ONBOARD_FRONTEND] Response status:", response.status)
 
-      if (response.ok) {
-        const data = await response.json()
-        console.log("🟢 [ONBOARD_FRONTEND] Success! User role updated:", data)
-        
-        // Refresh server-side data and session
-        console.log("🔵 [ONBOARD_FRONTEND] Refreshing session...")
-        router.refresh()
-        
-        // Wait for session to update, then redirect
-        console.log("🔵 [ONBOARD_FRONTEND] Waiting 500ms before redirect...")
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
-        const redirectUrl = role === "CLIENT" ? "/client" : "/freelancer"
-        console.log("🟢 [ONBOARD_FRONTEND] Redirecting to:", redirectUrl)
-        
-        // Use replace to clear navigation history
-        router.replace(redirectUrl)
-      } else {
+      if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: "Unknown error" }))
-        console.error("❌ [ONBOARD_FRONTEND] API Error:", response.status, errorData)
+        const errorMsg = errorData.error || `Server error: ${response.status}`
+        console.error("❌ [ONBOARD_FRONTEND] API Error:", errorMsg)
+        setError(errorMsg)
         setLoading(false)
         setSelectedRole(null)
-        alert(`Error saving role: ${errorData.error || "Unknown error"}`)
+        return
       }
+
+      const data = await response.json()
+      console.log("🟢 [ONBOARD_FRONTEND] Success:", data)
+
+      console.log("🔄 [ONBOARD_FRONTEND] Waiting for server to sync role update...")
+      
+      // Wait for server to process role update AND for JWT to be issued with new role
+      // First delay for DB write
+      await new Promise(resolve => setTimeout(resolve, 800))
+      
+      // ✅ CRITICAL: Force JWT to refresh by calling update() which triggers new token issuance
+      console.log("🔄 [ONBOARD_FRONTEND] Refreshing session with new role...")
+      const updateResult = await update({ redirect: false })
+      console.log("🔄 [ONBOARD_FRONTEND] Session update result:", !!updateResult)
+      
+      // Wait for JWT to be issued and stored in cookie
+      await new Promise(resolve => setTimeout(resolve, 1500))
+
+      // ✅ IMPROVED: Use dedicated verification endpoint that hits the database directly
+      console.log("🔄 [ONBOARD_FRONTEND] Verifying role update in database...")
+      let verifyAttempts = 0
+      let roleVerified = false
+      
+      while (verifyAttempts < 5 && !roleVerified) {
+        try {
+          const verifyRes = await fetch('/api/auth/verify-role', { 
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+          })
+          const verifyData = await verifyRes.json()
+          console.log("🔵 [ONBOARD_FRONTEND] Database verify attempt " + (verifyAttempts + 1) + ":", { dbRole: verifyData?.role, expectedRole: role, verified: verifyData?.verified })
+          
+          if (verifyData?.verified && verifyData?.role === role) {
+            roleVerified = true
+            console.log("✅ [ONBOARD_FRONTEND] Role verified in database! Safe to redirect.")
+            break
+          }
+        } catch (err) {
+          console.error("❌ [ONBOARD_FRONTEND] Role verification error:", err)
+        }
+        
+        verifyAttempts++
+        if (verifyAttempts < 5) {
+          await new Promise(resolve => setTimeout(resolve, 600))
+        }
+      }
+
+      if (!roleVerified) {
+        console.warn("🟡 [ONBOARD_FRONTEND] Role not verified after 5 attempts - this might cause issues, but redirecting anyway...")
+      }
+
+      // ✅ FIXED: Use correct dashboard paths with proper timing
+      const redirectUrl = role === "CLIENT" ? "/client/dashboard" : "/freelancer/my-dashboard"
+      console.log("🟢 [ONBOARD_FRONTEND] Redirecting to dashboard:", redirectUrl)
+      
+      // Use router.push() instead of router.replace() to ensure proper navigation flow
+      // Add a small delay to ensure all cookies are set
+      setTimeout(() => {
+        router.push(redirectUrl)
+      }, 200)
     } catch (error) {
       console.error("❌ [ONBOARD_FRONTEND] Exception:", error)
+      const errorMsg = error instanceof Error ? error.message : "Unknown error"
+      setError(errorMsg)
       setLoading(false)
       setSelectedRole(null)
-      alert(`Error: ${error instanceof Error ? error.message : "Unknown error"}`)
     }
   }
 
@@ -100,12 +167,24 @@ export default function OnboardPage() {
         <div className="flex flex-col space-y-4 text-center">
           <Icons.logo className="mx-auto h-8 w-8" />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Welcome, {session?.user.name}!</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Welcome, {session?.user?.name || "User"}!</h1>
             <p className="mt-2 text-sm text-muted-foreground">
               Tell us what you do so we can personalize your experience
             </p>
           </div>
         </div>
+
+        {error && (
+          <div className="rounded-md bg-red-50 p-4 border border-red-200">
+            <p className="text-sm font-medium text-red-800">{error}</p>
+            <button
+              onClick={() => setError("")}
+              className="text-xs text-red-600 underline mt-2 hover:text-red-700"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         <div className="grid gap-4">
           {/* Client Role */}

@@ -1,6 +1,6 @@
 # 📝 Detailed Changes Log
 
-## Files Modified/Created in ATXEP Platform Upgrade
+## Files Modified/Created in ALTFaze Platform Upgrade
 
 ### 1. **Library Files**
 

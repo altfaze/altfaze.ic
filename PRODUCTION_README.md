@@ -1,4 +1,4 @@
-# ATXEP - Production Ready Freelance Marketplace
+# ALTFaze - Production Ready Freelance Marketplace
 
 A full-stack Next.js 14 freelance marketplace application built with:
 
@@ -56,7 +56,7 @@ A full-stack Next.js 14 freelance marketplace application built with:
 ```bash
 # Clone repository
 git clone <repository-url>
-cd atxep
+cd ALTFaze
 
 # Install dependencies
 npm install
@@ -75,11 +75,11 @@ Edit `.env.local` with your credentials:
 
 ```env
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/atxep_db
+DATABASE_URL=postgresql://user:password@localhost:5432/ALTFaze_db
 
 # NextAuth
 NEXTAUTH_SECRET=<generate-with: openssl rand -base64 32>
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3002
 
 # Google OAuth (get from https://console.cloud.google.com)
 GOOGLE_CLIENT_ID=xxx
@@ -111,12 +111,12 @@ npm run db:migrate
 npm run dev
 ```
 
-Server runs at [http://localhost:3000](http://localhost:3000)
+Server runs at [http://localhost:3002](http://localhost:3002)
 
 ## 📁 Project Structure
 
 ```
-atxep-main/
+ALTFaze-main/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API routes
 │   │   ├── auth/          # Authentication

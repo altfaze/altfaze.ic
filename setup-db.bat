@@ -5,7 +5,7 @@ REM Initializes database and runs migrations
 setlocal enabledelayedexpansion
 
 echo ================================
-echo ATXEP Database Setup
+echo ALTFaze Database Setup
 echo ================================
 
 REM Check if .env.local exists
@@ -36,7 +36,7 @@ echo ================================
 echo.
 echo Next steps:
 echo 1. npm run dev          - Start development server
-echo 2. Open http://localhost:3000
+echo 2. Open http://localhost:3002
 echo 3. Create an account and test the application
 echo.
 

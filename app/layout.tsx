@@ -1,28 +1,58 @@
-import { MainNav } from "@/components/main-nav";
-// import { MobileNav } from "@/components/mobile-nav";
-import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { fontSans, fontDisplay } from "@/lib/fonts";
-import Link from "@/node_modules/next/link";
-import { buttonVariants } from "@/components/ui/button";
+import { MainNav } from "@/components/main-nav";
+import { fontDisplay } from "@/lib/fonts";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/components/providers";
 import { ModeToggle } from "@/components/toggle";
-// import HeroPage from "./hero/page";
-import { SiteFooter } from "@/components/site-footer";
-// import PricingPage from "@/app/pricing/page";
 import MobileNav from "@/components/mobile-nav";
 import { Toaster } from "@/components/ui/toaster";
-import { getCurrentUser } from "@/lib/session";
-import { getAuthSession } from "@/lib/auth";
-
-const inter = Inter({ subsets: ["latin"] });
+import { cn } from "@/lib/utils";
+import { OrganizationSchema, LocalBusinessSchema, ServiceSchema } from "@/app/schema-markup";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ATXEP - Hire, Build, Launch",
-  description: "The all-in-one platform to hire freelancers, build projects, buy templates, and get help",
+  title: "Altfaze - Best Freelance Marketplace to Hire Developers & Buy Website Templates",
+  description: "Altfaze is the leading freelance marketplace. Hire web developers, UI/UX designers, and freelancers for your projects. Buy premium website templates & build online fast.",
+  keywords: [
+    "freelance marketplace",
+    "hire web developers",
+    "website templates",
+    "freelance jobs",
+    "hire freelancers",
+    "web development services",
+    "UI/UX design",
+    "buy templates"
+  ],
+  authors: [{ name: "Altfaze" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://altfaze.com",
+    siteName: "Altfaze",
+    title: "Altfaze - Best Freelance Marketplace",
+    description: "Hire developers, designers, and freelancers. Buy website templates. Launch projects faster.",
+    images: [
+      {
+        url: "https://altfaze.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Altfaze Freelance Marketplace"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Altfaze - Hire Freelancers & Buy Templates",
+    description: "The #1 freelance marketplace to hire developers and buy website templates.",
+    images: ["https://altfaze.com/og-image.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+    "max-image-preview": "large",
+    "max-snippet": -1,
+    "max-video-preview": -1
+  }
 };
 
 export default function RootLayout({
@@ -31,7 +61,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning style={{ fontFamily: 'var(--font-display)' }}>
+    <html lang="en" suppressHydrationWarning style={{ fontFamily: "var(--font-display)" }}>
+      <head>
+        <OrganizationSchema />
+        <LocalBusinessSchema />
+        <ServiceSchema />
+      </head>
       <body
         className={cn(
           "relative flex min-h-screen w-full flex-col justify-center scroll-smooth bg-background font-sans antialiased",

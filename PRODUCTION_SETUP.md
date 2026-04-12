@@ -1,7 +1,7 @@
-# 🚀 ATXEP Platform - Production Setup Guide
+# 🚀 ALTFaze Platform - Production Setup Guide
 
 ## Overview
-This document covers all the critical setup steps needed to run ATXEP as a fully working production-ready SaaS platform.
+This document covers all the critical setup steps needed to run ALTFaze as a fully working production-ready SaaS platform.
 
 ---
 
@@ -11,7 +11,7 @@ Create or update `.env.local` with the following:
 
 ```bash
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/atxep_db"
+DATABASE_URL="postgresql://user:password@localhost:5432/ALTFaze_db"
 
 # NextAuth
 NEXTAUTH_SECRET="$(openssl rand -base64 32)"  # Generate with: openssl rand -base64 32
@@ -46,7 +46,7 @@ NODE_ENV="production"
 ### Steps
 1. **Create database:**
 ```bash
-createdb atxep_db
+createdb ALTFaze_db
 ```
 
 2. **Run migrations:**
@@ -77,7 +77,7 @@ npx prisma studio  # View database in web UI
 
 4. **Test with Stripe CLI**:
 ```bash
-stripe listen --forward-to localhost:3000/api/webhooks/stripe
+stripe listen --forward-to localhost:3002/api/webhooks/stripe
 stripe trigger payment_intent.succeeded
 ```
 
@@ -89,14 +89,14 @@ stripe trigger payment_intent.succeeded
 1. Go to: https://console.cloud.google.com
 2. Create OAuth 2.0 credentials (Desktop application)
 3. Add authorized redirect URIs:
-   - `http://localhost:3000/api/auth/callback/google` (development)
+   - `http://localhost:3002/api/auth/callback/google` (development)
    - `https://yourdomain.com/api/auth/callback/google` (production)
 
 ### GitHub OAuth
 1. Go to: GitHub Settings → Developer settings → OAuth Apps
 2. Create new OAuth App
 3. Set Authorization callback URL:
-   - `http://localhost:3000/api/auth/callback/github` (development)
+   - `http://localhost:3002/api/auth/callback/github` (development)
    - `https://yourdomain.com/api/auth/callback/github` (production)
 
 ---
@@ -138,12 +138,12 @@ stripe trigger payment_intent.succeeded
 ###  Test Freelancer API
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
-  http://localhost:3000/api/freelancers?limit=10&page=1
+  http://localhost:3002/api/freelancers?limit=10&page=1
 ```
 
 ### Test AI Suggestions
 ```bash
-curl -X POST http://localhost:3000/api/ai/suggestions \
+curl -X POST http://localhost:3002/api/ai/suggestions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
@@ -155,7 +155,7 @@ curl -X POST http://localhost:3000/api/ai/suggestions \
 
 ### Test Payment Checkout
 ```bash
-curl -X POST http://localhost:3000/api/payments/checkout \
+curl -X POST http://localhost:3002/api/payments/checkout \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{
@@ -188,7 +188,7 @@ npm run build
 npm start
 
 # Or use PM2 for production
-pm2 start npm --name "atxep" -- start
+pm2 start npm --name "ALTFaze" -- start
 ```
 
 ---
@@ -205,7 +205,7 @@ pm2 start npm --name "atxep" -- start
 ### Database Maintenance
 ```bash
 # Weekly backup
-pg_dump atxep_db > backup-$(date +%Y%m%d).sql
+pg_dump ALTFaze_db > backup-$(date +%Y%m%d).sql
 
 # Check database size
 du -sh /var/lib/postgresql/data/base/

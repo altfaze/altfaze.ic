@@ -1,4 +1,4 @@
-# 🚀 ATXEP Backend System - Complete Index
+# 🚀 ALTFaze Backend System - Complete Index
 
 Your production-grade backend is ready. Access everything you need below.
 
@@ -87,11 +87,11 @@ What was built, what changed, what to do next.
 ### Required Environment Variables
 ```env
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/atxep
+DATABASE_URL=postgresql://user:password@localhost:5432/ALTFaze
 
 # NextAuth
 NEXTAUTH_SECRET=<32-char-random-string>
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3002
 
 # Stripe
 STRIPE_SECRET_KEY=sk_test_...
@@ -105,7 +105,7 @@ GITHUB_CLIENT_ID=...
 GITHUB_CLIENT_SECRET=...
 
 # Application
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3002
 ```
 
 ### Setup Commands
@@ -120,7 +120,7 @@ pnpm prisma db push
 pnpm dev
 
 # 4. Test webhook locally (optional)
-stripe listen --forward-to localhost:3000/api/webhooks/stripe
+stripe listen --forward-to localhost:3002/api/webhooks/stripe
 ```
 
 ---
@@ -285,7 +285,7 @@ Backend System Documentation
 
 ### Commission System (5%)
 - Platform takes 5% on all transactions
-- ₹1000 payment = ₹50 ATXEP + ₹950 freelancer
+- ₹1000 payment = ₹50 ALTFaze + ₹950 freelancer
 - Automatic calculation in webhook handler
 - Stored in Transaction.commission field
 
@@ -387,7 +387,7 @@ See [BACKEND_SETUP.md - Troubleshooting](BACKEND_SETUP.md#common-issues--solutio
 
 ## 🎉 You're All Set!
 
-Your ATXEP backend is fully implemented and ready for use. 
+Your ALTFaze backend is fully implemented and ready for use. 
 
 **Next Steps**:
 1. Follow [BACKEND_SETUP.md](BACKEND_SETUP.md) to get running locally

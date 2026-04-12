@@ -1,4 +1,4 @@
-# ATXEP Troubleshooting Guide
+# ALTFaze Troubleshooting Guide
 
 Solutions for common issues and errors.
 
@@ -93,8 +93,8 @@ npm run dev
 2. Verify redirect URIs in provider settings:
    - **Google Console:** https://console.cloud.google.com
    - **GitHub Settings:** https://github.com/settings/developers (Apps)
-   - Add: `http://localhost:3000/api/auth/callback/google`
-   - Add: `http://localhost:3000/api/auth/callback/github`
+   - Add: `http://localhost:3002/api/auth/callback/google`
+   - Add: `http://localhost:3002/api/auth/callback/github`
 
 3. Clear browser cookies/cache and try again
 
@@ -128,7 +128,7 @@ npm run dev
 2. Verify NEXTAUTH_URL matches current URL:
    ```bash
    echo $NEXTAUTH_URL
-   # Should match http://localhost:3000
+   # Should match http://localhost:3002
    ```
 
 3. Clear browser cookies and login again
@@ -256,7 +256,7 @@ npx prisma migrate deploy
 
 3. Test webhook manually:
    ```bash
-   curl -X POST http://localhost:3000/api/webhooks/stripe \
+   curl -X POST http://localhost:3002/api/webhooks/stripe \
      -H "Content-Type: application/json" \
      -d '{"type":"checkout.session.completed","data":{"object":{"id":"cs_test_123"}}}'
    ```
@@ -313,7 +313,7 @@ echo "Publishable: $NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
 3. Restart application:
    ```bash
    npm run dev  # Dev
-   pm2 restart atxep  # Production
+   pm2 restart ALTFaze  # Production
    ```
 
 ## Deployment Issues
@@ -339,8 +339,8 @@ npm run build
 
 **Solution:**
 ```bash
-# Kill process on port 3000
-lsof -ti:3000 | xargs kill -9
+# Kill process on port 3002
+lsof -ti:3002 | xargs kill -9
 
 # Or use different port
 PORT=3001 npm run dev
@@ -375,7 +375,7 @@ npx prisma introspect  # Auto-generates matching schema
    - Look for `__Secure-next-auth.session-token`
 
 3. In development, cookies require secure context:
-   - Use `http://localhost:3000` (not IP address)
+   - Use `http://localhost:3002` (not IP address)
 
 ### "Unhandled Promise Rejection"
 **Error:** Console error about unhandled promise
@@ -420,7 +420,7 @@ If issue not in this guide:
    # Check Vercel Dashboard → Deployments → Logs
    
    # Production (Self-hosted)
-   pm2 logs atxep
+   pm2 logs ALTFaze
    tail -f /var/log/nginx/error.log
    ```
 

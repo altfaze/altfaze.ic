@@ -1,6 +1,6 @@
 # Backend Setup Guide - Quick Start
 
-Get your ATXEP production backend running in 10 minutes.
+Get your ALTFaze production backend running in 10 minutes.
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ cp .env.example .env.local
 ### 1.2 Fill in PostgreSQL Connection
 
 ```env
-DATABASE_URL=postgresql://username:password@localhost:5432/atxep_db
+DATABASE_URL=postgresql://username:password@localhost:5432/ALTFaze_db
 ```
 
 ### 1.3 Generate NextAuth Secrets
@@ -30,7 +30,7 @@ DATABASE_URL=postgresql://username:password@localhost:5432/atxep_db
 openssl rand -base64 32
 
 # Generate NEXTAUTH_URL
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3002
 ```
 
 ### 1.4 Set Up Stripe Keys
@@ -96,20 +96,20 @@ pnpm ls | grep stripe
 pnpm dev
 ```
 
-Server runs at http://localhost:3000
+Server runs at http://localhost:3002
 
 ## Step 5: Test Payment Flow
 
 ### 5.1 Create Test User
 
-1. Go to http://localhost:3000/register
+1. Go to http://localhost:3002/register
 2. Sign up with Google or GitHub
 3. Select role (CLIENT or FREELANCER)
 
 ### 5.2 Test Checkout
 
 ```bash
-curl -X POST http://localhost:3000/api/payments/checkout \
+curl -X POST http://localhost:3002/api/payments/checkout \
   -H "Content-Type: application/json" \
   -D "cookie: <your-session-cookie>" \
   -d '{
@@ -219,7 +219,7 @@ Set all variables in your hosting platform (Vercel, AWS, etc.)
 ### Add Test Funds
 
 ```bash
-curl -X POST http://localhost:3000/api/wallet \
+curl -X POST http://localhost:3002/api/wallet \
   -H "Content-Type: application/json" \
   -D "cookie: <your-session-cookie>" \
   -d '{
@@ -231,7 +231,7 @@ curl -X POST http://localhost:3000/api/wallet \
 ### Check Balance
 
 ```bash
-curl -X GET http://localhost:3000/api/wallet \
+curl -X GET http://localhost:3002/api/wallet \
   -D "cookie: <your-session-cookie>"
 ```
 

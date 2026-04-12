@@ -1,6 +1,6 @@
 # Backend Production System - Code Reference
 
-Complete reference for all backend files, utilities, and API endpoints in ATXEP.
+Complete reference for all backend files, utilities, and API endpoints in ALTFaze.
 
 ## 📦 New Files Created
 
@@ -104,8 +104,8 @@ const session = await createCheckoutSession({
   clientId: 'client-123',
   freelancerId: 'freelancer-456',
   amount: 1000,
-  successUrl: 'http://localhost:3000/success',
-  cancelUrl: 'http://localhost:3000/cancel',
+  successUrl: 'http://localhost:3002/success',
+  cancelUrl: 'http://localhost:3002/cancel',
 })
 
 event = constructWebhookEvent(body, sig, secret) // Verify & parse
@@ -454,7 +454,7 @@ Net Amount = 1000 - 50 = ₹950
 
 Stored in Transaction:
   amount: 1000        (total)
-  commission: 50      (ATXEP fee)
+  commission: 50      (ALTFaze fee)
   netAmount: 950      (freelancer gets)
 
 Wallet Updates:
@@ -472,7 +472,7 @@ Wallet Updates:
 ### Test Payment
 ```bash
 # 1. Create checkout
-curl -X POST http://localhost:3000/api/payments/checkout \
+curl -X POST http://localhost:3002/api/payments/checkout \
   -H "Cookie: <client-session>" \
   -d '{"freelancerId":"...", "amount": 1000}'
 
@@ -486,12 +486,12 @@ GET /api/wallet → check balances
 ### Test Projects
 ```bash
 # 1. Client creates project
-curl -X POST http://localhost:3000/api/projects \
+curl -X POST http://localhost:3002/api/projects \
   -H "Cookie: <client-session>" \
   -d '{"title":"...", "budget": 50000}'
 
 # 2. Freelancer accepts
-curl -X PATCH http://localhost:3000/api/projects \
+curl -X PATCH http://localhost:3002/api/projects \
   -H "Cookie: <freelancer-session>" \
   -d '{"projectId":"...", "status": "IN_PROGRESS"}'
 

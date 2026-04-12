@@ -25,20 +25,20 @@ function HeroPage() {
           </ShineBorder>
 
           <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl mt-20">
-            Build. Hire. Launch — All in One Platform
+            Best Freelance Marketplace to Hire Web Developers & Buy Website Templates
           </h1>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            The all-in-one platform to hire freelancers, build projects, buy templates, and get professional support. Everything you need to succeed.
+            The #1 freelance platform to hire professional developers, find skilled UI/UX designers, buy premium website templates, and launch your projects in days. Get expert web development services from top freelancers worldwide.
           </p>
           <div className="space-x-4">
             <Link href="/login" className={cn(buttonVariants({ size: "lg" }))}>
-              Get Started
+              Hire Freelancers Now
             </Link>
             <a
               href="/#why-choose"
               className={cn(buttonVariants({ variant: "outline", size: "lg" }), "mt-sm-2")}
             >
-              Learn More 👇🏻
+              Browse Templates 👇🏻
             </a>
           </div>
         </div>
@@ -67,8 +67,9 @@ function HeroPage() {
       >
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h3 className="text-center text-sm font-semibold text-gray-500 pb-2">
-            WHY CHOOSE ATXEP
+            BEST FREELANCE PLATFORM & TEMPLATE MARKETPLACE
           </h3>
+          <h2 className="text-2xl md:text-4xl font-bold">Why Choose Altfaze for Hiring Freelancers & Buying Website Templates?</h2>
         </div>
         <BentoDemo />
       </section>
@@ -77,10 +78,10 @@ function HeroPage() {
       <section className="container space-y-8 py-8 md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-            How It Works
+            How It Works - Hire Freelancers or Sell Templates in 3 Steps
           </h2>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Three simple steps to get started with ATXEP
+            Simple process to find web developers, designers, or buy premium website templates for your projects
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
@@ -90,8 +91,8 @@ function HeroPage() {
                 1
               </div>
             </div>
-            <h3 className="font-heading text-xl">Sign Up</h3>
-            <p className="text-muted-foreground">Create your free account in minutes and set up your profile.</p>
+            <h3 className="font-heading text-xl">Sign Up - Become a Freelancer or Client</h3>
+            <p className="text-muted-foreground">Create your free account in minutes. Join thousands of freelancers or hire the best developers for your projects.</p>
           </div>
           <div className="space-y-4 text-center">
             <div className="flex justify-center">
@@ -99,8 +100,8 @@ function HeroPage() {
                 2
               </div>
             </div>
-            <h3 className="font-heading text-xl">Post or Browse</h3>
-            <p className="text-muted-foreground">Post your project or browse thousands of available freelancers.</p>
+            <h3 className="font-heading text-xl">Post Projects or Browse Services</h3>
+            <p className="text-muted-foreground">Post your web development project or hire from thousands of available freelancers. Find website templates or offer your services.</p>
           </div>
           <div className="space-y-4 text-center">
             <div className="flex justify-center">
@@ -108,8 +109,8 @@ function HeroPage() {
                 3
               </div>
             </div>
-            <h3 className="font-heading text-xl">Collaborate & Pay</h3>
-            <p className="text-muted-foreground">Work together with secure payments and built-in project management.</p>
+            <h3 className="font-heading text-xl">Collaborate & Get Paid Securely</h3>
+            <p className="text-muted-foreground">Work together with secure payments, escrow protection, and built-in project management. Earn money as a freelancer or get your project delivered.</p>
           </div>
         </div>
       </section>
@@ -118,29 +119,30 @@ function HeroPage() {
       <section className="container space-y-8 py-8 md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-            Featured Templates
+            Premium Website Templates - Buy Now & Launch Today
           </h2>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Speed up your projects with professional templates
+            Responsive, modern website templates built with React & Next.js. Speed up your projects with ready-to-deploy designs. Affordable templates for every business need.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="text-4xl mb-2">🎨</div>
-              <CardTitle>SaaS Landing Page</CardTitle>
-              <CardDescription>Ready-to-deploy landing page</CardDescription>
+              <CardTitle>SaaS Landing Page Template</CardTitle>
+              <CardDescription>Professional SaaS landing page ready to deploy</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Modern SaaS landing page with hero section, features, pricing, and CTA.
+                Modern responsive SaaS landing page template with hero section, features showcase, pricing table, FAQ, and high-converting CTA buttons. Perfect for tech startups.
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Badge>React</Badge>
                 <Badge>Tailwind</Badge>
+                <Badge>Responsive</Badge>
               </div>
               <Link href="/templates">
-                <button className="text-primary underline text-sm">View Template →</button>
+                <button className="text-primary underline text-sm">Buy This Template →</button>
               </Link>
             </CardContent>
           </Card>
@@ -148,19 +150,20 @@ function HeroPage() {
           <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="text-4xl mb-2">⚙️</div>
-              <CardTitle>Admin Dashboard</CardTitle>
-              <CardDescription>Complete admin panel</CardDescription>
+              <CardTitle>Admin Dashboard Template</CardTitle>
+              <CardDescription>Complete admin panel for web applications</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Full-featured admin dashboard with analytics, users, and reports.
+                Full-featured admin dashboard template with analytics, user management, reports, and data visualization. Build your project faster with this professional template.
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Badge>Next.js</Badge>
                 <Badge>TypeScript</Badge>
+                <Badge>Admin</Badge>
               </div>
               <Link href="/templates">
-                <button className="text-primary underline text-sm">View Template →</button>
+                <button className="text-primary underline text-sm">Buy This Template →</button>
               </Link>
             </CardContent>
           </Card>
@@ -168,19 +171,20 @@ function HeroPage() {
           <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="text-4xl mb-2">🛍️</div>
-              <CardTitle>E-Commerce Store</CardTitle>
-              <CardDescription>Shop ready to launch</CardDescription>
+              <CardTitle>E-Commerce Store Template</CardTitle>
+              <CardDescription>Complete online shop ready to launch</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                Complete e-commerce platform with products, cart, and checkout.
+                Full-featured e-commerce store template with product catalog, shopping cart, secure checkout with Stripe, and order management. Start selling online today.
               </p>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Badge>Next.js</Badge>
                 <Badge>Stripe</Badge>
+                <Badge>E-Commerce</Badge>
               </div>
               <Link href="/templates">
-                <button className="text-primary underline text-sm">View Template →</button>
+                <button className="text-primary underline text-sm">Buy This Template →</button>
               </Link>
             </CardContent>
           </Card>
@@ -188,7 +192,7 @@ function HeroPage() {
         <div className="text-center pt-4">
           <Link href="/templates">
             <button className={cn(buttonVariants({ variant: "outline" }))}>
-              Browse All Templates
+              Browse 100+ Website Templates - Affordable Prices
             </button>
           </Link>
         </div>
@@ -198,22 +202,22 @@ function HeroPage() {
       <section className="container space-y-8 py-8 md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-            Top Freelancers
+            Hire Top Web Developers, UI/UX Designers & Freelancers
           </h2>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Work with highly-rated professionals across all skill levels
+            Work with highly-rated professional developers and designers. Hire freelancers for web development, design, content, and more. Quality talent at affordable rates.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4">
           {[
-            { name: "Alex Chen", title: "Full-stack Developer", rating: 4.9, projects: 127, emoji: "👨‍💻" },
-            { name: "Maria García", title: "UI/UX Designer", rating: 4.8, projects: 89, emoji: "👩‍🎨" },
-            { name: "James Wilson", title: "Python Developer", rating: 4.9, projects: 156, emoji: "👨‍💼" },
-            { name: "Sofia Rodriguez", title: "Content Writer", rating: 4.7, projects: 203, emoji: "📝" },
-            { name: "David Kim", title: "Mobile Developer", rating: 5.0, projects: 78, emoji: "📱" },
-            { name: "Emma Thompson", title: "Digital Marketer", rating: 4.8, projects: 112, emoji: "📊" },
-            { name: "Lucas Silva", title: "Backend Engineer", rating: 4.9, projects: 134, emoji: "⚙️" },
-            { name: "Nina Patel", title: "Product Manager", rating: 4.8, projects: 56, emoji: "🎯" },
+            { name: "Alex Chen", title: "Full-stack Web Developer", rating: 4.9, projects: 127, emoji: "👨‍💻" },
+            { name: "Maria García", title: "UI/UX Designer - Web & App", rating: 4.8, projects: 89, emoji: "👩‍🎨" },
+            { name: "James Wilson", title: "Python & Backend Developer", rating: 4.9, projects: 156, emoji: "👨‍💼" },
+            { name: "Sofia Rodriguez", title: "SEO & Content Writer", rating: 4.7, projects: 203, emoji: "📝" },
+            { name: "David Kim", title: "React & Mobile Developer", rating: 5.0, projects: 78, emoji: "📱" },
+            { name: "Emma Thompson", title: "Digital Marketer & SEO", rating: 4.8, projects: 112, emoji: "📊" },
+            { name: "Lucas Silva", title: "Backend Engineer & DevOps", rating: 4.9, projects: 134, emoji: "⚙️" },
+            { name: "Nina Patel", title: "Product Manager & Consultant", rating: 4.8, projects: 56, emoji: "🎯" },
           ].map((freelancer, idx) => (
             <Card key={idx} className="border-0 shadow-md hover:shadow-lg transition-shadow text-center p-6">
               <div className="text-4xl mb-3">{freelancer.emoji}</div>
@@ -229,7 +233,7 @@ function HeroPage() {
         <div className="text-center pt-4">
           <Link href="/hire">
             <button className={cn(buttonVariants({ variant: "outline" }))}>
-              Browse All Freelancers
+              View 1000+ Available Freelancers - Find Your Perfect Match
             </button>
           </Link>
         </div>
@@ -239,34 +243,34 @@ function HeroPage() {
       <section className="container space-y-8 py-8 md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-            Perfect For Every Need
+            Perfect For Every Need - Hire Freelancers, Buy Templates, Earn Money
           </h2>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            From startups to enterprises, ATXEP works for everyone
+            From startups to enterprises, freelancers to agencies - Altfaze works for everyone. Build websites, hire developers, and grow your business online.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           <Card className="border-0 shadow-md">
             <CardHeader>
               <div className="text-4xl mb-2">🚀</div>
-              <CardTitle>For Startup Founders</CardTitle>
+              <CardTitle>For Startup Founders & Entrepreneurs</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Launch your MVP quickly by hiring experienced developers and designers without the overhead of full-time employees.
+                Launch your MVP and startup website quickly by hiring experienced developers and designers. Buy pre-built website templates to get started in hours instead of weeks.
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-                  Cost-effective hiring
+                  Cost-effective freelance hiring
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="inline-block h-2 w-2 rounded-full bg-primary" />
+                  Ready-to-use templates & themes
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full bg-primary" />
                   Flexible team scaling
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-                  Ready templates
                 </li>
               </ul>
             </CardContent>
@@ -275,24 +279,24 @@ function HeroPage() {
           <Card className="border-0 shadow-md">
             <CardHeader>
               <div className="text-4xl mb-2">💻</div>
-              <CardTitle>For Developers</CardTitle>
+              <CardTitle>For Developers & Freelancers - Earn Money Online</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Earn money by taking on projects that match your skills. Build your portfolio and reputation while working flexibly.
+                Earn money by taking on web development projects that match your skills. Build your freelance portfolio and reputation. Sell your own website templates and services.
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-                  Flexible work schedule
+                  Flexible work schedule & remote jobs
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-                  Competitive rates
+                  Competitive freelance rates
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-                  Security & support
+                  Secure payments & escrow protection
                 </li>
               </ul>
             </CardContent>
@@ -301,11 +305,11 @@ function HeroPage() {
           <Card className="border-0 shadow-md">
             <CardHeader>
               <div className="text-4xl mb-2">🏢</div>
-              <CardTitle>For Enterprises</CardTitle>
+              <CardTitle>For Agencies & Enterprises - Scale Your Business</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Scale your operations with dedicated teams of specialists. Access top talent for short-term and long-term projects.
+                Scale your operations with dedicated teams of specialists. Hire web developers and designers for short-term and long-term projects. Access top talent worldwide.
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
@@ -318,7 +322,7 @@ function HeroPage() {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-                  Custom workflows
+                  Custom workflows & processes
                 </li>
               </ul>
             </CardContent>
@@ -330,28 +334,28 @@ function HeroPage() {
       <section className="container space-y-8 py-8 md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-            What Our Users Say
+            Real Success Stories - Join Thousands of Satisfied Users
           </h2>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Join thousands of satisfied clients and freelancers
+            See how clients and freelancers are earning money and building amazing projects on Altfaze. Success stories from hiring developers to selling website templates.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {[
             {
-              quote: "ATXEP made it incredibly easy to find the right developer for our project. We launched 3 months earlier than expected.",
+              quote: "Found the perfect web developer on Altfaze for our project. The platform made it easy to hire and manage the project. Delivered on time, exceeded expectations.",
               author: "Sarah Johnson",
               role: "Founder, TechStartup Inc",
             },
             {
-              quote: "The quality of freelancers on ATXEP is outstanding. I've completed over 50 projects here and earned more than I expected.",
+              quote: "As a freelancer, I've earned over $50K on Altfaze. The platform connects me with quality clients and projects. Easy to get started, and payments are always secure.",
               author: "Marcus Chen",
-              role: "Senior Developer",
+              role: "Full-Stack Developer & Freelancer",
             },
             {
-              quote: "Best platform for finding design talent. Our agency now uses ATXEP to scale our team based on project demand.",
+              quote: "Bought 5 website templates from Altfaze and saved weeks of development time. Templates are professional, well-built, and easy to customize. Best investment for my agency.",
               author: "Emily Rodriguez",
-              role: "Creative Director",
+              role: "Creative Director & Agency Owner",
             },
           ].map((testimonial, idx) => (
             <Card key={idx} className="border-0 shadow-md">
@@ -374,22 +378,26 @@ function HeroPage() {
 
       {/* ===== STATS SECTION ===== */}
       <section className="container bg-slate-50 dark:bg-slate-900 rounded-lg py-12 md:py-16">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold mb-2">Trusted by Thousands - Altfaze Marketplace Statistics</h2>
+          <p className="text-muted-foreground">The #1 platform for freelancers, developers, and businesses</p>
+        </div>
         <div className="grid gap-8 md:grid-cols-4 text-center">
           <div className="space-y-2">
             <div className="text-4xl font-bold text-primary">50K+</div>
-            <p className="text-muted-foreground">Projects Completed</p>
+            <p className="text-muted-foreground">Web Development Projects Completed</p>
           </div>
           <div className="space-y-2">
             <div className="text-4xl font-bold text-primary">25K+</div>
-            <p className="text-muted-foreground">Active Freelancers</p>
+            <p className="text-muted-foreground">Expert Web Developers & Freelancers</p>
           </div>
           <div className="space-y-2">
             <div className="text-4xl font-bold text-primary">10K+</div>
-            <p className="text-muted-foreground">Happy Clients</p>
+            <p className="text-muted-foreground">Happy Clients & Business Owners</p>
           </div>
           <div className="space-y-2">
             <div className="text-4xl font-bold text-primary">$500M+</div>
-            <p className="text-muted-foreground">Total Payments</p>
+            <p className="text-muted-foreground">Total Secure Payments Processed</p>
           </div>
         </div>
       </section>

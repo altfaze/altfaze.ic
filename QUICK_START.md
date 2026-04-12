@@ -1,4 +1,4 @@
-# 🚀 ATXEP - Quick Start (5 Minutes)
+# 🚀 ALTFaze - Quick Start (5 Minutes)
 
 Your freelance marketplace is **NOW PRODUCTION-READY!** Here's how to get running immediately.
 
@@ -12,7 +12,7 @@ Your freelance marketplace is **NOW PRODUCTION-READY!** Here's how to get runnin
 # Then start development server
 npm run dev
 
-# Open http://localhost:3000
+# Open http://localhost:3002
 ```
 
 ### Option 2: macOS/Linux Users
@@ -24,7 +24,7 @@ chmod +x setup-db.sh
 # Then start development server
 npm run dev
 
-# Open http://localhost:3000
+# Open http://localhost:3002
 ```
 
 ### Option 3: Manual Setup
@@ -49,11 +49,11 @@ Edit `.env.local` with your values:
 
 ```env
 # Database (required)
-DATABASE_URL=postgresql://user:password@localhost:5432/atxep_db
+DATABASE_URL=postgresql://user:password@localhost:5432/ALTFaze_db
 
 # Auth (generate: openssl rand -base64 32)
 NEXTAUTH_SECRET=<generated-random-string>
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3002
 
 # OAuth (optional for testing)
 GOOGLE_CLIENT_ID=your_google_id
@@ -70,7 +70,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxx
 ## 🧪 Test Accounts
 
 ### Create First Account
-1. Go to http://localhost:3000/register
+1. Go to http://localhost:3002/register
 2. Fill in form:
    - Email: `test@example.com`
    - Password: `password123`
@@ -171,7 +171,7 @@ npx prisma studio
 npx prisma introspect
 ```
 
-### Port 3000 already in use?
+### Port 3002 already in use?
 ```bash
 # Use different port
 PORT=3001 npm run dev
@@ -217,7 +217,7 @@ npm install
 npm run dev
 ```
 
-**That's it!** Application running at http://localhost:3000
+**That's it!** Application running at http://localhost:3002
 
 ---
 
