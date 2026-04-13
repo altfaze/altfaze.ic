@@ -1,7 +1,7 @@
 // app/(marketing)/keywords/[category]/page.tsx
 import { Metadata } from 'next'
 import { KEYWORDS_DATABASE } from '@/lib/seo/keywords'
-import { generateMetadata, generatePageSchema } from '@/lib/seo/metadata-generator'
+import { generateMetadata as generateMetadataHelper, generatePageSchema } from '@/lib/seo/metadata-generator'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${categoryData.category} - Altfaze`
   const description = categoryData.description
 
-  return generateMetadata({
+  return generateMetadataHelper({
     title,
     description,
     keywords: categoryData.keywords.slice(0, 10),
