@@ -111,9 +111,9 @@ export default function FAQPage() {
         {/* Help Section */}
         <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Didn't find your answer?</h2>
+            <h2 className="text-2xl font-bold mb-4">Didn&apos;t find your answer?</h2>
             <p className="text-muted-foreground mb-6">
-              Contact our support team and we'll be happy to help you.
+              Contact our support team and we&apos;ll be happy to help you.
             </p>
             <div className="flex gap-4 justify-center">
               <Link href="/contact">

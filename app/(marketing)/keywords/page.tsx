@@ -105,7 +105,7 @@ export default function KeywordsPage() {
       <div className="text-center">
         <h2 className="text-3xl font-bold mb-4">Find What You Need</h2>
         <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Whether you're looking to hire freelancers, buy templates, or earn money as a professional, Altfaze has you covered.
+          Whether you&apos;re looking to hire freelancers, buy templates, or earn money as a professional, Altfaze has you covered.
         </p>
         <div className="flex gap-4 justify-center">
           <Link href="/hire">

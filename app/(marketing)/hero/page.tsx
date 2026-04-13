@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Link from "@/node_modules/next/link";
+import Image from "next/image";
 import React from "react";
 
 function HeroPage() {
@@ -43,14 +44,18 @@ function HeroPage() {
           </div>
         </div>
         <div className="relative rounded-xl mx-auto justify-center flex flex-col items-center lg:max-w-[1000px] overflow-hidden md:overflow-auto lg:overflow-auto">
-          <img
+          <Image
             src="/darkoutput.png"
             alt="ATXEP Platform Dashboard"
+            width={1000}
+            height={600}
             className="hidden lg:max-w-[1000px] rounded-[inherit] border object-contain shadow-lg dark:block overflow-hidden md:overflow-auto lg:overflow-auto"
           />
-          <img
+          <Image
             src="/lightoutput.png"
             alt="ATXEP Platform Dashboard"
+            width={1000}
+            height={600}
             className="block lg:max-w-[1000px] rounded-[inherit] border object-contain shadow-lg dark:hidden overflow-hidden md:overflow-auto lg:overflow-auto"
           />
           <BorderBeam size={250} />
