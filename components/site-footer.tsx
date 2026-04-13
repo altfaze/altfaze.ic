@@ -10,7 +10,7 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
         <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
           <Icons.logo className="h-6 w-6" />
           <p className="text-center text-sm leading-loose md:text-left">
-            ALTFaze © 2026 by Param Shelke. A modern freelance marketplace platform. Built with{" "}
+            ATXEP © 2024 by Param Shelke. A modern freelance marketplace platform. Built with{" "}
             <a
               href="https://nextjs.org"
               target="_blank"
@@ -21,6 +21,16 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
             </a>
             .
           </p>
+        </div>
+        <a
+          href="https://altfaze.in"
+          target="_blank"
+          rel="noreferrer"
+          className="font-medium text-2xl dark:md:hover:bg-gray-800 border border-spacing-4 border-opacity-80 rounded px-2"
+        >
+          Return 
+        </a>
+      </div>
     </footer>
   )
 }
