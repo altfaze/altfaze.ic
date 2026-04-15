@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import { generateMetadata } from "@/lib/seo/metadata-generator";
 
 import { fontSans } from "@/lib/fonts";
-import Link from "@/node_modules/next/link";
+import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/toggle";

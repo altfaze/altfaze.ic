@@ -23,7 +23,6 @@ export default function robots(): MetadataRoute.Robots {
         '/admin',
         '/client',
         '/freelancer',
-        '/dashboard',
         '/onboard',
         '/profile',
         '/wallet',
