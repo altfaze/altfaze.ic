@@ -77,7 +77,7 @@ export function generatePageMetadata(
   pathname: string = ''
 ): Metadata {
   const allKeywords = [...seoConfig.baseKeywords, ...additionalKeywords]
-  const url = `https://atxep.in${pathname ? `/${pathname}` : ''}`
+  const url = `https://altfaze.in${pathname ? `/${pathname}` : ''}`
 
   return {
     title,

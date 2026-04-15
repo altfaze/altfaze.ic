@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
@@ -57,13 +58,13 @@ const components: { title: string; href: string; description: string }[] = [
 ];
 
 export function LoggedInNav() {
-
-  
-
+  const { data: session } = useSession();
+  const role = session?.user?.role || "CLIENT";
+  const dashboardHref = role === "FREELANCER" ? "/freelancer/my-dashboard" : "/client/dashboard";
 
   return (
     <div className="mr-4 md:flex">
-      <Link href="/dashboard" className="lg:mr-6 sm:mr-0 flex items-center gap-2">
+      <Link href={dashboardHref} className="lg:mr-6 sm:mr-0 flex items-center gap-2">
         <Icons.logo className="h-6 w-6 lg:block md:block" />
         <span className="font-bold lg:block md:block">ALTFaze</span>
         <Badge className="hidden lg:block md:block">Pro</Badge>

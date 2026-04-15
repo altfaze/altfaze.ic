@@ -28,68 +28,92 @@ export function DashboardSidebar() {
   }, [])
 
   const role = session?.user?.role || "CLIENT"
+  const routePrefix = role === "FREELANCER" ? "/freelancer" : "/client"
 
-  // Determine base path based on role
-  const basePath = role === "FREELANCER" ? "/freelancer" : "/client"
+  if (!mounted) {
+    return (
+      <div className="flex h-full flex-col gap-4 border-r border-border bg-background py-4 animate-pulse">
+        <div className="px-4 h-10 bg-muted rounded" />
+        <div className="flex-1 space-y-2 px-2">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-10 bg-muted rounded" />
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   const navItems: SidebarNavItem[] = [
     {
-      href: basePath,
+      href: role === "FREELANCER" ? "/freelancer/my-dashboard" : "/client/dashboard",
       title: "Dashboard",
       icon: <Icons.dashboard className="h-4 w-4" />,
     },
     {
-      href: `${basePath}/hire`,
+      href: "/client/freelancers",
       title: "Hire Freelancer",
       icon: <Icons.briefcase className="h-4 w-4" />,
       roles: ["CLIENT"],
     },
     {
-      href: `${basePath}/work`,
+      href: "/freelancer/work",
       title: "Find Work",
       icon: <Icons.search className="h-4 w-4" />,
       roles: ["FREELANCER"],
     },
     {
-      href: `${basePath}/templates`,
+      href: routePrefix + "/templates",
       title: "Templates",
       icon: <Icons.package className="h-4 w-4" />,
     },
     {
-      href: `${basePath}/projects`,
+      href: "/client/projects",
       title: "My Projects",
       icon: <Icons.folder className="h-4 w-4" />,
+      roles: ["CLIENT"],
     },
     {
-      href: `${basePath}/upload`,
+      href: "/freelancer/upload",
       title: "Upload Project",
       icon: <Icons.upload className="h-4 w-4" />,
       roles: ["FREELANCER"],
     },
     {
-      href: `${basePath}/ai-help`,
+      href: routePrefix + "/ai-help",
       title: "AI Help",
       icon: <Icons.sparkles className="h-4 w-4" />,
     },
     {
-      href: `${basePath}/requests`,
+      href: "/client/requests",
       title: "Requests",
       icon: <Icons.bell className="h-4 w-4" />,
+      roles: ["CLIENT"],
     },
     {
-      href: `${basePath}/wallet`,
+      href: "/freelancer/my-requests",
+      title: "Requests",
+      icon: <Icons.bell className="h-4 w-4" />,
+      roles: ["FREELANCER"],
+    },
+    {
+      href: routePrefix + "/wallet",
       title: "Wallet & Payments",
       icon: <Icons.creditCard className="h-4 w-4" />,
     },
     {
-      href: `${basePath}/offers`,
+      href: routePrefix + "/offers",
       title: "Discounts & Offers",
       icon: <Icons.gift className="h-4 w-4" />,
     },
     {
-      href: `${basePath}/settings`,
+      href: routePrefix + "/settings",
       title: "Settings",
       icon: <Icons.settings className="h-4 w-4" />,
+    },
+    {
+      href: routePrefix + "/profile",
+      title: "Profile",
+      icon: <Icons.user className="h-4 w-4" />,
     },
   ]
 
@@ -102,6 +126,7 @@ export function DashboardSidebar() {
 
   // Check if current path matches nav item (accounting for active state)
   const isActive = (href: string) => {
+    if (!pathname) return false
     const normalizedPathname = pathname.toLowerCase()
     const normalizedHref = href.toLowerCase()
     return normalizedPathname === normalizedHref || normalizedPathname.startsWith(normalizedHref + "/")
@@ -124,7 +149,7 @@ export function DashboardSidebar() {
     <div className="flex h-full flex-col gap-4 border-r border-border bg-background py-4">
       {/* Logo */}
       <div className="px-4">
-        <Link href={basePath} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <Link href={routePrefix} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <div className="rounded-md bg-primary p-2">
             <Icons.logo className="h-5 w-5 text-primary-foreground" />
           </div>
@@ -194,4 +219,9 @@ export function DashboardSidebar() {
       </div>
     </div>
   )
+}
+
+// Wrapper component for server-side rendering
+export function DashboardSidebarWrapper() {
+  return <DashboardSidebar />
 }

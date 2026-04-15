@@ -130,7 +130,7 @@ export default function OnboardPage() {
         console.warn("🟡 [ONBOARD_FRONTEND] Role not verified after 5 attempts - this might cause issues, but redirecting anyway...")
       }
 
-      // ✅ FIXED: Use correct dashboard paths with proper timing
+      // ✅ FIXED: Use correct dashboard paths with route group prefixes
       const redirectUrl = role === "CLIENT" ? "/client/dashboard" : "/freelancer/my-dashboard"
       console.log("🟢 [ONBOARD_FRONTEND] Redirecting to dashboard:", redirectUrl)
       

@@ -110,7 +110,7 @@ export default function TemplateDetailPage({ params }: { params: { id: string } 
 
   const handlePurchase = async () => {
     if (!session) {
-      router.push('/auth/login')
+      router.push('/login')
       return
     }
 
@@ -314,14 +314,14 @@ export default function TemplateDetailPage({ params }: { params: { id: string } 
                         </p>
                       )}
                       <Button asChild variant="outline" className="w-full">
-                        <Link href="/wallet">Add Funds to Wallet</Link>
+                        <Link href="/client/wallet">Add Funds to Wallet</Link>
                       </Button>
                     </>
                   )}
                 </>
               ) : (
                 <Button asChild className="w-full" size="lg">
-                  <Link href="/auth/login">Sign in to Purchase</Link>
+                  <Link href="/login">Sign in to Purchase</Link>
                 </Button>
               )}
             </div>

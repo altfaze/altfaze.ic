@@ -87,7 +87,7 @@ export default function FreelancerDetailPage({ params }: { params: { id: string 
   const handleSendRequest = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!session) {
-      router.push('/auth/login')
+      router.push('/login')
       return
     }
 
@@ -138,7 +138,7 @@ export default function FreelancerDetailPage({ params }: { params: { id: string 
       <div className="container py-12 text-center">
         <p className="text-muted-foreground">Freelancer not found</p>
         <Button asChild className="mt-4">
-          <Link href="/freelancers">Back to Freelancers</Link>
+          <Link href="/client/freelancers">Back to Freelancers</Link>
         </Button>
       </div>
     )
@@ -148,7 +148,7 @@ export default function FreelancerDetailPage({ params }: { params: { id: string 
     <div className="min-h-screen bg-background">
       <div className="container py-12 max-w-4xl">
         <Button asChild variant="outline" className="mb-6">
-          <Link href="/freelancers">← Back to Freelancers</Link>
+          <Link href="/client/freelancers">← Back to Freelancers</Link>
         </Button>
 
         {/* Header */}
@@ -326,7 +326,7 @@ export default function FreelancerDetailPage({ params }: { params: { id: string 
                     Sign in to send requests to this freelancer
                   </p>
                   <Button asChild className="w-full">
-                    <Link href="/auth/login">Sign In</Link>
+                    <Link href="/login">Sign In</Link>
                   </Button>
                 </CardContent>
               </Card>

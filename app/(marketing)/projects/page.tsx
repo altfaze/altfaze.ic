@@ -3,11 +3,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import React from "react";
+import { Metadata } from "next";
+import { generateMetadata } from "@/lib/seo/metadata-generator";
 
-export const metadata = {
-  title: "Build Projects | ALTFaze - Project Management",
-  description: "Manage and collaborate on projects with freelancers. Track progress, set milestones, and deliver on time.",
-};
+export const metadata: Metadata = generateMetadata({
+  title: 'Project Management - Post & Manage Freelance Projects | ALTFaze',
+  description: 'Post your project needs, get competitive bids from freelancers, and manage projects end-to-end on ALTFaze. Web development, design, marketing & more.',
+  keywords: [
+    'project management',
+    'post projects',
+    'freelance projects',
+    'project bidding',
+    'hire for projects',
+    'project collaboration',
+    'freelance project platform',
+    'web development projects'
+  ],
+  path: '/projects',
+  ogTitle: 'Manage Your Projects with Top Talent - ALTFaze',
+  ogDescription: 'Post projects, get bids from vetted freelancers, and collaborate smoothly from start to finish.'
+})
 
 const projects = [
   { id: 1, title: "E-commerce Website Redesign", category: "Web Design", budget: "$2,000-5,000", timeline: "4-6 weeks", status: "Active", proposals: 12 },

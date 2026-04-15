@@ -163,7 +163,7 @@ export default function ClientRequestsPage() {
                       )}
                       {request.status === 'ACCEPTED' && (
                         <Button size="sm" asChild>
-                          <Link href={`/freelancers/${request.freelancer.id}`}>
+                          <Link href={`/client/freelancers/${request.freelancer.id}`}>
                             View Profile
                           </Link>
                         </Button>
@@ -179,7 +179,7 @@ export default function ClientRequestsPage() {
             <CardContent className="pt-12 pb-12 text-center">
               <p className="text-muted-foreground mb-4">No requests sent yet</p>
               <Button asChild>
-                <Link href="/freelancers">Browse Freelancers</Link>
+                <Link href="/client/freelancers">Browse Freelancers</Link>
               </Button>
             </CardContent>
           </Card>

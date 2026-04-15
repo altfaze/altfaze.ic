@@ -9,9 +9,10 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Debug: Log that page is loading
+if (typeof window !== 'undefined') {
+  console.log('✅ [CLIENT_DASHBOARD_PAGE] Page component mounted at:', new Date().toISOString())
+}
 
 interface Request {
   id: string
@@ -63,31 +64,36 @@ export default function ClientDashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [isClient, setIsClient] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
-  // Prevent hydration mismatch
   useEffect(() => {
-    setIsClient(true)
-    console.log('🟢 [CLIENT_DASHBOARD] Page mounted, status:', status, 'role:', session?.user?.role)
-  }, [status, session?.user?.role])
+    setMounted(true)
+    console.log('🟢 [CLIENT_DASHBOARD] Component mounted, session status:', status, 'role:', session?.user?.role)
+  }, [])
 
   const fetchData = useCallback(async () => {
     try {
+      console.log('🔄 [CLIENT_DASHBOARD] Fetching data...')
       setLoading(true)
       setError(null)
 
       const res = await fetch('/api/requests?type=sent&limit=50', {
         cache: 'no-store',
       })
+      console.log('📡 [CLIENT_DASHBOARD] API Response status:', res.status)
+      
       if (!res.ok) {
-        throw new Error('Failed to fetch requests')
+        const errorText = await res.text()
+        console.error('❌ [CLIENT_DASHBOARD] API Error response:', errorText)
+        throw new Error(`Failed to fetch requests: ${res.status}`)
       }
 
       const result = await res.json()
-      const requests = result.data.requests || []
+      console.log('✅ [CLIENT_DASHBOARD] Data fetched successfully:', result)
+      const requests = result.data?.requests || []
 
       const stats = {
-        totalRequests: result.data.pagination.total,
+        totalRequests: result.data?.pagination?.total || 0,
         totalSent: requests.length,
         totalAccepted: requests.filter((r: Request) => r.status === 'ACCEPTED').length,
         totalCompleted: requests.filter((r: Request) => r.status === 'COMPLETED').length,
@@ -97,27 +103,40 @@ export default function ClientDashboard() {
       setData({
         requests,
         ...stats,
-        pagination: result.data.pagination,
+        pagination: result.data?.pagination || { page: 1, limit: 50, pages: 1, total: 0 },
       })
     } catch (err) {
-      console.error('Dashboard error:', err)
+      console.error('[CLIENT_DASHBOARD] Error fetching data:', err)
       setError(err instanceof Error ? err.message : 'Failed to load dashboard')
+      setData(null)
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    if (isClient && status === 'authenticated') {
-      console.log('✅ [CLIENT_DASHBOARD] Authenticated, fetching data')
-      fetchData()
-    } else if (isClient && status === 'unauthenticated') {
-      console.log('⚠️ [CLIENT_DASHBOARD] Unauthenticated, redirecting to login')
-      router.push('/login')
+    if (!mounted) return
+    
+    if (status === 'loading') {
+      console.log('⏳ [CLIENT_DASHBOARD] Session loading...')
+      return
     }
-  }, [isClient, status, fetchData, router])
 
-  if (loading) {
+    if (status === 'unauthenticated') {
+      console.warn('⚠️ [CLIENT_DASHBOARD] Unauthenticated, redirecting to login')
+      router.replace('/login')
+      return
+    }
+
+    if (status === 'authenticated') {
+      console.log('✅ [CLIENT_DASHBOARD] Authenticated as:', session?.user?.email, 'Role:', session?.user?.role)
+      fetchData()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted, status, fetchData, router])
+
+  // Loading state
+  if (!mounted || status === 'loading') {
     return (
       <div className="min-h-screen bg-background p-6">
         <div className="max-w-7xl mx-auto space-y-8">
@@ -133,13 +152,33 @@ export default function ClientDashboard() {
     )
   }
 
+  // Unauthenticated state
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Not Authenticated</h2>
+          <p className="text-muted-foreground">Please log in to access the dashboard.</p>
+          <Button asChild className="mt-4">
+            <Link href="/login">Go to Login</Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Authenticated - render dashboard
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Welcome Section */}
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">Welcome back, {session?.user?.name}! 👋</h1>
-          <p className="text-muted-foreground">ALTFaze Client Dashboard - Manage your projects and freelancers</p>
+          <h1 className="text-4xl font-bold tracking-tight">
+            Welcome back, {session?.user?.name || 'Client'}! 👋
+          </h1>
+          <p className="text-muted-foreground">
+            ALTFaze Client Dashboard - Manage your projects and freelancers
+          </p>
         </div>
 
         {/* Stats Grid */}
@@ -183,7 +222,9 @@ export default function ClientDashboard() {
               <div className="text-xl">💰</div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${data?.totalBudget.toFixed(2) || '0.00'}</div>
+              <div className="text-2xl font-bold">
+                ${data?.totalBudget?.toFixed(2) || '0.00'}
+              </div>
               <p className="text-xs text-muted-foreground">Total allocated</p>
             </CardContent>
           </Card>
@@ -197,7 +238,7 @@ export default function ClientDashboard() {
               <CardDescription>Your sent requests and their current status</CardDescription>
             </div>
             <Button asChild variant="outline" size="sm">
-              <Link href="/client/send-request">+ Send Request</Link>
+              <Link href="/client/requests">+ Send Request</Link>
             </Button>
           </CardHeader>
           <CardContent>
@@ -207,7 +248,13 @@ export default function ClientDashboard() {
               </div>
             )}
 
-            {data?.requests && data.requests.length > 0 ? (
+            {loading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <Skeleton key={i} className="h-20 w-full" />
+                ))}
+              </div>
+            ) : data?.requests && data.requests.length > 0 ? (
               <div className="space-y-4">
                 {data.requests.map((request) => (
                   <div
@@ -220,10 +267,11 @@ export default function ClientDashboard() {
                         <StatusBadge status={request.status} />
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        To: <strong>{request.receiver.name}</strong> • {request.description}
+                        To: <strong>{request.receiver?.name || 'Unknown'}</strong> • {request.description}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Created {new Date(request.createdAt).toLocaleDateString()}
+                        Created{' '}
+                        {new Date(request.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="text-right">
@@ -244,7 +292,7 @@ export default function ClientDashboard() {
                 <div className="text-4xl text-muted-foreground mx-auto mb-4">📋</div>
                 <p className="text-muted-foreground">No work requests yet</p>
                 <Button asChild className="mt-4">
-                  <Link href="/client/send-request">Send your first request</Link>
+                  <Link href="/client/requests">Send your first request</Link>
                 </Button>
               </div>
             )}
@@ -259,10 +307,10 @@ export default function ClientDashboard() {
           <CardContent>
             <div className="grid gap-3 md:grid-cols-3">
               <Button asChild className="w-full">
-                <Link href="/client/send-request">Send Work Request</Link>
+                <Link href="/client/requests">Send Work Request</Link>
               </Button>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/freelancers">Browse Freelancers</Link>
+                <Link href="/client/freelancers">Browse Freelancers</Link>
               </Button>
               <Button asChild variant="outline" className="w-full">
                 <Link href="/client/profile">My Profile</Link>

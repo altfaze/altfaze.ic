@@ -7,12 +7,12 @@ import { ModeToggle } from "@/components/toggle";
 import MobileNav from "@/components/mobile-nav";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
-import { OrganizationSchema, LocalBusinessSchema, ServiceSchema } from "@/app/schema-markup";
+import { OrganizationSchema, LocalBusinessSchema, ServiceSchema, MarketplaceProductSchema, FAQSchema, BreadcrumbSchema } from "@/app/schema-markup";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Altfaze - Best Freelance Marketplace to Hire Developers & Buy Website Templates",
-  description: "Altfaze is the leading freelance marketplace. Hire web developers, UI/UX designers, and freelancers for your projects. Buy premium website templates & build online fast.",
+  description: "Altfaze is the leading freelance marketplace. Hire web developers, UI/UX designers, and freelancers for your projects. Buy premium website templates & build online fast. Access 1000+ skilled professionals.",
   keywords: [
     "freelance marketplace",
     "hire web developers",
@@ -21,19 +21,24 @@ export const metadata: Metadata = {
     "hire freelancers",
     "web development services",
     "UI/UX design",
-    "buy templates"
+    "buy templates",
+    "hire developers India",
+    "affordable web development",
+    "startup services",
+    "freelance hiring platform",
+    "find freelancers online"
   ],
   authors: [{ name: "Altfaze" }],
   openGraph: {
     type: "website",
-    locale: "en_US",
-    url: "https://altfaze.com",
+    locale: "en_IN",
+    url: "https://altfaze.in",
     siteName: "Altfaze",
     title: "Altfaze - Best Freelance Marketplace",
     description: "Hire developers, designers, and freelancers. Buy website templates. Launch projects faster.",
     images: [
       {
-        url: "https://altfaze.com/og-image.png",
+        url: "https://altfaze.in/og-image.png",
         width: 1200,
         height: 630,
         alt: "Altfaze Freelance Marketplace"
@@ -44,14 +49,25 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Altfaze - Hire Freelancers & Buy Templates",
     description: "The #1 freelance marketplace to hire developers and buy website templates.",
-    images: ["https://altfaze.com/og-image.png"]
+    images: ["https://altfaze.in/og-image.png"],
+    creator: "@altfaze"
   },
   robots: {
     index: true,
     follow: true,
     "max-image-preview": "large",
     "max-snippet": -1,
-    "max-video-preview": -1
+    "max-video-preview": -1,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1
+    }
+  },
+  alternates: {
+    canonical: "https://altfaze.in",
   }
 };
 
@@ -66,6 +82,17 @@ export default function RootLayout({
         <OrganizationSchema />
         <LocalBusinessSchema />
         <ServiceSchema />
+        <MarketplaceProductSchema />
+        <FAQSchema />
+        <BreadcrumbSchema items={[
+          { name: 'Home', url: 'https://altfaze.in' },
+          { name: 'Hire Freelancers', url: 'https://altfaze.in/hire' },
+          { name: 'Buy Templates', url: 'https://altfaze.in/templates' },
+          { name: 'Services', url: 'https://altfaze.in/services' },
+          { name: 'Projects', url: 'https://altfaze.in/projects' },
+          { name: 'Pricing', url: 'https://altfaze.in/pricing' },
+          { name: 'FAQ', url: 'https://altfaze.in/faq' }
+        ]} />
       </head>
       <body
         className={cn(

@@ -7,6 +7,23 @@ import GitHubProvider from 'next-auth/providers/github'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 
+// ✅ CRITICAL: Use a consistent secret for JWT encryption/decryption
+// This must be the same across all server instances
+const getAuthSecret = () => {
+  const secret = process.env.NEXTAUTH_SECRET
+  if (!secret) {
+    // In production, this would be a fatal error
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('NEXTAUTH_SECRET environment variable is required in production')
+    }
+    // For development, use a consistent nanoid-based secret
+    // This ensures the app works during dev even without the env var set
+    console.warn('⚠️  NEXTAUTH_SECRET not set - using development default')
+    return 'dev-secret-key-change-in-production'
+  }
+  return secret
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   session: {
@@ -14,6 +31,8 @@ export const authOptions: NextAuthOptions = {
     maxAge: 24 * 60 * 60, // 24 hour session expiration
     updateAge: 60 * 60,   // Refresh token every hour
   },
+  // ✅ Use only one secret config - not both secret and jwt.secret
+  secret: getAuthSecret(),
   pages: {
     signIn: '/login',
     error: '/login',
@@ -70,6 +89,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             name: user.name,
             image: user.image,
+            role: user.role,
           }
         } catch (error: any) {
           console.error('[AUTH] Credentials authorization failed:', error.message)
@@ -152,27 +172,34 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ token, session }) {
-      if (token && session.user) {
-        session.user.id = token.id as string
-        session.user.email = token.email || ''
-        session.user.name = token.name
-        session.user.image = token.picture
-        session.user.username = token.username as string | undefined
-        session.user.role = (token.role as string) || 'CLIENT'
+      try {
+        if (token && session.user) {
+          session.user.id = token.id as string
+          session.user.email = token.email || ''
+          session.user.name = token.name
+          session.user.image = token.picture
+          session.user.username = token.username as string | undefined
+          session.user.role = (token.role as string) || 'CLIENT'
+        }
+      } catch (error) {
+        console.error('[SESSION] Error in session callback:', error)
+        // Return minimal session on error - don't let JWT errors break the app
+        return session
       }
 
       return session
     },
 
     async jwt({ token, user, account }) {
-      if (user) {
-        token.id = user.id
-        token.email = user.email
-        console.log('[JWT] New JWT issued for user:', user.email)
-      }
-
-      // ✅ FIXED: Verify user still exists and check suspension on every token refresh
       try {
+        if (user) {
+          token.id = user.id
+          token.email = user.email
+          token.role = (user as any).role || 'CLIENT'
+          console.log('[JWT] New JWT issued for user:', user.email, 'role:', token.role)
+        }
+
+        // ✅ FIXED: Verify user still exists and check suspension on every token refresh
         const emailToUse = token.email || user?.email
         if (emailToUse) {
           const dbUser = await db.user.findUnique({
@@ -210,9 +237,14 @@ export const authOptions: NextAuthOptions = {
           }
         }
       } catch (error) {
-        console.error('[JWT] Error loading user data:', error)
-        // On error, invalidate the token to force re-authentication
-        return { ...token, invalid: true }
+        console.error('[JWT] Error in JWT callback:', error)
+        // Don't invalidate on error - let the token be used and fail later if needed
+        // This prevents cascading failures on database errors
+        if (!token.id) {
+          token.id = user?.id || ''
+          token.email = user?.email || token.email || ''
+          token.role = (user as any)?.role || token.role || 'CLIENT'
+        }
       }
 
       return token

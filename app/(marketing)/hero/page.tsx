@@ -1,3 +1,5 @@
+import { Metadata } from 'next'
+import { generateMetadata } from '@/lib/seo/metadata-generator'
 import { BentoDemo } from "@/components/bento-features";
 import { Icons } from "@/components/more-icons";
 import BlurIn from "@/components/magicui/blur-in";
@@ -11,6 +13,26 @@ import { cn } from "@/lib/utils";
 import Link from "@/node_modules/next/link";
 import Image from "next/image";
 import React from "react";
+
+export const metadata: Metadata = generateMetadata({
+  title: 'Freelance Marketplace - Hire Web Developers & Buy Website Templates | ALTfaze',
+  description: 'Connect with top freelancers, hire web developers, and buy premium website templates. ALTfaze is the #1 marketplace for web development services, UI/UX design, and template solutions.',
+  keywords: [
+    'freelance marketplace',
+    'hire web developers',
+    'website templates',
+    'freelance platform',
+    'web development services',
+    'buy templates',
+    'UI/UX designers',
+    'affordable freelancers',
+    'template marketplace',
+    'web development marketplace'
+  ],
+  path: '/hero',
+  ogTitle: 'ALTfaze - Hire Freelancers & Buy Website Templates',
+  ogDescription: 'The #1 marketplace to hire professional web developers and purchase premium website templates. Launch your projects faster with expert freelancers.'
+})
 
 function HeroPage() {
   return (
@@ -106,7 +128,9 @@ function HeroPage() {
               </div>
             </div>
             <h3 className="font-heading text-xl">Post Projects or Browse Services</h3>
-            <p className="text-muted-foreground">Post your web development project or hire from thousands of available freelancers. Find website templates or offer your services.</p>
+            <p className="text-muted-foreground">
+              <Link href="/projects" className="text-primary underline hover:no-underline">Post your web development project</Link> or hire from thousands of available freelancers. Find website templates or offer your services.
+            </p>
           </div>
           <div className="space-y-4 text-center">
             <div className="flex justify-center">
@@ -262,7 +286,7 @@ function HeroPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Launch your MVP and startup website quickly by hiring experienced developers and designers. Buy pre-built website templates to get started in hours instead of weeks.
+                Launch your MVP and startup website quickly by hiring experienced developers and designers. Buy pre-built website templates to get started in hours instead of weeks. Check out our <Link href="/pricing" className="text-primary underline hover:no-underline">affordable pricing plans</Link> for teams.
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
@@ -414,7 +438,7 @@ function HeroPage() {
             Frequently Asked Questions
           </h2>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Everything you need to know about ALTFaze
+            Everything you need to know about ALTFaze - Hire freelancers, buy templates, and manage projects
           </p>
         </div>
         <div className="space-y-4 max-w-2xl mx-auto">
@@ -445,6 +469,13 @@ function HeroPage() {
               <p className="text-muted-foreground text-sm">{faq.a}</p>
             </div>
           ))}
+        </div>
+        <div className="text-center pt-6">
+          <Link href="/faq">
+            <button className={cn(buttonVariants({ variant: "outline" }))}>
+              View All FAQs & Get Help
+            </button>
+          </Link>
         </div>
       </section>
 

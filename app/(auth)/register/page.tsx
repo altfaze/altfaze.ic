@@ -1,14 +1,11 @@
+"use client"
+
 import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/more-icons"
 import { UserAuthForm } from "@/components/user-auth-form"
-
-export const metadata = {
-  title: "Create an account",
-  description: "Create an account to get started.",
-}
 
 export default function RegisterPage() {
   return (

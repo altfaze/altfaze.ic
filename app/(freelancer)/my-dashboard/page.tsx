@@ -9,10 +9,10 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
+// Debug: Log that page is loading
+if (typeof window !== 'undefined') {
+  console.log('✅ [FREELANCER_DASHBOARD_PAGE] Page component mounted at:', new Date().toISOString())
+}
 
 interface Request {
   id: string
@@ -74,17 +74,23 @@ export default function FreelancerDashboard() {
 
   const fetchData = useCallback(async () => {
     try {
+      console.log('🔄 [FREELANCER_DASHBOARD] Fetching data...')
       setLoading(true)
       setError(null)
 
       const res = await fetch('/api/requests?type=received&limit=50', {
         cache: 'no-store',
       })
+      console.log('📡 [FREELANCER_DASHBOARD] API Response status:', res.status)
+      
       if (!res.ok) {
-        throw new Error('Failed to fetch requests')
+        const errorText = await res.text()
+        console.error('❌ [FREELANCER_DASHBOARD] API Error response:', errorText)
+        throw new Error(`Failed to fetch requests: ${res.status}`)
       }
 
       const result = await res.json()
+      console.log('✅ [FREELANCER_DASHBOARD] Data fetched successfully:', result)
       const requests = result.data.requests || []
 
       const stats = {
@@ -103,7 +109,7 @@ export default function FreelancerDashboard() {
         pagination: result.data.pagination,
       })
     } catch (err) {
-      console.error('Dashboard error:', err)
+      console.error('❌ [FREELANCER_DASHBOARD] Error fetching data:', err)
       setError(err instanceof Error ? err.message : 'Failed to load dashboard')
     } finally {
       setLoading(false)
@@ -112,13 +118,49 @@ export default function FreelancerDashboard() {
 
   useEffect(() => {
     if (isClient && status === 'authenticated') {
-      console.log('✅ [FREELANCER_DASHBOARD] Authenticated, fetching data')
-      fetchData()
+      console.log('✅ [FREELANCER_DASHBOARD] Authenticated as:', session?.user?.email, 'Role:', session?.user?.role, 'fetching data')
+      try {
+        fetchData()
+      } catch (err) {
+        console.error('[FREELANCER_DASHBOARD] Error fetching data:', err)
+        setLoading(false)
+      }
     } else if (isClient && status === 'unauthenticated') {
-      console.log('⚠️ [FREELANCER_DASHBOARD] Unauthenticated, redirecting to login')
+      console.warn('⚠️ [FREELANCER_DASHBOARD] Unauthenticated, redirecting to login')
       router.push('/login')
+    } else if (isClient && status !== 'loading') {
+      console.log('⏳ [FREELANCER_DASHBOARD] Session status:', status)
+      // If not authenticated and not loading, set loading to false
+      setLoading(false)
     }
-  }, [isClient, status, fetchData, router])
+  }, [isClient, status, fetchData, router, session?.user?.email, session?.user?.role])
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-background p-6">
+        <div className="max-w-7xl mx-auto space-y-8">
+          <Skeleton className="h-32 w-full" />
+          <div className="grid gap-4 md:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-24 w-full" />
+            ))}
+          </div>
+          <Skeleton className="h-96 w-full" />
+        </div>
+      </div>
+    )
+  }
+
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Not Authenticated</h2>
+          <p className="text-muted-foreground">Please log in to access the dashboard.</p>
+        </div>
+      </div>
+    )
+  }
 
   if (loading) {
     return (
@@ -310,7 +352,7 @@ export default function FreelancerDashboard() {
                 <Link href="/freelancer/upload">Upload Work</Link>
               </Button>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/freelancer/earnings">View Earnings</Link>
+                <Link href="/freelancer/wallet">View Earnings</Link>
               </Button>
             </div>
           </CardContent>

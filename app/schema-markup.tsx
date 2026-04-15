@@ -5,8 +5,8 @@ export function OrganizationSchema() {
     "@type": "Organization",
     name: "Altfaze",
     alternateName: "Alt Faze",
-    url: "https://altfaze.com",
-    logo: "https://altfaze.com/logo.png",
+    url: "https://altfaze.in",
+    logo: "https://altfaze.in/logo.png",
     description: "The leading freelance marketplace to hire web developers, designers, and freelancers. Buy premium website templates and launch projects fast.",
     sameAs: [
       "https://www.facebook.com/altfaze",
@@ -17,16 +17,16 @@ export function OrganizationSchema() {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "Customer Support",
-      telephone: "+1-800-ALTFAZE",
-      email: "support@altfaze.com"
+      telephone: "+91-1234567890",
+      email: "support@altfaze.in"
     },
     address: {
       "@type": "PostalAddress",
-      addressCountry: "US",
-      addressLocality: "Remote"
+      addressCountry: "IN",
+      addressLocality: "India"
     },
     foundingDate: "2023",
-    priceCurrency: "USD",
+    priceCurrency: "INR",
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: "4.8",
@@ -50,24 +50,24 @@ export function LocalBusinessSchema() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "Altfaze",
-    image: "https://altfaze.com/logo.png",
-    url: "https://altfaze.com",
-    telephone: "+1-800-ALTFAZE",
+    image: "https://altfaze.in/logo.png",
+    url: "https://altfaze.in",
+    telephone: "+91-1234567890",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "123 Tech Street",
-      addressLocality: "San Francisco",
-      addressRegion: "CA",
-      postalCode: "94102",
-      addressCountry: "US"
+      streetAddress: "Tech Park, Mumbai",
+      addressLocality: "Mumbai",
+      addressRegion: "Maharashtra",
+      postalCode: "400001",
+      addressCountry: "IN"
     },
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
       opens: "09:00",
-      closes: "17:00"
+      closes: "18:00"
     },
-    areaServed: "US",
+    areaServed: "IN",
     knowsAbout: ["Web Development", "Freelance Jobs", "Website Templates", "UI/UX Design"]
   }
 
@@ -88,7 +88,7 @@ export function ServiceSchema() {
     provider: {
       "@type": "Organization",
       name: "Altfaze",
-      url: "https://altfaze.com"
+      url: "https://altfaze.in"
     },
     areaServed: "US",
     hasOfferCatalog: {
@@ -147,6 +147,114 @@ export function AggregateOfferSchema() {
       "@type": "Organization",
       name: "Altfaze"
     }
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  )
+}
+
+// FAQ Schema for SEO - Shows FAQs in search results
+export function FAQSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What is Altfaze?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Altfaze is a leading freelance marketplace where you can hire web developers, designers, and professional freelancers. You can also buy premium website templates and post projects for thousands of skilled professionals to bid on."
+        }
+      },
+      {
+        "@type": "Question",
+        name: "How do I hire a freelancer on Altfaze?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Sign up as a client, post your project with details and budget, and experienced freelancers will submit proposals. Review their portfolios, ratings, and hire the best match for your project."
+        }
+      },
+      {
+        "@type": "Question",
+        name: "Can I earn money as a freelancer on Altfaze?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes! Sign up as a freelancer, build your profile, and start bidding on projects. You can offer web development services, UI/UX design, content writing, and more. Payments are processed securely through our escrow system."
+        }
+      },
+      {
+        "@type": "Question",
+        name: "Are payments secure on Altfaze?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Absolutely. We use escrow protection for all projects. Funds are held securely until the project is completed and approved. This protects both clients and freelancers from fraud and disputes."
+        }
+      }
+    ]
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  )
+}
+
+// Marketplace Product Schema - For product rich snippets
+export function MarketplaceProductSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: "Freelance Marketplace Services",
+    description: "Access to hire freelancers and buy website templates",
+    brand: {
+      "@type": "Brand",
+      name: "Altfaze"
+    },
+    offers: {
+      "@type": "AggregateOffer",
+      priceCurrency: "INR",
+      lowPrice: "399",
+      highPrice: "250000",
+      availability: "https://schema.org/InStock",
+      offerCount: "1000+"
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.8",
+      ratingCount: "2500"
+    }
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  )
+}
+
+// Breadcrumb Navigation Schema - For better SERP display
+export function BreadcrumbSchema({ items }: { items: Array<{ name: string; url: string }> }) {
+  if (!items || !Array.isArray(items)) {
+    return null
+  }
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url
+    }))
   }
 
   return (

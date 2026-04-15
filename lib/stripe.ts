@@ -36,7 +36,7 @@ export async function createCheckoutSession(params: {
         price_data: {
           currency: 'inr',
           product_data: {
-            name: params.description || 'ATXEP Project/Template Payment',
+            name: params.description || 'ALTFaze Project/Template Payment',
             description: `Payment from ${params.clientId} to ${params.freelancerId}`,
           },
           unit_amount: Math.round(params.amount * 100), // Amount in paise (cents)

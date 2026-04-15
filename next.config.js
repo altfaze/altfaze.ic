@@ -12,7 +12,7 @@ const nextConfig = {
         return config;
     },
     images: {
-        domains: ['lh3.googleusercontent.com'],
+        domains: ['lh3.googleusercontent.com', 'avatar.vercel.sh'],
         formats: ['image/avif', 'image/webp'],
     },
     headers: async () => {

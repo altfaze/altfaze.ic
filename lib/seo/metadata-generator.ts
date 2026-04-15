@@ -18,13 +18,13 @@ export function generateMetadata(options: MetadataOptions): Metadata {
     description,
     keywords = [],
     path,
-    image = 'https://altfaze.com/og-image.png',
+    image = 'https://altfaze.in/og-image.png',
     ogTitle = title,
     ogDescription = description
   } = options
 
   const allKeywords = [...keywords, ...getHighPriorityKeywords()].slice(0, 10)
-  const url = `https://altfaze.com${path}`
+  const url = `https://altfaze.in${path}`
 
   return {
     title: `${title} | Altfaze`,
@@ -72,11 +72,19 @@ function getHighPriorityKeywords(): string[] {
   return [
     'freelance marketplace',
     'hire freelancers',
+    'hire developers',
     'website templates',
     'web development',
     'freelance jobs',
     'design templates',
-    'build website online'
+    'build website online',
+    'affordable web development',
+    'hire developers India',
+    'freelance services',
+    'project management platform',
+    'web design agency',
+    'startup services',
+    'remote work platform'
   ]
 }
 
@@ -87,20 +95,21 @@ export function generatePageSchema(
   path: string,
   keywords: string[] = []
 ) {
+  const url = `https://altfaze.in${path}`
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
+    url,
     name: title,
     description,
-    url: `https://altfaze.com${path}`,
-    image: 'https://altfaze.com/og-image.png',
+    image: 'https://altfaze.in/og-image.png',
     keywords: [...keywords, ...getHighPriorityKeywords()].join(', '),
     publisher: {
       '@type': 'Organization',
       name: 'Altfaze',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://altfaze.com/logo.png'
+        url: 'https://altfaze.in/logo.png'
       }
     }
   }
@@ -138,7 +147,7 @@ export function generateBreadcrumbSchema(
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `https://altfaze.com${item.url}`
+      item: `https://altfaze.in${item.url}`
     }))
   }
 }

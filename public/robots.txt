@@ -1,3 +1,18 @@
 User-agent: *
 Allow: /
-Sitemap: https://altfaze.in/sitemap.xml
+Disallow: /api
+Disallow: /admin
+Disallow: /client
+Disallow: /freelancer
+Disallow: /dashboard
+Disallow: /onboard
+Disallow: /profile
+Disallow: /wallet
+Disallow: *.json$
+Disallow: /_next
+
+Crawl-delay: 1
+Request-rate: 1/1s
+
+Sitemap: https://altfaze.com/sitemap.xml
+Sitemap: https://altfaze.com/api/sitemap

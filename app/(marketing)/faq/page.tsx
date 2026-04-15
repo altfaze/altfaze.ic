@@ -10,6 +10,24 @@ import {
 } from "@/components/ui/accordion"
 import Link from 'next/link'
 
+export const metadata: Metadata = generateMetadata({
+  title: 'FAQ - Altfaze Freelance Marketplace | How to Hire Freelancers & Buy Templates',
+  description: 'Frequently asked questions about Altfaze. Learn how to hire freelancers, become a freelancer, buy website templates, and use our secure payment system.',
+  keywords: [
+    'FAQ',
+    'frequently asked questions',
+    'how to hire freelancers',
+    'how to become freelancer',
+    'website templates FAQ',
+    'payment security',
+    'platform questions',
+    'freelance marketplace help'
+  ],
+  path: '/faq',
+  ogTitle: 'Frequently Asked Questions - ALTfaze',
+  ogDescription: 'Get answers to common questions about hiring freelancers, selling services, buying templates, and using our platform.'
+})
+
 const faqs = [
   {
     question: "What is Altfaze?",
@@ -52,22 +70,6 @@ const faqs = [
     answer: "Project timelines vary based on complexity. Small projects might take days, while larger web development projects could take weeks or months. Discuss timelines with freelancers before hiring."
   },
 ]
-
-export const metadata: Metadata = generateMetadata({
-  title: 'Frequently Asked Questions - Altfaze Freelance Marketplace',
-  description: 'Common questions about hiring freelancers, buying website templates, earning money, and using Altfaze marketplace. Find answers to your questions.',
-  keywords: [
-    'FAQ',
-    'frequently asked questions',
-    'hiring freelancers',
-    'buying templates',
-    'freelance marketplace',
-    'how to hire',
-    'how to earn',
-    'website templates'
-  ],
-  path: '/faq'
-})
 
 const faqSchema = generateFAQSchema(faqs)
 
@@ -116,11 +118,11 @@ export default function FAQPage() {
               Contact our support team and we&apos;ll be happy to help you.
             </p>
             <div className="flex gap-4 justify-center">
-              <Link href="/contact">
-                <Button>Contact Support</Button>
-              </Link>
               <Link href="/">
-                <Button variant="outline">Back to Home</Button>
+                <Button>Back to Home</Button>
+              </Link>
+              <Link href="/hire">
+                <Button variant="outline">Browse Services</Button>
               </Link>
             </div>
           </div>

@@ -2,11 +2,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import React from "react";
+import { Metadata } from "next";
+import { generateMetadata } from "@/lib/seo/metadata-generator";
 
-export const metadata = {
-  title: "Services | ALTFaze - Freelance Platform",
-  description: "Discover all ALTFaze services: hire freelancers, become a freelancer, build projects, buy templates, and get professional help.",
-};
+export const metadata: Metadata = generateMetadata({
+  title: 'Freelance Services - Web Development, Design & Templates | ALTFaze',
+  description: 'Discover all ALTFaze services: hire freelancers, sell services, buy website templates, project management. Find professionals for web development, design, marketing & more.',
+  keywords: [
+    'freelance services',
+    'web development services',
+    'design services',
+    'freelance marketplace',
+    'hiring services',
+    'template marketplace',
+    'digital services',
+    'professional services',
+    'project management services'
+  ],
+  path: '/services',
+  ogTitle: 'Complete Freelance Services - ALTFaze',
+  ogDescription: 'From hiring top talent to buying templates and earning as a freelancer - everything you need in one platform.'
+})
 
 export default function ServicesPage() {
   return (

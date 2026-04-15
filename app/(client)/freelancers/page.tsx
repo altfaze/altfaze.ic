@@ -96,12 +96,12 @@ export default function FreelancersPage() {
             }}
             className="max-w-sm"
           />
-          <Select value={skillFilter} onValueChange={(v) => { setSkillFilter(v); setPage(1) }}>
+          <Select value={skillFilter || "all"} onValueChange={(v) => { setSkillFilter(v === "all" ? "" : v); setPage(1) }}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by skill" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Skills</SelectItem>
+              <SelectItem value="all">All Skills</SelectItem>
               {skills.map((skill) => (
                 <SelectItem key={skill} value={skill}>{skill}</SelectItem>
               ))}
@@ -162,7 +162,7 @@ export default function FreelancersPage() {
                       <p className="text-lg font-bold">${freelancer.freelancer.hourlyRate}/hr</p>
                     </div>
                     <Button asChild size="sm">
-                      <Link href={`/freelancers/${freelancer.id}`}>View Profile</Link>
+                      <Link href={`/client/freelancers/${freelancer.id}`}>View Profile</Link>
                     </Button>
                   </div>
                 </CardContent>

@@ -101,7 +101,7 @@ export default function WalletPage() {
             </CardHeader>
             <CardContent>
               <Button asChild className="w-full">
-                <Link href="/wallet/add-funds">Add Funds</Link>
+                <Link href="/client/wallet/add-funds">Add Funds</Link>
               </Button>
             </CardContent>
           </Card>

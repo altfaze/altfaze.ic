@@ -67,7 +67,7 @@ export default function AddFundsPage() {
     <div className="min-h-screen bg-background">
       <div className="container py-12 max-w-2xl">
         <Button asChild variant="outline" className="mb-6">
-          <Link href="/wallet">← Back to Wallet</Link>
+          <Link href="/client/wallet">← Back to Wallet</Link>
         </Button>
 
         <Card>

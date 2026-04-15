@@ -1,10 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/more-icons'
 
 export default function NotFound() {
+  const router = useRouter()
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="max-w-md w-full space-y-6 text-center px-4">
@@ -18,11 +21,11 @@ export default function NotFound() {
         </div>
 
         <div className="flex gap-4 flex-col">
-          <Button asChild className="w-full">
-            <Link href="/">Back to Home</Link>
+          <Button onClick={() => router.back()} className="w-full">
+            Go Back
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Go to Login</Link>
+            <Link href="/">Back to Home</Link>
           </Button>
         </div>
       </div>

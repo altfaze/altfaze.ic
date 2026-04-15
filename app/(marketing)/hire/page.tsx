@@ -4,11 +4,29 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import React from "react";
+import { Metadata } from "next";
+import { generateMetadata } from "@/lib/seo/metadata-generator";
 
-export const metadata = {
-  title: "Hire Freelancers | ALTFaze - Find Top Talent",
-  description: "Hire vetted freelancers for web development, design, marketing, and more. Find the perfect talent for your project.",
-};
+// SEO Metadata for Hire Freelancers page
+export const metadata: Metadata = generateMetadata({
+  title: 'Hire Freelancers - Find Top Web Developers & Designers | ALTFaze',
+  description: 'Hire vetted freelancers for web development, design, marketing, and more. Find the perfect talent for your project. Access 1000+ skilled professionals on ALTFaze.',
+  keywords: [
+    'hire freelancers',
+    'hire developers',
+    'hire web developers',
+    'hire UI/UX designers',
+    'hire graphic designers',
+    'freelance hiring',
+    'find freelancers online',
+    'hire developers India',
+    'affordable freelancers',
+    'skilled professionals for hire'
+  ],
+  path: '/hire',
+  ogTitle: 'Hire Top Freelancers & Developers - ALTFaze',
+  ogDescription: 'Finding the right freelancer is easy on ALTFaze. Browse profiles, compare rates, and hire talented professionals for your projects.'
+})
 
 const freelancers = [
   { id: 1, name: "Alex Chen", title: "Full-stack Developer", skills: ["React", "Node.js", "AWS"], rate: 85, rating: 4.9, projects: 127, image: "👨‍💻" },
