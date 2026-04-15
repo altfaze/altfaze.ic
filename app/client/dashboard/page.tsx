@@ -69,7 +69,7 @@ export default function ClientDashboard() {
   useEffect(() => {
     setMounted(true)
     console.log('🟢 [CLIENT_DASHBOARD] Component mounted, session status:', status, 'role:', session?.user?.role)
-  }, [])
+  }, [status, session?.user?.role])
 
   const fetchData = useCallback(async () => {
     try {

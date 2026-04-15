@@ -16,6 +16,9 @@ export async function generateProjectDescription(
       throw new Error('OPENAI_API_KEY not configured')
     }
 
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -38,8 +41,10 @@ export async function generateProjectDescription(
         temperature: 0.7,
         max_tokens: 300,
       }),
-      timeout: 30000,
+      signal: controller.signal,
     })
+
+    clearTimeout(timeoutId)
 
     if (!response.ok) {
       const error = await response.json()
@@ -67,6 +72,9 @@ export async function generateProposal(
     if (!apiKey) {
       throw new Error('OPENAI_API_KEY not configured')
     }
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -96,8 +104,10 @@ Create a compelling proposal (150-250 words) that shows why the freelancer is pe
         temperature: 0.8,
         max_tokens: 400,
       }),
-      timeout: 30000,
+      signal: controller.signal,
     })
+
+    clearTimeout(timeoutId)
 
     if (!response.ok) {
       const error = await response.json()
@@ -122,6 +132,9 @@ export async function summarizeProposal(proposal: string): Promise<string> {
       throw new Error('OPENAI_API_KEY not configured')
     }
 
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000)
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -143,8 +156,10 @@ export async function summarizeProposal(proposal: string): Promise<string> {
         temperature: 0.5,
         max_tokens: 150,
       }),
-      timeout: 30000,
+      signal: controller.signal,
     })
+
+    clearTimeout(timeoutId)
 
     if (!response.ok) {
       const error = await response.json()

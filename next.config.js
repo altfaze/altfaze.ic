@@ -12,7 +12,16 @@ const nextConfig = {
         return config;
     },
     images: {
-        domains: ['lh3.googleusercontent.com', 'avatar.vercel.sh'],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'lh3.googleusercontent.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'avatar.vercel.sh',
+            },
+        ],
         formats: ['image/avif', 'image/webp'],
     },
     headers: async () => {

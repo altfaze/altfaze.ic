@@ -7,6 +7,8 @@ import { getToken } from 'next-auth/jwt'
  * Debug endpoint to test routing and authentication
  * URL: /api/debug/route-test
  */
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request) {
   try {
     console.log('🔧 [ROUTE_TEST] DEBUG endpoint called')

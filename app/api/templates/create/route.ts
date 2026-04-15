@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
     const fileValidation = validateFile(templateFile, { maxSize: 100 * 1024 * 1024 })
     if (!fileValidation.valid) {
-      return errorResponse(400, fileValidation.error)
+      return errorResponse(400, fileValidation.error || 'File validation failed')
     }
 
     // Upload template file
