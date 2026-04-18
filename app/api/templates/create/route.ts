@@ -117,7 +117,10 @@ export async function POST(req: NextRequest) {
           fileSize: templateFile.size,
         },
       },
-    }).catch(() => {})
+    }).catch(err => {
+      console.error('[TEMPLATE_CREATE] Activity log creation failed:', err)
+      // Continue - activity log failure shouldn't block template creation
+    })
 
     return successResponse(
       {

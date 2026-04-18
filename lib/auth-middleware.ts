@@ -30,7 +30,7 @@ export async function requireAuth(req?: NextRequest): Promise<{ userId: string }
 
 export async function requireAuthWithRole(
   req?: NextRequest,
-  requiredRole?: 'CLIENT' | 'FREELANCER'
+  requiredRole?: 'CLIENT' | 'FREELANCER' | 'ADMIN'
 ): Promise<{ userId: string; role: string }> {
   try {
     const session = await getServerSession(authOptions)

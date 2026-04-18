@@ -1,75 +1,89 @@
 /**
- * Notifications API
- * Get user notifications
+ * Notifications API - Get and manage user notifications
  */
 
 import { NextRequest } from 'next/server'
+import { db } from '@/lib/db'
 import { requireAuth, handleApiError } from '@/lib/auth-middleware'
 import { successResponse, errorResponse } from '@/lib/api-utils'
-import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
-import { db } from '@/lib/db'
+import { rateLimit } from '@/lib/rate-limit'
 
-// Force dynamic rendering
 export const dynamic = 'force-dynamic'
 
+/**
+ * GET /api/notifications
+ * Get user's notifications with optional filtering
+ */
 export async function GET(req: NextRequest) {
   try {
-    const limited = !(await rateLimit(req, 'api', API_RATE_LIMIT.limit, API_RATE_LIMIT.window))
-    if (limited) {
-      return errorResponse(429, 'Too many requests. Please try again later.')
+    const isRateLimited = !(await rateLimit(req, 'notifications'))
+    if (isRateLimited) {
+      return errorResponse(429, 'Rate limited')
     }
 
     const { userId } = await requireAuth(req)
+    const searchParams = req.nextUrl.searchParams
+    const unreadOnly = searchParams.get('unread') === 'true'
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100)
+    const notificationType = searchParams.get('type')
 
-    // For now, fetch unread activities/requests
-    const [pendingRequests, recentActivity] = await Promise.all([
-      db.request.findMany({
-        where: {
-          receiverId: userId,
-          status: 'PENDING',
-        },
-        select: {
-          id: true,
-          title: true,
-          createdAt: true,
-          sender: { select: { name: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 5,
-      }),
-      db.activityLog.findMany({
-        where: { userId },
-        select: {
-          id: true,
-          action: true,
-          description: true,
-          createdAt: true,
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 10,
-      }),
-    ])
+    const notifications = await db.notification.findMany({
+      where: {
+        userId,
+        ...(unreadOnly && { read: false }),
+        ...(notificationType && { type: notificationType }),
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    })
+
+    const unreadCount = await db.notification.count({
+      where: { userId, read: false },
+    })
 
     return successResponse(
-      {
-        unread: pendingRequests.map(r => ({
-          id: r.id,
-          message: `New bid from ${r.sender.name}: ${r.title}`,
-          type: 'info',
-          createdAt: r.createdAt,
-        })),
-        recent: recentActivity.map(a => ({
-          id: a.id,
-          message: a.description,
-          type: a.action.includes('ERROR') ? 'error' : 'info',
-          createdAt: a.createdAt,
-        })),
-      },
+      { notifications, unreadCount },
       200,
       'Notifications retrieved'
     )
   } catch (error) {
-    console.error('[NOTIFICATIONS_ERROR]', error)
+    console.error('[NOTIFICATIONS_GET]', error)
+    return handleApiError(error)
+  }
+}
+
+/**
+ * POST /api/notifications
+ * [Internal only] Create a new notification
+ */
+export async function POST(req: NextRequest) {
+  try {
+    const isRateLimited = !(await rateLimit(req, 'notification-create'))
+    if (isRateLimited) {
+      return errorResponse(429, 'Rate limited')
+    }
+
+    const body = await req.json()
+    const { userId, type, title, message, relatedResourceType, relatedResourceId } = body
+
+    if (!userId || !type || !title || !message) {
+      return errorResponse(400, 'Missing required fields')
+    }
+
+    const notification = await db.notification.create({
+      data: {
+        userId,
+        type,
+        title,
+        message,
+        relatedResourceType,
+        relatedResourceId,
+      },
+    })
+
+    return successResponse(notification, 201, 'Notification created')
+  } catch (error) {
+    console.error('[NOTIFICATION_CREATE]', error)
     return handleApiError(error)
   }
 }

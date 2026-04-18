@@ -96,14 +96,18 @@ export async function PATCH(
     })
 
     // Log activity
-    await db.activityLog.create({
-      data: {
-        userId,
-        action: 'REQUEST_ACCEPTED',
-        description: `Accepted proposal from ${request.sender.name} for $${request.amount || 0}`,
-        metadata: { projectId, requestId, freelancerId: request.senderId },
-      },
-    }).catch(() => {})
+    try {
+      await db.activityLog.create({
+        data: {
+          userId,
+          action: 'REQUEST_ACCEPTED',
+          description: `Accepted proposal from ${request.sender.name} for $${request.amount || 0}`,
+          metadata: { projectId, requestId, freelancerId: request.senderId },
+        },
+      })
+    } catch (err) {
+      console.error('[PROJECT_CLOSE] Activity log creation failed:', err)
+    }
 
     // Emit event
     await emitRequestAccepted(requestId, userId, updatedRequest)

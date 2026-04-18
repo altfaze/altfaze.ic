@@ -1,17 +1,25 @@
 import Stripe from 'stripe'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not defined in environment variables')
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY
+
+if (!stripeSecretKey) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('STRIPE_SECRET_KEY is not defined in production environment variables')
+  }
+  console.warn('⚠️ STRIPE_SECRET_KEY is not defined - Stripe operations will fail')
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2024-04-10',
-})
+export const stripe = stripeSecretKey
+  ? new Stripe(stripeSecretKey, {
+      apiVersion: '2024-04-10',
+    })
+  : null
 
 export const STRIPE_CONFIG = {
   publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
-  secretKey: process.env.STRIPE_SECRET_KEY || '',
+  secretKey: stripeSecretKey || '',
   webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
+  isConfigured: !!stripeSecretKey,
 }
 
 /**
@@ -28,6 +36,10 @@ export async function createCheckoutSession(params: {
   successUrl: string
   cancelUrl: string
 }) {
+  if (!stripe) {
+    throw new Error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.')
+  }
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     mode: 'payment',
@@ -63,6 +75,7 @@ export async function createCheckoutSession(params: {
  * Retrieve session details from Stripe
  */
 export async function getSession(sessionId: string) {
+  if (!stripe) throw new Error('Stripe is not configured')
   return await stripe.checkout.sessions.retrieve(sessionId)
 }
 
@@ -70,6 +83,7 @@ export async function getSession(sessionId: string) {
  * Get payment intent details
  */
 export async function getPaymentIntent(intentId: string) {
+  if (!stripe) throw new Error('Stripe is not configured')
   return await stripe.paymentIntents.retrieve(intentId)
 }
 
@@ -77,6 +91,7 @@ export async function getPaymentIntent(intentId: string) {
  * Refund a payment
  */
 export async function refundPayment(chargeId: string, amount?: number) {
+  if (!stripe) throw new Error('Stripe is not configured')
   return await stripe.refunds.create({
     charge: chargeId,
     amount: amount ? Math.round(amount * 100) : undefined,
@@ -92,6 +107,7 @@ export function verifyWebhookSignature(
   signature: string,
   secret: string
 ): boolean {
+  if (!stripe) return false
   try {
     stripe.webhooks.constructEvent(body, signature, secret)
     return true
@@ -104,5 +120,6 @@ export function verifyWebhookSignature(
  * Parse webhook event safely
  */
 export function constructWebhookEvent(body: string | Buffer, signature: string, secret: string) {
+  if (!stripe) throw new Error('Stripe is not configured')
   return stripe.webhooks.constructEvent(body, signature, secret)
 }

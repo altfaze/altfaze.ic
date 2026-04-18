@@ -10,23 +10,30 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
 
 interface WalletData {
-  user: {
-    id: string
+  wallet: {
+    userId: string
+    email: string
     name: string
     walletBalance: number
+    totalSpent: number
+    totalEarned: number
   }
   transactions: Array<{
     id: string
     type: string
     amount: number
-    description: string
+    netAmount: number
+    commission: number
     status: string
+    description: string
     createdAt: string
   }>
-  stats: {
-    totalSpent: number
-    totalEarned: number
-    thisMonth: number
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    pages: number
+    hasMore: boolean
   }
 }
 
@@ -97,7 +104,7 @@ export default function WalletPage() {
           <Card className="border-primary/50 bg-primary/5">
             <CardHeader>
               <CardDescription>Current Balance</CardDescription>
-              <CardTitle className="text-3xl">${wallet?.user.walletBalance.toFixed(2)}</CardTitle>
+              <CardTitle className="text-3xl">${wallet?.wallet.walletBalance.toFixed(2)}</CardTitle>
             </CardHeader>
             <CardContent>
               <Button asChild className="w-full">
@@ -110,21 +117,21 @@ export default function WalletPage() {
           <div className="grid gap-2">
             <Card>
               <CardContent className="pt-6">
-                <p className="text-xs text-muted-foreground">This Month</p>
-                <p className="text-2xl font-bold">${wallet?.stats.thisMonth.toFixed(2)}</p>
+                <p className="text-xs text-muted-foreground">Total Earned</p>
+                <p className="text-2xl font-bold text-green-600">${wallet?.wallet.totalEarned.toFixed(2)}</p>
               </CardContent>
             </Card>
             <div className="grid grid-cols-2 gap-2">
               <Card>
                 <CardContent className="pt-4">
                   <p className="text-xs text-muted-foreground">Total Spent</p>
-                  <p className="text-lg font-bold">${wallet?.stats.totalSpent.toFixed(2)}</p>
+                  <p className="text-lg font-bold">${wallet?.wallet.totalSpent.toFixed(2)}</p>
                 </CardContent>
               </Card>
               <Card>
                 <CardContent className="pt-4">
-                  <p className="text-xs text-muted-foreground">Total Earned</p>
-                  <p className="text-lg font-bold text-green-600">${wallet?.stats.totalEarned.toFixed(2)}</p>
+                  <p className="text-xs text-muted-foreground">Balance</p>
+                  <p className="text-lg font-bold">${wallet?.wallet.walletBalance.toFixed(2)}</p>
                 </CardContent>
               </Card>
             </div>

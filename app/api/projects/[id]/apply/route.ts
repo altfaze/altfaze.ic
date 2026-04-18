@@ -102,14 +102,18 @@ export async function POST(
     })
 
     // Log activity
-    await db.activityLog.create({
-      data: {
-        userId,
-        action: 'REQUEST_SENT',
-        description: `Applied to project: "${project.title}" with $${bidAmount} bid`,
-        metadata: { projectId, requestId: newRequest.id },
-      },
-    }).catch(() => {})
+    try {
+      await db.activityLog.create({
+        data: {
+          userId,
+          action: 'REQUEST_SENT',
+          description: `Applied to project: "${project.title}" with $${bidAmount} bid`,
+          metadata: { projectId, requestId: newRequest.id },
+        },
+      })
+    } catch (err) {
+      console.error('[PROJECT_APPLY] Activity log creation failed:', err)
+    }
 
     // Emit real-time event
     await emitRequestSent(newRequest.id, userId, project.creatorId, newRequest)

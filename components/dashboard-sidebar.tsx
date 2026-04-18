@@ -73,6 +73,12 @@ export function DashboardSidebar() {
       roles: ["CLIENT"],
     },
     {
+      href: "/client/hire",
+      title: "Post Project",
+      icon: <Icons.add className="h-4 w-4" />,
+      roles: ["CLIENT"],
+    },
+    {
       href: "/freelancer/upload",
       title: "Upload Project",
       icon: <Icons.upload className="h-4 w-4" />,
@@ -102,7 +108,7 @@ export function DashboardSidebar() {
     },
     {
       href: routePrefix + "/offers",
-      title: "Discounts & Offers",
+      title: "Offers",
       icon: <Icons.gift className="h-4 w-4" />,
     },
     {

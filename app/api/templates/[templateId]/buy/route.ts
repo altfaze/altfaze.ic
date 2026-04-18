@@ -109,13 +109,18 @@ export async function POST(
 
     // Add to seller (if not same user and uploaderId exists)
     if (template.uploaderId && template.uploaderId !== userId) {
-      await db.user.update({
-        where: { id: template.uploaderId },
-        data: {
-          walletBalance: { increment: price * 0.95 }, // 5% commission
-          totalEarned: { increment: price * 0.95 },
-        },
-      }).catch(() => {})
+      try {
+        await db.user.update({
+          where: { id: template.uploaderId },
+          data: {
+            walletBalance: { increment: price * 0.95 }, // 5% commission
+            totalEarned: { increment: price * 0.95 },
+          },
+        })
+      } catch (err) {
+        console.error('[TEMPLATE_BUY] Seller wallet update failed:', err)
+        // Continue - seller payment failure will be handled separately
+      }
     }
 
     // Log activity
@@ -146,7 +151,10 @@ export async function POST(
       )
     }
 
-    await Promise.all(activityLogs).catch(() => {})
+    await Promise.all(activityLogs).catch(err => {
+      console.error('[TEMPLATE_BUY] Activity log creation failed:', err)
+      // Continue - activity log failure doesn't affect transaction
+    })
 
     return successResponse(
       {

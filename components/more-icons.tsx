@@ -47,6 +47,7 @@ import {
   ArrowDown,
   ArrowUp,
   Mail,
+  Copy,
 } from "lucide-react"
 
 export type Icon = FunctionComponent<SVGProps<SVGSVGElement>>;
@@ -97,6 +98,7 @@ export const Icons = {
   arrowDown: ArrowDown,
   arrowUp: ArrowUp,
   mail: Mail,
+  copy: Copy,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

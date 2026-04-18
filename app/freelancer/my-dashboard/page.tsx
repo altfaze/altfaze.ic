@@ -9,11 +9,6 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
 
-// Debug: Log that page is loading
-if (typeof window !== 'undefined') {
-  console.log('✅ [FREELANCER_DASHBOARD_PAGE] Page component mounted at:', new Date().toISOString())
-}
-
 interface Request {
   id: string
   title: string
@@ -64,37 +59,25 @@ export default function FreelancerDashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [isClient, setIsClient] = useState(false)
-
-  // Prevent hydration mismatch
-  useEffect(() => {
-    setIsClient(true)
-    console.log('🟢 [FREELANCER_DASHBOARD] Page mounted, status:', status, 'role:', session?.user?.role)
-  }, [status, session?.user?.role])
 
   const fetchData = useCallback(async () => {
     try {
-      console.log('🔄 [FREELANCER_DASHBOARD] Fetching data...')
       setLoading(true)
       setError(null)
 
       const res = await fetch('/api/requests?type=received&limit=50', {
         cache: 'no-store',
       })
-      console.log('📡 [FREELANCER_DASHBOARD] API Response status:', res.status)
       
       if (!res.ok) {
-        const errorText = await res.text()
-        console.error('❌ [FREELANCER_DASHBOARD] API Error response:', errorText)
         throw new Error(`Failed to fetch requests: ${res.status}`)
       }
 
       const result = await res.json()
-      console.log('✅ [FREELANCER_DASHBOARD] Data fetched successfully:', result)
-      const requests = result.data.requests || []
+      const requests = result?.data?.requests || []
 
       const stats = {
-        totalRequests: result.data.pagination.total,
+        totalRequests: result?.data?.pagination?.total || 0,
         totalReceived: requests.length,
         totalAccepted: requests.filter((r: Request) => r.status === 'ACCEPTED').length,
         totalCompleted: requests.filter((r: Request) => r.status === 'COMPLETED').length,
@@ -106,10 +89,9 @@ export default function FreelancerDashboard() {
       setData({
         requests,
         ...stats,
-        pagination: result.data.pagination,
+        pagination: result?.data?.pagination || { page: 1, limit: 50, pages: 1, total: 0 },
       })
     } catch (err) {
-      console.error('❌ [FREELANCER_DASHBOARD] Error fetching data:', err)
       setError(err instanceof Error ? err.message : 'Failed to load dashboard')
     } finally {
       setLoading(false)
@@ -117,23 +99,12 @@ export default function FreelancerDashboard() {
   }, [])
 
   useEffect(() => {
-    if (isClient && status === 'authenticated') {
-      console.log('✅ [FREELANCER_DASHBOARD] Authenticated as:', session?.user?.email, 'Role:', session?.user?.role, 'fetching data')
-      try {
-        fetchData()
-      } catch (err) {
-        console.error('[FREELANCER_DASHBOARD] Error fetching data:', err)
-        setLoading(false)
-      }
-    } else if (isClient && status === 'unauthenticated') {
-      console.warn('⚠️ [FREELANCER_DASHBOARD] Unauthenticated, redirecting to login')
+    if (status === 'authenticated') {
+      fetchData()
+    } else if (status === 'unauthenticated') {
       router.push('/login')
-    } else if (isClient && status !== 'loading') {
-      console.log('⏳ [FREELANCER_DASHBOARD] Session status:', status)
-      // If not authenticated and not loading, set loading to false
-      setLoading(false)
     }
-  }, [isClient, status, fetchData, router, session?.user?.email, session?.user?.role])
+  }, [status, fetchData, router])
 
   if (status === 'loading') {
     return (

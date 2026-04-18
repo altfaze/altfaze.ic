@@ -59,15 +59,20 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    // Log activity
-    await db.activityLog.create({
-      data: {
-        userId,
-        action: 'WALLET_UPDATED',
-        description: `Added $${amount} to wallet`,
-        metadata: { transactionId: transaction.id, amount },
-      },
-    }).catch(() => {})
+    // Log activity (non-blocking - errors logged but don't affect transaction)
+    try {
+      await db.activityLog.create({
+        data: {
+          userId,
+          action: 'WALLET_UPDATED',
+          description: `Added $${amount} to wallet`,
+          metadata: { transactionId: transaction.id, amount },
+        },
+      })
+    } catch (logError) {
+      console.error('[WALLET_ADD_FUNDS] Activity log creation failed:', logError)
+      // Continue - activity log failure shouldn't block transaction
+    }
 
     return successResponse(
       {

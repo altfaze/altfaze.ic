@@ -1,17 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import Stripe from 'stripe'
+import { STRIPE_CONFIG } from '@/lib/stripe'
 
 export const dynamic = 'force-dynamic'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-04-10',
-})
+// Initialize Stripe webhook handler with proper validation
+if (!STRIPE_CONFIG.secretKey) {
+  console.error('❌ STRIPE_SECRET_KEY not configured - webhook handler will fail')
+}
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
+if (!STRIPE_CONFIG.webhookSecret) {
+  console.error('❌ STRIPE_WEBHOOK_SECRET not configured - webhook signature verification will fail')
+}
+
+const stripe = STRIPE_CONFIG.secretKey
+  ? new Stripe(STRIPE_CONFIG.secretKey, {
+      apiVersion: '2024-04-10',
+    })
+  : null
+
+const webhookSecret = STRIPE_CONFIG.webhookSecret
 
 export async function POST(req: NextRequest) {
   try {
+    // Validate Stripe configuration before processing webhook
+    if (!stripe || !webhookSecret) {
+      console.error('Stripe webhook received but not configured properly')
+      return NextResponse.json(
+        { error: 'Stripe not configured' },
+        { status: 503 }
+      )
+    }
+
     const body = await req.text()
     const signature = req.headers.get('stripe-signature')
 

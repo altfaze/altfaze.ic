@@ -63,14 +63,18 @@ export async function POST(
     })
 
     // Log activity
-    await db.activityLog.create({
-      data: {
-        userId,
-        action: 'WORK_SUBMITTED',
-        description: `Submitted work for project: "${project.title}"`,
-        metadata: { projectId, submissionUrl },
-      },
-    }).catch(() => {})
+    try {
+      await db.activityLog.create({
+        data: {
+          userId,
+          action: 'WORK_SUBMITTED',
+          description: `Submitted work for project: "${project.title}"`,
+          metadata: { projectId, submissionUrl },
+        },
+      })
+    } catch (err) {
+      console.error('[PROJECT_SUBMIT] Activity log creation failed:', err)
+    }
 
     return successResponse(
       {
@@ -141,14 +145,18 @@ export async function PATCH(
       })
 
       // Log activity
-      await db.activityLog.create({
-        data: {
-          userId,
-          action: 'WORK_REJECTED',
-          description: `Requested revisions for project: "${project.title}". Feedback: ${feedback || 'None'}`,
-          metadata: { projectId, feedback },
-        },
-      }).catch(() => {})
+      try {
+        await db.activityLog.create({
+          data: {
+            userId,
+            action: 'WORK_REJECTED',
+            description: `Requested revisions for project: "${project.title}". Feedback: ${feedback || 'None'}`,
+            metadata: { projectId, feedback },
+          },
+        })
+      } catch (err) {
+        console.error('[PROJECT_SUBMIT] Rejection activity log failed:', err)
+      }
 
       return successResponse(
         {
@@ -171,44 +179,56 @@ export async function PATCH(
 
     // Create completion transaction if budget exists
     if (project.budget && project.submiterId) {
-      await db.transaction.create({
-        data: {
-          userId: project.submiterId,
-          senderId: userId,
-          receiverId: project.submiterId,
-          projectId,
-          type: 'EARNING',
-          amount: project.budget,
-          netAmount: project.budget.toNumber() * 0.95, // 5% commission
-          commission: project.budget.toNumber() * 0.05,
-          status: 'COMPLETED',
-          description: `Earnings from project: "${project.title}"`,
-        },
-      }).catch(() => {})
+      try {
+        await db.transaction.create({
+          data: {
+            userId: project.submiterId,
+            senderId: userId,
+            receiverId: project.submiterId,
+            projectId,
+            type: 'EARNING',
+            amount: project.budget,
+            netAmount: project.budget.toNumber() * 0.95, // 5% commission
+            commission: project.budget.toNumber() * 0.05,
+            status: 'COMPLETED',
+            description: `Earnings from project: "${project.title}"`,
+          },
+        })
+      } catch (err) {
+        console.error('[PROJECT_SUBMIT] Transaction creation failed:', err)
+      }
 
       // Update freelancer earnings
-      await db.user.update({
-        where: { id: project.submiterId },
-        data: {
-          totalEarned: {
-            increment: project.budget.toNumber() * 0.95,
+      try {
+        await db.user.update({
+          where: { id: project.submiterId },
+          data: {
+            totalEarned: {
+              increment: project.budget.toNumber() * 0.95,
+            },
+            walletBalance: {
+              increment: project.budget.toNumber() * 0.95,
+            },
           },
-          walletBalance: {
-            increment: project.budget.toNumber() * 0.95,
-          },
-        },
-      }).catch(() => {})
+        })
+      } catch (err) {
+        console.error('[PROJECT_SUBMIT] Freelancer earnings update failed:', err)
+      }
     }
 
     // Log activity
-    await db.activityLog.create({
-      data: {
-        userId,
-        action: 'PROJECT_COMPLETED',
-        description: `Approved and completed project: "${project.title}"`,
-        metadata: { projectId, freelancerId: project.submiterId },
-      },
-    }).catch(() => {})
+    try {
+      await db.activityLog.create({
+        data: {
+          userId,
+          action: 'PROJECT_COMPLETED',
+          description: `Approved and completed project: "${project.title}"`,
+          metadata: { projectId, freelancerId: project.submiterId },
+        },
+      })
+    } catch (err) {
+      console.error('[PROJECT_SUBMIT] Completion activity log failed:', err)
+    }
 
     return successResponse(
       {

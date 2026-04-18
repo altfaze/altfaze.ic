@@ -1,6 +1,7 @@
 import { getAuthSession } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest } from "next/server"
+import { successResponse, errorResponse } from "@/lib/api-utils"
 
 // Force dynamic rendering - always get fresh data from DB
 // Critical for payment routes - never cache!
@@ -21,13 +22,13 @@ export async function POST(req: NextRequest) {
     const session = await getAuthSession()
 
     if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      return errorResponse(401, "Unauthorized")
     }
 
     const { amount, type, itemId } = await req.json()
 
     if (!amount || typeof amount !== 'number' || amount <= 0) {
-      return NextResponse.json({ error: "Invalid amount provided" }, { status: 400 })
+      return errorResponse(400, "Invalid amount provided")
     }
 
     const user = await db.user.findUnique({
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
+      return errorResponse(404, "User not found")
     }
 
     // Check if user is suspended
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (userStatus?.isSuspended) {
-      return NextResponse.json({ error: "Account suspended" }, { status: 403 })
+      return errorResponse(403, "Account suspended")
     }
 
     // In production, create actual Stripe checkout session
@@ -55,9 +56,9 @@ export async function POST(req: NextRequest) {
 
     console.log('[STRIPE_CHECKOUT]', { userId: user.id, amount, type, itemId })
 
-    return NextResponse.json({ url: checkoutUrl }, { status: 200 })
+    return successResponse({ url: checkoutUrl }, 200, "Checkout session created")
   } catch (error) {
     console.error("[STRIPE_CHECKOUT_ERROR]", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return errorResponse(500, "Internal server error", error)
   }
 }

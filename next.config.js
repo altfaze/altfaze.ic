@@ -7,6 +7,9 @@ const nextConfig = {
         maxInactiveAge: 60 * 60 * 1000,
         pagesBufferLength: 5,
     },
+    experimental: {
+        optimizePackageImports: ['@radix-ui/react-*', 'lucide-react'],
+    },
     webpack: (config, { isServer }) => {
         config.optimization.minimize = true;
         return config;

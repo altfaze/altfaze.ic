@@ -98,8 +98,8 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    // Log activity
-    await Promise.all([
+    // Log activity (non-blocking - errors logged but don't affect transaction)
+    Promise.all([
       db.activityLog.create({
         data: {
           userId: clientId,
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
           description: `Paid $${amount} to freelancer`,
           metadata: { transactionId: transaction.id },
         },
-      }),
+      }).catch(err => console.error('[PAY_FREELANCER] Client activity log failed:', err)),
       db.activityLog.create({
         data: {
           userId: freelancerId,
@@ -115,8 +115,8 @@ export async function POST(req: NextRequest) {
           description: `Received $${amount} payment`,
           metadata: { transactionId: transaction.id },
         },
-      }),
-    ]).catch(() => {})
+      }).catch(err => console.error('[PAY_FREELANCER] Freelancer activity log failed:', err)),
+    ])
 
     return successResponse(
       {
