@@ -639,4 +639,4 @@ For architecture questions:
 - Review this document
 - Check code comments
 - Ask in discussions
-- Email architecture@altfaze.com
+- Email architecture@altfaze.in

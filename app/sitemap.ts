@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next'
 import { KEYWORDS_DATABASE } from '@/lib/seo/keywords'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://altfaze.com'
+  const baseUrl = 'https://altfaze.in'
   const currentDate = new Date().toISOString().split('T')[0]
 
   // Main pages

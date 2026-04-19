@@ -175,7 +175,7 @@ NEXT_PUBLIC_GA_ID=G-XXXXXXXX
 SENTRY_AUTH_TOKEN=...
 
 # Email service (optional)
-EMAIL_FROM=noreply@altfaze.com
+EMAIL_FROM=noreply@altfaze.in
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
@@ -518,7 +518,7 @@ For deployment issues:
 2. Check build output
 3. Verify environment variables
 4. Check database connection
-5. Email support@vercel.com or support@altfaze.com
+5. Email support@vercel.com or support@altfaze.in
 
 ---
 

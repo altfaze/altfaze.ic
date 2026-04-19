@@ -143,7 +143,7 @@ export async function POST(
         description: template.description,
         category: template.category,
         features: template.features,
-        downloadUrl: `https://cdn.altfaze.com/templates/${template.id}/download`, // Change to actual CDN URL
+        downloadUrl: `https://cdn.altfaze.in/templates/${template.id}/download`, // Change to actual CDN URL
       },
       200,
       'Template download link ready'

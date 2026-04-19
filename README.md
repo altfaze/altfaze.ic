@@ -231,7 +231,7 @@ RAZORPAY_WEBHOOK_SECRET=webhook_secret_xxxxxxxxxxxx
 #### Email Service (Optional)
 ```env
 # Email provider configuration
-EMAIL_FROM=noreply@altfaze.com
+EMAIL_FROM=noreply@altfaze.in
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
@@ -772,7 +772,7 @@ NODE_ENV=development
 
 #### Production
 ```env
-NEXTAUTH_URL=https://altfaze.com
+NEXTAUTH_URL=https://altfaze.in
 NODE_ENV=production
 VERCEL_ENV=production
 ```
@@ -937,18 +937,18 @@ npm run test:e2e
 ## 📞 Support & Contact
 
 ### Documentation
-- Full docs: https://docs.altfaze.com
-- API reference: https://api.altfaze.com/docs
-- FAQ: https://altfaze.com/faq
+- Full docs: https://docs.altfaze.in
+- API reference: https://api.altfaze.in/docs
+- FAQ: https://altfaze.in/faq
 
 ### Help & Support
-- Email: support@altfaze.com
+- Email: support@altfaze.in
 - Discord: https://discord.gg/altfaze
 - Twitter: @altfaze
 
 ### Report Issues
 - GitHub Issues: https://github.com/altfaze/altfaze/issues
-- Bug Report: https://altfaze.com/report-bug
+- Bug Report: https://altfaze.in/report-bug
 
 ---
 

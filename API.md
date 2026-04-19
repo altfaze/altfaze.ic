@@ -739,4 +739,4 @@ For API issues:
 - Check error codes above
 - Verify authentication token
 - Check rate limits
-- Contact support@altfaze.com
+- Contact support@altfaze.in

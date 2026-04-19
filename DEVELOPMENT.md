@@ -692,6 +692,6 @@ For development issues:
 2. Check browser console for errors
 3. Check terminal output for logs
 4. Check Prisma Studio for data
-5. Ask in discussions or email dev@altfaze.com
+5. Ask in discussions or email dev@altfaze.in
 
 Happy coding! 🚀

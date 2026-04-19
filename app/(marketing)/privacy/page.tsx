@@ -88,7 +88,7 @@ export default function PrivacyPage() {
             <section className="space-y-4">
               <h2 className="text-2xl font-bold">6. Contact Us</h2>
               <p className="text-muted-foreground">
-                If you have any questions about this privacy policy, please contact us at support@altfaze.com
+                If you have any questions about this privacy policy, please contact us at support@altfaze.in
               </p>
             </section>
 

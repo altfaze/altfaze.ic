@@ -338,7 +338,7 @@ atxep-dev/
 
 ### Live Help
 - GitHub Discussions: Coming soon
-- Email: support@altfaze.com
+- Email: support@altfaze.in
 - Discord: https://discord.gg/altfaze
 
 ### Additional Resources
