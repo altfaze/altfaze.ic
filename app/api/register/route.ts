@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { email, password, name } = body
+    const { email, password, name, role } = body
 
     // Validation
     if (!email || !password || !name) {
@@ -42,6 +42,9 @@ export async function POST(req: NextRequest) {
       return errorResponse(400, 'Name must be less than 100 characters')
     }
 
+    // Validate role if provided
+    const userRole = role && ['CLIENT', 'FREELANCER'].includes(role) ? role : 'CLIENT'
+
     // Check if user already exists
     const existingUser = await db.user.findUnique({
       where: { email: normalizedEmail },
@@ -54,18 +57,21 @@ export async function POST(req: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user with initial username
+    // Create user with selected role
     const user = await db.user.create({
       data: {
         email: normalizedEmail,
         password: hashedPassword,
         name: name.trim(),
         username: normalizedEmail.split('@')[0] + '_' + nanoid(8),
-        role: 'CLIENT',
-        isVerified: false, // Require email verification in production
-        client: {
-          create: {},
-        },
+        role: userRole,
+        isVerified: false,
+        ...(userRole === 'CLIENT' && {
+          client: { create: {} },
+        }),
+        ...(userRole === 'FREELANCER' && {
+          freelancer: { create: {} },
+        }),
       },
       select: {
         id: true,

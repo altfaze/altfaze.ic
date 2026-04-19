@@ -9,23 +9,22 @@ import { generateMetadata } from "@/lib/seo/metadata-generator";
 
 // SEO Metadata for Hire Freelancers page
 export const metadata: Metadata = generateMetadata({
-  title: 'Hire Freelancers - Find Top Web Developers & Designers | ALTFaze',
-  description: 'Hire vetted freelancers for web development, design, marketing, and more. Find the perfect talent for your project. Access 1000+ skilled professionals on ALTFaze.',
+  title: 'AltFaze – Hire Top Freelancers & Web Developers | Affordable Rates',
+  description: 'Hire vetted freelancers on AltFaze for web development, UI/UX design, and digital services. Find the perfect talent for your projects. 1000+ skilled professionals ready to work.',
   keywords: [
-    'hire freelancers',
-    'hire developers',
-    'hire web developers',
-    'hire UI/UX designers',
-    'hire graphic designers',
-    'freelance hiring',
-    'find freelancers online',
-    'hire developers India',
+    'AltFaze hire freelancers',
+    'hire web developers AltFaze',
+    'AltFaze developers for hire',
+    'hire UI/UX designers AltFaze',
+    'AltFaze freelancer marketplace',
+    'hire developers online',
     'affordable freelancers',
-    'skilled professionals for hire'
+    'hire remote developers',
+    'web developer hiring'
   ],
   path: '/hire',
-  ogTitle: 'Hire Top Freelancers & Developers - ALTFaze',
-  ogDescription: 'Finding the right freelancer is easy on ALTFaze. Browse profiles, compare rates, and hire talented professionals for your projects.'
+  ogTitle: 'Hire Top Freelancers & Developers on AltFaze',
+  ogDescription: 'Finding skilled talent is easy on AltFaze. Browse profiles, compare rates, and hire talented developers and designers for your projects.'
 })
 
 const freelancers = [

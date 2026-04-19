@@ -182,7 +182,7 @@ Client Posts → Project Created → Escrow Amount → Client Makes Payment
 ```
 
 **Features:**
-- Stripe integration
+- Razorpay integration (INR payments)
 - Secure escrow system
 - Payment verification
 - Automatic commission calculation

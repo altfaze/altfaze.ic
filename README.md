@@ -218,14 +218,14 @@ NEXTAUTH_URL=http://localhost:3000
 # NEXTAUTH_URL=https://your-domain.com
 ```
 
-#### Stripe Payments
+#### Razorpay Payments (India)
 ```env
-# Get from https://dashboard.stripe.com/apikeys
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxxxxxxxxx
-STRIPE_SECRET_KEY=sk_test_xxxxxxxxxxxx
+# Get from https://dashboard.razorpay.com/app/keys
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
+RAZORPAY_KEY_SECRET=key_secret_xxxxxxxxxxxx
 
-# Get from Stripe Webhooks page
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxx
+# Get from Razorpay Webhooks page
+RAZORPAY_WEBHOOK_SECRET=webhook_secret_xxxxxxxxxxxx
 ```
 
 #### Email Service (Optional)

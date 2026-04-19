@@ -9,16 +9,17 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
 import { Icons } from '@/components/icons'
-import {
-  EmbeddedCheckoutProvider,
-  EmbeddedCheckout,
-} from '@stripe/react-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 const PRESETS = [10, 25, 50, 100, 250, 500]
-const MIN_AMOUNT = 5
+const MIN_AMOUNT = 1
 const MAX_AMOUNT = 50000
+
+// Declare Razorpay script interface
+declare global {
+  interface Window {
+    Razorpay: any
+  }
+}
 
 export default function AddFundsPage() {
   const router = useRouter()
@@ -26,8 +27,6 @@ export default function AddFundsPage() {
   const { toast } = useToast()
   const [amount, setAmount] = useState('')
   const [loading, setLoading] = useState(false)
-  const [clientSecret, setClientSecret] = useState('')
-  const [showCheckout, setShowCheckout] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
 
   // Check for success message
@@ -49,7 +48,6 @@ export default function AddFundsPage() {
 
   const handleSelectAmount = (value: number) => {
     setAmount(value.toString())
-    setShowCheckout(false)
   }
 
   const handleCreateCheckout = async () => {
@@ -67,7 +65,7 @@ export default function AddFundsPage() {
     if (amountNum < MIN_AMOUNT) {
       toast({
         title: 'Error',
-        description: `Minimum amount is $${MIN_AMOUNT}`,
+        description: `Minimum amount is ₹${MIN_AMOUNT}`,
         variant: 'destructive',
       })
       return
@@ -76,7 +74,7 @@ export default function AddFundsPage() {
     if (amountNum > MAX_AMOUNT) {
       toast({
         title: 'Error',
-        description: `Maximum amount is $${MAX_AMOUNT}`,
+        description: `Maximum amount is ₹${MAX_AMOUNT}`,
         variant: 'destructive',
       })
       return
@@ -84,6 +82,7 @@ export default function AddFundsPage() {
 
     setLoading(true)
     try {
+      // Create order via Razorpay API
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,12 +95,18 @@ export default function AddFundsPage() {
       }
 
       const data = await response.json()
-      if (data.data?.sessionId) {
-        setClientSecret(data.data.sessionId)
-        setShowCheckout(true)
-      } else {
-        throw new Error('No session created')
+      if (!data.data?.orderId) {
+        throw new Error('No order created')
       }
+
+      // Load Razorpay script dynamically
+      const script = document.createElement('script')
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+      script.async = true
+      script.onload = () => {
+        openRazorpayCheckout(data.data, amountNum)
+      }
+      document.head.appendChild(script)
     } catch (error) {
       toast({
         title: 'Error',
@@ -111,6 +116,76 @@ export default function AddFundsPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const openRazorpayCheckout = async (orderData: any, amount: number) => {
+    if (!window.Razorpay) {
+      toast({
+        title: 'Error',
+        description: 'Failed to load payment system',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      order_id: orderData.orderId,
+      amount: amount * 100, // Convert to paise
+      currency: 'INR',
+      name: 'ALTFaze',
+      description: `Add ₹${amount} to wallet`,
+      customer_id: orderData.customerId,
+      prefill: {
+        name: orderData.customerName,
+        email: orderData.customerEmail,
+      },
+      handler: async (response: any) => {
+        try {
+          // Verify payment on backend
+          const verifyResponse = await fetch('/api/razorpay/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          })
+
+          if (!verifyResponse.ok) {
+            const error = await verifyResponse.json()
+            throw new Error(error.message || 'Payment verification failed')
+          }
+
+          setSuccessMessage('Payment successful! Your wallet has been credited.')
+          setTimeout(() => {
+            router.push('/client/wallet')
+          }, 2000)
+        } catch (error) {
+          toast({
+            title: 'Payment Verification Failed',
+            description: error instanceof Error ? error.message : 'Could not verify payment',
+            variant: 'destructive',
+          })
+        }
+      },
+      modal: {
+        ondismiss: () => {
+          toast({
+            title: 'Payment Cancelled',
+            description: 'You cancelled the payment. Please try again.',
+            variant: 'destructive',
+          })
+        },
+      },
+      theme: {
+        color: '#3b82f6',
+      },
+    }
+
+    const razorpay = new window.Razorpay(options)
+    razorpay.open()
   }
 
   if (successMessage) {
@@ -137,66 +212,53 @@ export default function AddFundsPage() {
           <Link href="/client/wallet">← Back to Wallet</Link>
         </Button>
 
-        {showCheckout && clientSecret ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>Secure Payment</CardTitle>
-              <CardDescription>Complete your payment with Stripe</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
-                <EmbeddedCheckout />
-              </EmbeddedCheckoutProvider>
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-3xl">Add Funds to Wallet</CardTitle>
-              <CardDescription>Fund your wallet to purchase templates and pay for services</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Quick Presets */}
-              <div>
-                <label className="text-sm font-medium block mb-3">Quick Select</label>
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-                  {PRESETS.map((preset) => (
-                    <Button
-                      key={preset}
-                      variant={amount === preset.toString() ? 'default' : 'outline'}
-                      onClick={() => handleSelectAmount(preset)}
-                      disabled={loading}
-                      className="text-sm"
-                    >
-                      ${preset}
-                    </Button>
-                  ))}
-                </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-3xl">Add Funds to Wallet</CardTitle>
+            <CardDescription>Fund your wallet to purchase templates and pay for services</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Quick Presets */}
+            <div>
+              <label className="text-sm font-medium block mb-3">Quick Select</label>
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+                {PRESETS.map((preset) => (
+                  <Button
+                    key={preset}
+                    variant={amount === preset.toString() ? 'default' : 'outline'}
+                    onClick={() => handleSelectAmount(preset)}
+                    disabled={loading}
+                    className="text-sm"
+                  >
+                    ₹{preset}
+                  </Button>
+                ))}
               </div>
+            </div>
 
-              {/* Custom Amount */}
-              <div>
-                <label className="text-sm font-medium block mb-2">Custom Amount</label>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">$</span>
-                    <Input
-                      type="number"
-                      placeholder="Enter amount"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      min={MIN_AMOUNT}
-                      max={MAX_AMOUNT}
-                      step="0.01"
-                      className="pl-7"
-                      disabled={loading}
-                    />
-                  </div>
+            {/* Custom Amount */}
+            <div>
+              <label className="text-sm font-medium block mb-2">Custom Amount</label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">₹</span>
+                  <Input
+                    type="number"
+                    placeholder="Enter amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    min={MIN_AMOUNT}
+                    max={MAX_AMOUNT}
+                    step="1"
+                    className="pl-7"
+                    disabled={loading}
+                  />
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Min: ${MIN_AMOUNT} • Max: ${MAX_AMOUNT}
-                </p>
               </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Min: ₹{MIN_AMOUNT} • Max: ₹{MAX_AMOUNT}
+              </p>
+            </div>
 
               {/* Summary */}
               {amount && !isNaN(parseFloat(amount)) && (
@@ -205,11 +267,11 @@ export default function AddFundsPage() {
                     <div className="space-y-3">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Amount to Add</span>
-                        <span className="font-semibold">${parseFloat(amount).toFixed(2)}</span>
+                        <span className="font-semibold">₹{parseFloat(amount).toFixed(0)}</span>
                       </div>
                       <div className="flex justify-between pt-3 border-t">
                         <span className="font-medium">Total</span>
-                        <span className="text-lg font-bold text-primary">${parseFloat(amount).toFixed(2)}</span>
+                        <span className="text-lg font-bold text-primary">₹{parseFloat(amount).toFixed(0)}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -229,7 +291,7 @@ export default function AddFundsPage() {
                     Processing...
                   </>
                 ) : (
-                  `Proceed to Payment ($${amount ? parseFloat(amount).toFixed(2) : '0.00'})`
+                  `Proceed to Payment (₹${amount ? parseFloat(amount).toFixed(0) : '0'})`
                 )}
               </Button>
 
@@ -241,7 +303,7 @@ export default function AddFundsPage() {
                   </svg>
                   <div>
                     <p className="font-medium">Secure Payment Processing</p>
-                    <p className="text-xs text-muted-foreground">All transactions encrypted with Stripe</p>
+                    <p className="text-xs text-muted-foreground">All transactions encrypted with Razorpay</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 text-sm">
@@ -275,11 +337,11 @@ export default function AddFundsPage() {
                 <div className="space-y-3 mt-3 px-3 text-sm text-muted-foreground border-t pt-3">
                   <div>
                     <p className="font-medium text-foreground mb-1">How long does the payment take?</p>
-                    <p>Payments are processed instantly through Stripe. Your wallet will be credited right away.</p>
+                    <p>Payments are processed instantly through Razorpay. Your wallet will be credited right away.</p>
                   </div>
                   <div>
                     <p className="font-medium text-foreground mb-1">Is my payment information safe?</p>
-                    <p>Yes! All payments are processed securely through Stripe&apos;s PCI-compliant platform.</p>
+                    <p>Yes! All payments are processed securely through Razorpay&apos;s PCI-compliant platform.</p>
                   </div>
                   <div>
                     <p className="font-medium text-foreground mb-1">Can I get a refund?</p>
@@ -289,7 +351,6 @@ export default function AddFundsPage() {
               </details>
             </CardContent>
           </Card>
-        )}
       </div>
     </div>
   )

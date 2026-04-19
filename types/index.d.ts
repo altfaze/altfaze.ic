@@ -52,14 +52,13 @@ export type DashboardConfig = {
   sidebarNav: SidebarNavItem[]
 }
 
-export type SubscriptionPlan = {
+export type PaymentPlan = {
   name: string
   description: string
-  stripePriceId: string
+  amount: number // Amount in INR
 }
 
-export type UserSubscriptionPlan = SubscriptionPlan &
-  Pick<User, "stripeCustomerId" | "stripeSubscriptionId"> & {
-    stripeCurrentPeriodEnd: number
-    isPro: boolean
+export type UserPaymentInfo = 
+  Pick<User, "razorpayCustomerId" | "razorpayContactId"> & {
+    razorpayFundAccountId?: string | null
   }

@@ -128,9 +128,12 @@ export default function HireFreelancerPage() {
         skills: [],
       })
 
-      // Redirect to project detail
-      router.push(`/client/projects/${data.data.id}`)
+      // Redirect to projects list instead of detail to avoid 400 errors
+      setTimeout(() => {
+        router.push(`/client/projects?status=OPEN`)
+      }, 1500)
     } catch (error) {
+      console.error('[PROJECT_CREATE_ERROR]', error)
       toast({
         title: 'Error',
         description: error instanceof Error ? error.message : 'Failed to create project',

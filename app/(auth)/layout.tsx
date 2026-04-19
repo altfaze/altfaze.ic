@@ -8,19 +8,19 @@ interface AuthLayoutProps {
 
 // Auth pages don't get individual metadata - use a generic auth metadata
 export const metadata: Metadata = generateMetadata({
-  title: "Authentication - Altfaze Freelance Marketplace",
-  description: "Sign in or create a free account on Altfaze to hire freelancers or start earning as a freelancer.",
+  title: "AltFaze Login – Sign In to Your Freelance Account",
+  description: "Sign in to your AltFaze account to hire freelancers, find projects, or start earning as a freelancer. Secure login for the #1 freelance marketplace.",
   keywords: [
-    "login",
-    "sign up",
-    "register",
-    "create account",
+    "AltFaze login",
+    "AltFaze sign in",
     "freelancer login",
-    "account"
+    "client account",
+    "AltFaze account access",
+    "sign in freelance"
   ],
   path: "/auth",
-  ogTitle: "Sign In to Altfaze",
-  ogDescription: "Access your Altfaze account to hire talent or start freelancing."
+  ogTitle: "AltFaze Login",
+  ogDescription: "Access your AltFaze account to hire talent or start freelancing."
 })
 
 export default function AuthLayout({ children }: AuthLayoutProps) {

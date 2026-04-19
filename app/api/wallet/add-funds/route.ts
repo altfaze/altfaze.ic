@@ -36,7 +36,11 @@ export async function POST(req: NextRequest) {
         amount,
         status: 'COMPLETED',
         description: `Added $${amount} to wallet`,
-        stripeSessionId,
+        metadata: {
+          stripeSessionId,
+          source: 'wallet_topup',
+          completedAt: new Date().toISOString(),
+        },
       },
     })
 

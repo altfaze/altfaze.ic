@@ -418,13 +418,15 @@ Authorization: Bearer {token}
 
 ### Create Payment Intent
 ```http
-POST /api/checkout
+POST /api/payments/checkout
 Authorization: Bearer {token}
 Content-Type: application/json
 
 {
+  "freelancerId": "user_123",
+  "amount": 5000,
   "projectId": "project_123",
-  "amount": 5000
+  "description": "Payment for project"
 }
 ```
 
@@ -432,24 +434,45 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "sessionId": "cs_test_...",
-  "url": "https://checkout.stripe.com/pay/cs_test_..."
+  "data": {
+    "orderId": "order_DBJOWzybf0sJbb",
+    "amount": 5000,
+    "currency": "INR",
+    "keyId": "rzp_test_xxx",
+    "transactionId": "txn_123"
+  }
+}
+```
+
+### Payment Verification
+```http
+POST /api/razorpay/verify
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "razorpay_order_id": "order_DBJOWzybf0sJbb",
+  "razorpay_payment_id": "pay_DBJOWzybf0sJbb",
+  "razorpay_signature": "signature_hex_string"
 }
 ```
 
 ### Payment Webhook
 ```http
-POST /api/stripe/webhook
+POST /api/razorpay/webhook
 Content-Type: application/json
-Stripe-Signature: t=...,v1=...
+x-razorpay-signature: signature_hex_string
 
 {
-  "type": "charge.succeeded",
-  "data": {
-    "object": {
-      "id": "ch_...",
-      "amount": 500000,
-      "status": "succeeded"
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_xxx",
+        "order_id": "order_xxx",
+        "amount": 500000,
+        "status": "captured"
+      }
     }
   }
 }

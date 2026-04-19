@@ -7,21 +7,20 @@ import { Metadata } from "next";
 import { generateMetadata } from "@/lib/seo/metadata-generator";
 
 export const metadata: Metadata = generateMetadata({
-  title: 'Project Management - Post & Manage Freelance Projects | ALTFaze',
-  description: 'Post your project needs, get competitive bids from freelancers, and manage projects end-to-end on ALTFaze. Web development, design, marketing & more.',
+  title: 'AltFaze – Post & Manage Freelance Projects | Hire Top Talent',
+  description: 'Post your project on AltFaze and get bids from top freelancers. Manage web development, design, and marketing projects end-to-end with secure payments and escrow protection.',
   keywords: [
-    'project management',
-    'post projects',
-    'freelance projects',
-    'project bidding',
+    'AltFaze projects',
+    'post projects AltFaze',
+    'freelance projects AltFaze',
+    'project management platform',
     'hire for projects',
-    'project collaboration',
-    'freelance project platform',
-    'web development projects'
+    'project bidding platform',
+    'collaborate with freelancers'
   ],
   path: '/projects',
-  ogTitle: 'Manage Your Projects with Top Talent - ALTFaze',
-  ogDescription: 'Post projects, get bids from vetted freelancers, and collaborate smoothly from start to finish.'
+  ogTitle: 'Post & Manage Projects on AltFaze – Hire Top Freelancers',
+  ogDescription: 'Post your projects and get bids from vetted freelancers. Manage collaboration, payments, and delivery securely on AltFaze.'
 })
 
 const projects = [

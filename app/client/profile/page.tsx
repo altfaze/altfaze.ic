@@ -48,7 +48,10 @@ export default function ProfilePage() {
       const res = await fetch('/api/users/profile', {
         cache: 'no-store',
       })
-      if (!res.ok) throw new Error('Failed to fetch profile')
+      if (!res.ok) {
+        console.error(`[PROFILE_FETCH_ERROR] Status: ${res.status}`)
+        throw new Error('Failed to fetch profile')
+      }
 
       const json: ProfileResponse = await res.json()
       setProfile(json.data.user)
@@ -61,9 +64,10 @@ export default function ProfilePage() {
         skills: json.data.user.freelancer?.skills.join(', ') || '',
       })
     } catch (error) {
+      console.error('[PROFILE_FETCH_ERROR]', error)
       toast({
         title: 'Error',
-        description: 'Failed to load profile',
+        description: 'Failed to load profile. Please refresh the page.',
         variant: 'destructive',
       })
     } finally {

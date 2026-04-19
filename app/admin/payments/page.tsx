@@ -21,7 +21,7 @@ export default function AdminPaymentsPage() {
           </p>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc list-inside">
             <li>View all transactions across the platform</li>
-            <li>Track Stripe payments and webhooks</li>
+            <li>Track Razorpay payments and webhooks</li>
             <li>Monitor escrow fund movements</li>
             <li>Verify payment settlements</li>
             <li>Generate payment reports and reconciliation</li>

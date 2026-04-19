@@ -155,7 +155,7 @@ model Transaction {
   type                TransactionType
   amount              Float
   status              TransactionStatus @default(PENDING)
-  stripeId            String?     // Stripe charge/payment ID
+  razorpayPaymentId   String?     // Razorpay payment ID
   
   // Relations
   projectId           String?

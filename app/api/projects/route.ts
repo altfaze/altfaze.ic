@@ -205,7 +205,7 @@ export async function PATCH(req: NextRequest) {
       return errorResponse(400, 'Valid status is required')
     }
 
-    const validStatuses = ['OPEN', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED']
+    const validStatuses = ['OPEN', 'IN_PROGRESS', 'SUBMITTED', 'COMPLETED', 'CANCELLED']
     if (!validStatuses.includes(status)) {
       return errorResponse(400, `Invalid status. Must be one of: ${validStatuses.join(', ')}`)
     }

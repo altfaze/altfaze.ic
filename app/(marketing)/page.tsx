@@ -6,27 +6,23 @@ import { Metadata } from "next";
 import { generateMetadata, generatePageSchema } from "@/lib/seo/metadata-generator";
 
 export const metadata: Metadata = generateMetadata({
-  title: "Freelance Marketplace - Hire Developers, Buy Templates & Find Freelancers",
-  description: "Altfaze is the best freelance marketplace to hire professional web developers, buy website templates, and launch projects fast. Find 1000+ skilled freelancers for your business. Affordable web development services in India and worldwide.",
+  title: 'AltFaze – Freelance Marketplace to Hire Developers, Buy Templates, Find Projects',
+  description: 'AltFaze is the leading freelance marketplace platform. Hire web developers and designers, buy premium website templates, post projects, and earn as a freelancer. Trusted marketplace with secure payments.',
   keywords: [
-    "freelance marketplace",
-    "hire web developers",
-    "buy website templates",
-    "freelance jobs online",
-    "web development services",
-    "hire developers",
-    "freelancer platform",
-    "website templates",
-    "affordable web development",
-    "hire developers india",
-    "UI/UX design services",
-    "project management",
-    "startup services",
-    "find freelancers"
+    'AltFaze freelance platform',
+    'hire freelancers online AltFaze',
+    'AltFaze projects marketplace',
+    'AltFaze client dashboard',
+    'AltFaze freelancer services',
+    'AltFaze job posting platform',
+    'AltFaze hire developers',
+    'AltFaze remote work',
+    'freelance marketplace',
+    'hire web developers'
   ],
   path: "/",
-  ogTitle: "Altfaze - The #1 Freelance Marketplace",
-  ogDescription: "Hire developers, designers, and freelancers. Buy premium website templates. Launch your projects faster with expert professionals."
+  ogTitle: "AltFaze – The #1 Freelance Marketplace for Hiring & Projects",
+  ogDescription: "Hire professionals, find projects, buy templates. AltFaze is your complete freelance marketplace for web development, design, and remote work."
 });
 
 export default function Home() {

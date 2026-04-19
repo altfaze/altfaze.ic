@@ -3,16 +3,16 @@ import { Metadata } from 'next'
 import { generateMetadata } from '@/lib/seo/metadata-generator'
 
 export const metadata: Metadata = generateMetadata({
-  title: 'Affordable Pricing Plans - Hire Freelancers & Buy Templates',
-  description: 'Transparent pricing for hiring freelancers and buying website templates. No hidden fees. Pay for what you use. Secure escrow payments and commission structure.',
+  title: 'AltFaze Pricing – Affordable Plans to Hire Freelancers & Buy Templates',
+  description: 'Simple, transparent pricing on AltFaze. Hire freelancers, buy website templates, and manage projects with flexible pricing. No hidden fees. Secure escrow protection.',
   keywords: [
-    'freelance pricing',
-    'template pricing',
-    'affordable services',
-    'pricing plans',
-    'commission',
-    'freelance rates',
-    'service pricing'
+    'AltFaze pricing',
+    'freelance pricing AltFaze',
+    'affordable freelance services',
+    'AltFaze rates',
+    'commission structure',
+    'transparent pricing',
+    'freelance platform pricing'
   ],
   path: '/pricing'
 })

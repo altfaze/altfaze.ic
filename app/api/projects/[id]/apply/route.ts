@@ -3,8 +3,7 @@ import { db } from '@/lib/db'
 import { requireAuthWithRole, handleApiError } from '@/lib/auth-middleware'
 import { successResponse, errorResponse } from '@/lib/api-utils'
 import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
-import { validateCreateRequest } from '@/lib/validations/request'
-import { emitRequestSent, emitRequestAccepted } from '@/lib/realtime'
+import { emitRequestSent } from '@/lib/realtime'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -26,7 +25,7 @@ export async function POST(
     const { userId } = await requireAuthWithRole(req, 'FREELANCER')
     const projectId = params.id
     const body = await req.json()
-    const { proposal, bidAmount } = body
+    const { amount, message } = body
 
     // Validate project exists and is OPEN
     const project = await db.project.findUnique({
@@ -47,14 +46,8 @@ export async function POST(
     }
 
     // Validate input
-    const validation = validateCreateRequest({
-      projectId,
-      proposal,
-      bidAmount,
-    })
-
-    if (!validation.valid) {
-      return errorResponse(400, 'Validation failed', validation.errors)
+    if (!amount || parseFloat(amount) <= 0) {
+      return errorResponse(400, 'Offer amount must be greater than 0')
     }
 
     // Check for duplicate application
@@ -79,11 +72,11 @@ export async function POST(
     const newRequest = await db.request.create({
       data: {
         title: `Proposal for: ${project.title}`,
-        description: proposal,
+        description: message || '',
         senderId: userId,
         receiverId: project.creatorId,
         projectId,
-        amount: bidAmount,
+        amount: parseFloat(amount),
         dueDate: project.deadline,
         status: 'PENDING',
       },
@@ -107,7 +100,7 @@ export async function POST(
         data: {
           userId,
           action: 'REQUEST_SENT',
-          description: `Applied to project: "${project.title}" with $${bidAmount} bid`,
+          description: `Applied to project: "${project.title}" with $${amount} bid`,
           metadata: { projectId, requestId: newRequest.id },
         },
       })

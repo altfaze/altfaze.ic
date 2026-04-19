@@ -3,18 +3,18 @@ import { Metadata } from 'next'
 import { generateMetadata } from '@/lib/seo/metadata-generator'
 
 export const metadata: Metadata = generateMetadata({
-  title: 'Buy Premium Website Templates - React, Next.js, Tailwind',
-  description: 'Browse 100+ professional website templates for React, Next.js, and more. Buy affordable website templates for SaaS, e-commerce, dashboards, and landing pages. Ready to deploy.',
+  title: 'AltFaze Templates – Buy Premium Website Templates | React, Next.js',
+  description: 'Browse 1000+ professional website templates on AltFaze. Buy ready-to-deploy React, Next.js, and Tailwind templates for SaaS, e-commerce, dashboards, and more. Launch fast.',
   keywords: [
-    'website templates',
-    'buy website templates',
+    'AltFaze templates',
+    'buy website templates AltFaze',
     'React templates',
     'Next.js templates',
-    'responsive templates',
+    'website templates marketplace',
     'SaaS templates',
     'e-commerce templates',
-    'landing page templates',
-    'responsive design'
+    'responsive templates',
+    'affordable templates'
   ],
   path: '/templates'
 })

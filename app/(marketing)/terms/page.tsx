@@ -1,5 +1,20 @@
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { Metadata } from 'next'
+import { generateMetadata } from '@/lib/seo/metadata-generator'
+
+export const metadata: Metadata = generateMetadata({
+  title: 'Terms of Service – AltFaze Freelance Marketplace',
+  description: 'Review AltFaze terms of service. Understand the rules, conditions, and agreements for using our freelance marketplace platform.',
+  keywords: [
+    'terms of service',
+    'user agreement',
+    'platform rules',
+    'conditions',
+    'terms and conditions'
+  ],
+  path: '/terms'
+})
 
 export default function TermsPage() {
   return (

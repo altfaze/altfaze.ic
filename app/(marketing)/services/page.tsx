@@ -6,22 +6,22 @@ import { Metadata } from "next";
 import { generateMetadata } from "@/lib/seo/metadata-generator";
 
 export const metadata: Metadata = generateMetadata({
-  title: 'Freelance Services - Web Development, Design & Templates | ALTFaze',
-  description: 'Discover all ALTFaze services: hire freelancers, sell services, buy website templates, project management. Find professionals for web development, design, marketing & more.',
+  title: 'AltFaze Services – Hire Freelancers, Buy Templates & Sell Services',
+  description: 'Explore AltFaze services: hire freelancers for web development & design, buy premium website templates, or sell your professional services. Complete freelance marketplace solutions.',
   keywords: [
+    'AltFaze services',
+    'hire freelancers AltFaze',
+    'AltFaze templates',
+    'sell services AltFaze',
     'freelance services',
     'web development services',
     'design services',
-    'freelance marketplace',
     'hiring services',
-    'template marketplace',
-    'digital services',
-    'professional services',
-    'project management services'
+    'professional services'
   ],
   path: '/services',
-  ogTitle: 'Complete Freelance Services - ALTFaze',
-  ogDescription: 'From hiring top talent to buying templates and earning as a freelancer - everything you need in one platform.'
+  ogTitle: 'AltFaze Services – Hire, Buy & Sell Professional Services',
+  ogDescription: 'Complete service marketplace on AltFaze. Hire talented developers, buy website templates, or earn as a freelancer.'
 })
 
 export default function ServicesPage() {

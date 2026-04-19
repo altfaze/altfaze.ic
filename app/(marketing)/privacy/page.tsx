@@ -1,5 +1,20 @@
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { Metadata } from 'next'
+import { generateMetadata } from '@/lib/seo/metadata-generator'
+
+export const metadata: Metadata = generateMetadata({
+  title: 'Privacy Policy – AltFaze Freelance Marketplace',
+  description: 'Read AltFaze privacy policy. Learn how we collect, use, and protect your personal data on our freelance marketplace platform.',
+  keywords: [
+    'privacy policy',
+    'data protection',
+    'GDPR compliance',
+    'user privacy',
+    'data security'
+  ],
+  path: '/privacy'
+})
 
 export default function PrivacyPage() {
   return (

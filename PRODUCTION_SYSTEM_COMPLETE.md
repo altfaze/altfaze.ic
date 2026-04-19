@@ -507,7 +507,7 @@ All wallet updates use Prisma transactions:
 2. **Real-Time**: WebSocket system for live notifications
 3. **Search**: Debounced freelancer search with advanced filters
 4. **First Purchase**: Discount logic for new users
-5. **Stripe Integration**: Complete webhook handlers
+5. **Razorpay Integration**: Complete webhook handlers (INR payments)
 6. **Testing**: Unit/integration test suite
 7. **Performance**: Query optimization, caching
 8. **Monitoring**: Error tracking, analytics

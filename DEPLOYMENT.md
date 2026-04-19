@@ -31,7 +31,7 @@ Complete guide to deploying Altfaze to production.
 
 ### Security
 - [ ] NEXTAUTH_SECRET generated
-- [ ] Stripe keys secured
+- [ ] Razorpay keys secured
 - [ ] API rate limiting enabled
 - [ ] CORS configured
 - [ ] HTTPS enforced
@@ -98,10 +98,10 @@ DATABASE_URL=postgresql://user:password@host:5432/altfaze_db
 NEXTAUTH_SECRET=your_generated_secret
 NEXTAUTH_URL=https://your-domain.vercel.app
 
-# Stripe
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_xxxxx
-STRIPE_SECRET_KEY=sk_live_xxxxx
-STRIPE_WEBHOOK_SECRET=whsec_xxxxx
+# Razorpay (for Indian INR payments)
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_live_xxxxx
+RAZORPAY_KEY_SECRET=key_secret_xxxxx
+RAZORPAY_WEBHOOK_SECRET=webhook_secret_xxxxx
 
 # Optional
 NEXT_PUBLIC_GA_ID=G-XXXXXXXX
@@ -148,22 +148,22 @@ NEXTAUTH_URL=https://your-domain.com
 
 ⚠️ Must match your actual domain in production
 
-### Stripe Keys
+### Razorpay Keys
 
-**Get from**: https://dashboard.stripe.com/apikeys
+**Get from**: https://dashboard.razorpay.com/app/keys
 
 ```env
-# Publishable (safe to expose)
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+# Public Key (safe to expose)
+NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_live_...
 
-# Secret (NEVER expose)
-STRIPE_SECRET_KEY=sk_live_...
+# Secret Key (NEVER expose)
+RAZORPAY_KEY_SECRET=key_secret_live_...
 ```
 
 **Get webhook secret from**: Settings → Webhooks
 
 ```env
-STRIPE_WEBHOOK_SECRET=whsec_...
+RAZORPAY_WEBHOOK_SECRET=webhook_secret_...
 ```
 
 ### Optional Services

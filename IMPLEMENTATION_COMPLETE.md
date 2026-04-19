@@ -276,7 +276,7 @@ IMPLEMENTATION.md            - This file
 - ✅ Wallet balance
 - ✅ Earnings tracking
 - ✅ Account status
-- ✅ Stripe integration fields
+- ✅ Razorpay integration fields
 
 ### Project Model
 - ✅ Full lifecycle (OPEN → IN_PROGRESS → COMPLETED)
@@ -296,7 +296,7 @@ IMPLEMENTATION.md            - This file
 ### Transaction Model
 - ✅ Multiple types (PAYMENT, EARNING, WITHDRAWAL, REFUND)
 - ✅ Commission calculation
-- ✅ Stripe integration
+- ✅ Razorpay integration
 - ✅ Metadata storage
 
 ### Template Model

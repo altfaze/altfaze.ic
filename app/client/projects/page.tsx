@@ -53,17 +53,26 @@ export default function ProjectsPage() {
       if (status) url += `&status=${status}`
 
       const res = await fetch(url, { cache: 'no-store' })
-      if (!res.ok) throw new Error('Failed to fetch projects')
+      
+      if (!res.ok) {
+        console.error(`[PROJECTS_FETCH_ERROR] Status: ${res.status}`)
+        throw new Error('Failed to fetch projects. Please try again.')
+      }
 
       const json: ProjectsResponse = await res.json()
-      setProjects(json.data.projects)
+      setProjects(json.data?.projects || [])
     } catch (error) {
-      console.error('Error fetching projects:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to load projects',
-        variant: 'destructive',
-      })
+      console.error('[PROJECTS_FETCH_ERROR]', error)
+      // Don't show error toast, just set empty projects
+      setProjects([])
+      // Optionally show a less intrusive notification
+      if (error instanceof Error && !error.message.includes('Failed to fetch')) {
+        toast({
+          title: 'Notice',
+          description: 'Could not load projects. Please refresh.',
+          variant: 'default',
+        })
+      }
     } finally {
       setLoading(false)
     }

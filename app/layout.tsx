@@ -7,48 +7,48 @@ import { ModeToggle } from "@/components/toggle";
 import MobileNav from "@/components/mobile-nav";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
-import { OrganizationSchema, LocalBusinessSchema, ServiceSchema, MarketplaceProductSchema, FAQSchema, BreadcrumbSchema } from "@/app/schema-markup";
+import { OrganizationSchema, LocalBusinessSchema, ServiceSchema, MarketplaceProductSchema, FAQSchema, BreadcrumbSchema, WebsiteSchema } from "@/app/schema-markup";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Altfaze - Best Freelance Marketplace to Hire Developers & Buy Website Templates",
-  description: "Altfaze is the leading freelance marketplace. Hire web developers, UI/UX designers, and freelancers for your projects. Buy premium website templates & build online fast. Access 1000+ skilled professionals.",
+  title: "AltFaze – Hire Freelancers, Find Projects & Buy Website Templates",
+  description: "AltFaze is the leading freelance marketplace. Hire web developers, UI/UX designers, and freelancers. Buy premium website templates, post projects, and work securely. 1000+ skilled professionals available.",
   keywords: [
-    "freelance marketplace",
+    "AltFaze freelance marketplace",
     "hire web developers",
+    "hire freelancers online",
     "website templates",
     "freelance jobs",
-    "hire freelancers",
     "web development services",
     "UI/UX design",
     "buy templates",
-    "hire developers India",
-    "affordable web development",
-    "startup services",
-    "freelance hiring platform",
-    "find freelancers online"
+    "freelance platform",
+    "find freelancers",
+    "project management",
+    "remote work platform",
+    "affordable web development"
   ],
-  authors: [{ name: "Altfaze" }],
+  authors: [{ name: "AltFaze" }],
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: "https://altfaze.in",
-    siteName: "Altfaze",
-    title: "Altfaze - Best Freelance Marketplace",
-    description: "Hire developers, designers, and freelancers. Buy website templates. Launch projects faster.",
+    siteName: "AltFaze",
+    title: "AltFaze – The #1 Freelance Marketplace Platform",
+    description: "Hire professionals, find projects, buy templates. Complete freelance marketplace for businesses and remote workers.",
     images: [
       {
         url: "https://altfaze.in/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Altfaze Freelance Marketplace"
+        alt: "AltFaze Freelance Marketplace"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Altfaze - Hire Freelancers & Buy Templates",
-    description: "The #1 freelance marketplace to hire developers and buy website templates.",
+    title: "AltFaze – Hire Freelancers & Buy Templates",
+    description: "The #1 freelance marketplace to hire developers, find projects, and buy website templates.",
     images: ["https://altfaze.in/og-image.png"],
     creator: "@altfaze"
   },
@@ -79,6 +79,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning style={{ fontFamily: "var(--font-display)" }}>
       <head>
+        <WebsiteSchema />
         <OrganizationSchema />
         <LocalBusinessSchema />
         <ServiceSchema />

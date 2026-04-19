@@ -11,21 +11,20 @@ import {
 import Link from 'next/link'
 
 export const metadata: Metadata = generateMetadata({
-  title: 'FAQ - Altfaze Freelance Marketplace | How to Hire Freelancers & Buy Templates',
-  description: 'Frequently asked questions about Altfaze. Learn how to hire freelancers, become a freelancer, buy website templates, and use our secure payment system.',
+  title: 'AltFaze FAQ – Hire Freelancers, Buy Templates & Start Earning',
+  description: 'Frequently asked questions about AltFaze freelance marketplace. Learn how to hire developers, become a freelancer, buy website templates, and use secure payments.',
   keywords: [
-    'FAQ',
-    'frequently asked questions',
-    'how to hire freelancers',
-    'how to become freelancer',
-    'website templates FAQ',
-    'payment security',
-    'platform questions',
-    'freelance marketplace help'
+    'AltFaze FAQ',
+    'AltFaze help',
+    'how to hire on AltFaze',
+    'AltFaze freelancer guide',
+    'AltFaze templates FAQ',
+    'freelance marketplace help',
+    'AltFaze payment security'
   ],
   path: '/faq',
-  ogTitle: 'Frequently Asked Questions - ALTfaze',
-  ogDescription: 'Get answers to common questions about hiring freelancers, selling services, buying templates, and using our platform.'
+  ogTitle: 'AltFaze FAQ – Your Questions Answered',
+  ogDescription: 'Get answers to common questions about hiring, freelancing, templates, and payments on AltFaze.'
 })
 
 const faqs = [

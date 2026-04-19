@@ -62,6 +62,12 @@ export function DashboardSidebar() {
       roles: ["FREELANCER"],
     },
     {
+      href: "/freelancer/clients",
+      title: "Browse Clients",
+      icon: <Icons.briefcase className="h-4 w-4" />,
+      roles: ["FREELANCER"],
+    },
+    {
       href: routePrefix + "/templates",
       title: "Templates",
       icon: <Icons.package className="h-4 w-4" />,

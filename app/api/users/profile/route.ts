@@ -27,6 +27,9 @@ export async function GET(req: NextRequest) {
         walletBalance: true,
         totalSpent: true,
         totalEarned: true,
+        razorpayCustomerId: true,
+        razorpayContactId: true,
+        razorpayFundAccountId: true,
         freelancer: {
           select: {
             title: true,
@@ -53,6 +56,9 @@ export async function GET(req: NextRequest) {
         walletBalance: user.walletBalance?.toNumber() || 0,
         totalSpent: user.totalSpent?.toNumber() || 0,
         totalEarned: user.totalEarned?.toNumber() || 0,
+        razorpayCustomerId: user.razorpayCustomerId,
+        razorpayContactId: user.razorpayContactId,
+        razorpayFundAccountId: user.razorpayFundAccountId,
         freelancer: user.freelancer,
       },
       200,
@@ -101,6 +107,9 @@ export async function PUT(req: NextRequest) {
         image: true,
         role: true,
         walletBalance: true,
+        razorpayCustomerId: true,
+        razorpayContactId: true,
+        razorpayFundAccountId: true,
         freelancer: {
           select: {
             title: true,
@@ -132,6 +141,9 @@ export async function PUT(req: NextRequest) {
         image: updated.image,
         role: updated.role,
         walletBalance: updated.walletBalance?.toNumber() || 0,
+        razorpayCustomerId: updated.razorpayCustomerId,
+        razorpayContactId: updated.razorpayContactId,
+        razorpayFundAccountId: updated.razorpayFundAccountId,
         freelancer: updated.freelancer,
       },
       200,

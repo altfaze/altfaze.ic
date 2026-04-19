@@ -1,11 +1,26 @@
-"use client"
-
 import Link from "next/link"
+import { Metadata } from "next"
+import { generateMetadata } from "@/lib/seo/metadata-generator"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/more-icons"
 import { UserAuthForm } from "@/components/user-auth-form"
+
+// Register page needs separate metadata to override layout metadata
+export const metadata: Metadata = generateMetadata({
+  title: "AltFaze Sign Up – Join as Freelancer or Client",
+  description: "Create your free AltFaze account. Join as a freelancer to earn money or as a client to hire top talent. Quick registration process.",
+  keywords: [
+    "AltFaze sign up",
+    "register freelancer",
+    "create account",
+    "join freelance platform"
+  ],
+  path: "/register",
+  ogTitle: "Join AltFaze – Start Your Freelance Journey",
+  ogDescription: "Register for free and start hiring freelancers or earning as a freelancer on AltFaze."
+})
 
 export default function RegisterPage() {
   return (

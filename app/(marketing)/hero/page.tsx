@@ -15,23 +15,26 @@ import Image from "next/image";
 import React from "react";
 
 export const metadata: Metadata = generateMetadata({
-  title: 'Freelance Marketplace - Hire Web Developers & Buy Website Templates | ALTfaze',
-  description: 'Connect with top freelancers, hire web developers, and buy premium website templates. ALTfaze is the #1 marketplace for web development services, UI/UX design, and template solutions.',
+  title: 'AltFaze – Hire Freelancers, Find Projects, Work Marketplace Platform',
+  description: 'AltFaze is the leading freelance marketplace to hire web developers, designers, and talented professionals. Find projects, buy premium website templates, and launch your business fast. Trusted by 1000+ businesses.',
   keywords: [
+    'AltFaze freelance platform',
+    'hire freelancers online AltFaze',
+    'AltFaze projects marketplace',
+    'AltFaze client dashboard',
+    'AltFaze freelancer services',
+    'AltFaze job posting platform',
+    'AltFaze hire developers designers',
+    'AltFaze remote work platform',
     'freelance marketplace',
     'hire web developers',
     'website templates',
-    'freelance platform',
-    'web development services',
-    'buy templates',
-    'UI/UX designers',
-    'affordable freelancers',
-    'template marketplace',
-    'web development marketplace'
+    'freelance jobs',
+    'hire freelancers'
   ],
   path: '/hero',
-  ogTitle: 'ALTfaze - Hire Freelancers & Buy Website Templates',
-  ogDescription: 'The #1 marketplace to hire professional web developers and purchase premium website templates. Launch your projects faster with expert freelancers.'
+  ogTitle: 'AltFaze – The #1 Freelance Marketplace Platform',
+  ogDescription: 'Hire professionals, find projects, buy templates. AltFaze is your complete freelance marketplace for web development, design, and remote work.'
 })
 
 function HeroPage() {
@@ -44,14 +47,14 @@ function HeroPage() {
             className="text-center capitalize bg-muted px-4 py-1.5 text-lg font-medium absolute"
             color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
           >
-            Welcome to ALTfaze 🚀
+            Welcome to AltFaze 🚀
           </ShineBorder>
 
           <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl mt-20">
-            Best Freelance Marketplace to Hire Web Developers & Buy Website Templates
+            AltFaze – Hire Freelancers & Buy Website Templates
           </h1>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            The #1 freelance platform to hire professional developers, find skilled UI/UX designers, buy premium website templates, and launch your projects in days. Get expert web development services from top freelancers worldwide.
+            The #1 freelance marketplace platform to hire professional web developers, find skilled UI/UX designers, buy premium website templates, and launch your projects in days. Access 1000+ expert freelancers worldwide.
           </p>
           <div className="space-x-4">
             <Link href="/login" className={cn(buttonVariants({ size: "lg" }))}>

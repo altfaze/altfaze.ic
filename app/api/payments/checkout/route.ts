@@ -2,8 +2,7 @@ import { NextRequest } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAuth, handleApiError } from '@/lib/auth-middleware'
 import { successResponse, errorResponse, isValidAmount } from '@/lib/api-utils'
-import { createCheckoutSession } from '@/lib/stripe'
-import { logPaymentCompletion } from '@/lib/activity'
+import { createOrder } from '@/lib/razorpay'
 import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
 
 // Force dynamic rendering for payment operations
@@ -26,8 +25,8 @@ export async function POST(req: NextRequest) {
       return errorResponse(400, 'freelancerId is required')
     }
 
-    if (!isValidAmount(amount, 0.01)) {
-      return errorResponse(400, 'Valid amount is required (minimum 0.01)')
+    if (!isValidAmount(amount, 1)) {
+      return errorResponse(400, 'Valid amount is required (minimum ₹1)')
     }
 
     // Verify freelancer exists
@@ -43,26 +42,23 @@ export async function POST(req: NextRequest) {
     // Verify client exists and get details
     const client = await db.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, name: true, stripeCustomerId: true },
+      select: { id: true, email: true, name: true },
     })
 
     if (!client) {
       return errorResponse(404, 'Client not found')
     }
 
-    // Create Stripe checkout session
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'
-    
     try {
-      const session = await createCheckoutSession({
-        clientId: userId,
-        freelancerId: freelancerId,
+      // Create Razorpay order
+      const order = await createOrder({
         amount: parseFloat(amount),
-        projectId: projectId || undefined,
-        templateId: templateId || undefined,
+        currency: 'INR',
+        receipt: `order_${userId}_${Date.now()}`,
         description: description || 'Payment for project/template',
-        successUrl: `${appUrl}/payment-success?sessionId={CHECKOUT_SESSION_ID}`,
-        cancelUrl: `${appUrl}/payment-cancelled`,
+        customerName: client.name || 'Customer',
+        customerEmail: client.email || '',
+        customerId: userId,
       })
 
       // Create pending transaction record
@@ -72,14 +68,14 @@ export async function POST(req: NextRequest) {
           type: 'PAYMENT',
           amount: parseFloat(amount),
           status: 'PENDING',
-          stripeSessionId: session.id,
+          razorpayOrderId: order.id,
           description: description || 'Payment for project/template',
           senderId: userId,
           receiverId: freelancerId,
           projectId: projectId || null,
           templateId: templateId || null,
           metadata: {
-            checkoutSessionId: session.id,
+            razorpayOrderId: order.id,
             freelancerId,
             clientEmail: client.email,
             freelancerEmail: freelancer.email,
@@ -89,18 +85,20 @@ export async function POST(req: NextRequest) {
 
       return successResponse(
         {
-          sessionId: session.id,
-          url: session.url,
+          orderId: order.id,
           amount: parseFloat(amount),
           description: description || 'Payment',
-          currency: 'inr',
+          currency: 'INR',
+          keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          customerName: client.name,
+          customerEmail: client.email,
         },
         200,
-        'Checkout session created'
+        'Order created successfully'
       )
-    } catch (stripeError: any) {
-      console.error('[STRIPE_ERROR]', stripeError)
-      return errorResponse(500, 'Failed to create payment session. Please try again.')
+    } catch (razorpayError: any) {
+      console.error('[RAZORPAY_ERROR]', razorpayError)
+      return errorResponse(500, 'Failed to create payment order. Please try again.')
     }
   } catch (error) {
     console.error('[PAYMENTS_CHECKOUT_ERROR]', error)
@@ -109,7 +107,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * GET /api/payments/checkout?sessionId=...
+ * GET /api/payments/checkout?orderId=...
  * Get checkout session status
  */
 export async function GET(req: NextRequest) {
@@ -121,15 +119,15 @@ export async function GET(req: NextRequest) {
 
     const { userId } = await requireAuth(req)
 
-    const sessionId = req.nextUrl.searchParams.get('sessionId')
+    const orderId = req.nextUrl.searchParams.get('orderId')
 
-    if (!sessionId) {
-      return errorResponse(400, 'sessionId is required')
+    if (!orderId) {
+      return errorResponse(400, 'orderId is required')
     }
 
-    // Get transaction by session ID
+    // Get transaction by order ID
     const transaction = await db.transaction.findUnique({
-      where: { stripeSessionId: sessionId },
+      where: { razorpayOrderId: orderId },
       select: {
         id: true,
         status: true,
@@ -152,7 +150,7 @@ export async function GET(req: NextRequest) {
         createdAt: transaction.createdAt,
       },
       200,
-      'Checkout session retrieved'
+      'Order retrieved'
     )
   } catch (error) {
     console.error('[PAYMENTS_GET_ERROR]', error)

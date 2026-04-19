@@ -48,11 +48,11 @@ export async function POST(
       return errorResponse(400, 'Submission description is required')
     }
 
-    // Create update/submission record
+    // Update project to SUBMITTED status (waiting for client approval)
     const updatedProject = await db.project.update({
       where: { id: projectId },
       data: {
-        status: 'COMPLETED',
+        status: 'SUBMITTED',
         description: `${project.description}\n\n--- SUBMISSION ---\n${submission}\nSubmission URL: ${submissionUrl || 'N/A'}`,
         updatedAt: new Date(),
       },
@@ -68,7 +68,7 @@ export async function POST(
         data: {
           userId,
           action: 'WORK_SUBMITTED',
-          description: `Submitted work for project: "${project.title}"`,
+          description: `Submitted work for project: "${project.title}" - Awaiting client approval`,
           metadata: { projectId, submissionUrl },
         },
       })
@@ -86,7 +86,7 @@ export async function POST(
         updatedAt: updatedProject.updatedAt,
       },
       200,
-      'Work submitted successfully. Client will review and approve.'
+      'Work submitted successfully. Waiting for client approval.'
     )
   } catch (error) {
     console.error('[SUBMIT_PROJECT_ERROR]', error)
@@ -130,12 +130,12 @@ export async function PATCH(
       return errorResponse(403, 'Only project creator can approve work')
     }
 
-    if (project.status !== 'COMPLETED') {
-      return errorResponse(400, 'Project must be in COMPLETED status to approve')
+    if (project.status !== 'SUBMITTED') {
+      return errorResponse(400, 'Project must be in SUBMITTED status to approve/reject')
     }
 
     if (!approved) {
-      // Reject and send back to IN_PROGRESS
+      // Reject and send back to IN_PROGRESS for revisions
       const rejectedProject = await db.project.update({
         where: { id: projectId },
         data: {
@@ -162,7 +162,7 @@ export async function PATCH(
         {
           id: rejectedProject.id,
           status: rejectedProject.status,
-          message: 'Work rejected. Freelancer notified.',
+          message: 'Work rejected. Freelancer notified to make revisions.',
         },
         200,
         'Revisions requested'
@@ -173,6 +173,7 @@ export async function PATCH(
     const approvedProject = await db.project.update({
       where: { id: projectId },
       data: {
+        status: 'COMPLETED',
         updatedAt: new Date(),
       },
     })

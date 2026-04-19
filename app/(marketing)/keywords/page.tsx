@@ -7,16 +7,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link'
 
 export const metadata: Metadata = generateMetadata({
-  title: 'SEO Keywords & Freelance Services - Browse by Category',
-  description: 'Browse all keyword categories on Altfaze. Find freelancers, buy templates, and discover services. Hire web developers, designers, and more.',
+  title: 'AltFaze Services & Categories – Browse All Freelance Services',
+  description: 'Explore all AltFaze services by category. Hire freelancers for web development, design, marketing, and more. Find the talent you need on AltFaze.',
   keywords: [
-    'SEO keywords',
-    'freelance services',
-    'hire freelancers',
-    'web development',
-    'website templates',
+    'AltFaze categories',
+    'AltFaze services',
+    'freelance services categories',
+    'hire freelancers by category',
+    'web development services',
     'design services',
-    'keyword categories'
+    'marketing services'
   ],
   path: '/keywords'
 })

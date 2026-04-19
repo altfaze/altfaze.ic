@@ -264,3 +264,38 @@ export function BreadcrumbSchema({ items }: { items: Array<{ name: string; url: 
     />
   )
 }
+
+// Website Schema with Sitelinks and Search Box - CRITICAL for Google Sitelinks
+export function WebsiteSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AltFaze",
+    alternateName: "Alt Faze",
+    url: "https://altfaze.in",
+    logo: "https://altfaze.in/logo.png",
+    description: "AltFaze - The leading freelance marketplace to hire web developers, designers, and freelancers. Buy premium website templates and launch projects fast.",
+    sameAs: [
+      "https://www.facebook.com/altfaze",
+      "https://www.twitter.com/altfaze",
+      "https://www.linkedin.com/company/altfaze",
+      "https://www.instagram.com/altfaze"
+    ],
+    // Site Search Box - Enables search functionality in Google SERPs
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://altfaze.in/search?q={search_term_string}"
+      },
+      query_input: "required name=search_term_string"
+    }
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  )
+}
