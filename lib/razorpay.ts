@@ -4,14 +4,15 @@ import crypto from 'crypto'
 const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
 const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET
 
+// Only warn in development if keys are missing
 if (!razorpayKeyId || !razorpayKeySecret) {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('Razorpay keys are not defined in production environment variables')
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('⚠️ Razorpay keys are not defined - Payment operations will fail')
   }
-  console.warn('⚠️ Razorpay keys are not defined - Payment operations will fail')
+  // Don't throw error during build - let runtime handle it
 }
 
-// Initialize Razorpay instance
+// Initialize Razorpay instance (null if keys not available)
 export const razorpay = razorpayKeyId && razorpayKeySecret
   ? new Razorpay({
       key_id: razorpayKeyId,
@@ -73,11 +74,16 @@ export function verifyPaymentSignature(params: {
   paymentId: string // razorpay_payment_id
   signature: string // razorpay_signature
 }): boolean {
+  if (!razorpayKeySecret) {
+    console.error('[RAZORPAY_VERIFICATION_ERROR] Key secret is not configured')
+    return false
+  }
+
   try {
     // Create HMAC SHA256 hash
     const message = `${params.orderId}|${params.paymentId}`
     const generatedSignature = crypto
-      .createHmac('sha256', razorpayKeySecret || '')
+      .createHmac('sha256', razorpayKeySecret)
       .update(message)
       .digest('hex')
 

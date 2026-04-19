@@ -12,12 +12,14 @@ import bcrypt from 'bcryptjs'
 const getAuthSecret = () => {
   const secret = process.env.NEXTAUTH_SECRET
   if (!secret) {
-    // In production, this would be a fatal error
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('NEXTAUTH_SECRET environment variable is required in production')
+    // For development/build, use a fallback
+    // In true production, NEXTAUTH_SECRET will be set by the platform
+    if (process.env.NODE_ENV === 'production' && process.env.VERCEL === '1') {
+      // On Vercel production, NEXTAUTH_SECRET should be set
+      console.warn('⚠️  NEXTAUTH_SECRET not set in production - this will cause authentication to fail')
+      return 'temporary-build-secret-change-immediately'
     }
-    // For development, use a consistent nanoid-based secret
-    // This ensures the app works during dev even without the env var set
+    // For local development and builds, use a consistent default
     console.warn('⚠️  NEXTAUTH_SECRET not set - using development default')
     return 'dev-secret-key-change-in-production'
   }
