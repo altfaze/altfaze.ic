@@ -4,7 +4,9 @@
  */
 
 import { db } from '@/lib/db'
+import { Decimal } from '@prisma/client/runtime/library'
 import { calculateCommission, calculateNetAmount } from '@/lib/commission'
+import { toSafeNumber } from '@/lib/utils'
 
 export interface CreateOrderInput {
   senderId: string // Client
@@ -91,7 +93,13 @@ export async function createOrder(input: CreateOrderInput) {
       },
     }).catch((err: any) => console.error('[ORDER_SERVICE] Activity log error:', err))
 
-    return { success: true, order }
+    return { 
+      success: true, 
+      order: {
+        ...order,
+        amount: toSafeNumber(order.amount)
+      }
+    }
   } catch (error: any) {
     console.error('[ORDER_SERVICE] Create error:', error.message)
     throw error
@@ -155,7 +163,13 @@ export async function acceptOrder(orderId: string, freelancerId: string) {
       },
     }).catch((err: any) => console.error('[ORDER_SERVICE] Activity log error:', err))
 
-    return { success: true, order: updated }
+    return { 
+      success: true, 
+      order: {
+        ...updated,
+        amount: toSafeNumber(updated.amount)
+      }
+    }
   } catch (error: any) {
     console.error('[ORDER_SERVICE] Accept error:', error.message)
     throw error
@@ -277,7 +291,18 @@ export async function completeOrder(orderId: string, clientId: string) {
       }),
     ]).catch((err: any) => console.error('[ORDER_SERVICE] Activity log error:', err))
 
-    return { success: true, order: completed, breakdown: { totalAmount, commission, freelancerAmount } }
+    return { 
+      success: true, 
+      order: {
+        ...completed,
+        amount: toSafeNumber(completed.amount)
+      },
+      breakdown: { 
+        totalAmount, 
+        commission, 
+        freelancerAmount 
+      } 
+    }
   } catch (error: any) {
     console.error('[ORDER_SERVICE] Complete error:', error.message)
     throw error
@@ -372,11 +397,15 @@ export async function getUserOrders(userId: string, type: 'sent' | 'received' | 
       orderBy: { createdAt: 'desc' },
     })
 
-    return { success: true, orders }
+    // Convert decimal amounts to numbers
+    const convertedOrders = orders.map(order => ({
+      ...order,
+      amount: toSafeNumber(order.amount)
+    }))
+
+    return { success: true, orders: convertedOrders }
   } catch (error: any) {
     console.error('[ORDER_SERVICE] Get orders error:', error.message)
     throw error
   }
 }
-
-import { Decimal } from '@prisma/client/runtime/library'

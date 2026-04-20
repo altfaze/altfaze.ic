@@ -1,6 +1,8 @@
 import { getAuthSession } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { NextRequest, NextResponse } from "next/server"
+import { toSafeNumber } from "@/lib/utils"
+import { successResponse, errorResponse } from "@/lib/api-utils"
+import { NextRequest } from "next/server"
 
 // Force dynamic rendering - always get fresh data from DB
 export const dynamic = 'force-dynamic'
@@ -10,10 +12,7 @@ export async function POST(req: NextRequest) {
     const session = await getAuthSession()
 
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: "Unauthorized - Please log in first" },
-        { status: 401 }
-      )
+      return errorResponse(401, "Unauthorized - Please log in first")
     }
 
     const normalizedEmail = session.user.email.toLowerCase().trim()
@@ -21,26 +20,17 @@ export async function POST(req: NextRequest) {
 
     // Validation
     if (!amount || !type) {
-      return NextResponse.json(
-        { error: "Missing required fields: amount, type" },
-        { status: 400 }
-      )
+      return errorResponse(400, "Missing required fields: amount, type")
     }
 
     const validTypes = ["PAYMENT", "EARNING", "REFUND", "WITHDRAWAL"]
     if (!validTypes.includes(type)) {
-      return NextResponse.json(
-        { error: `Invalid type. Must be one of: ${validTypes.join(", ")}` },
-        { status: 400 }
-      )
+      return errorResponse(400, `Invalid type. Must be one of: ${validTypes.join(", ")}`)
     }
 
     const numAmount = parseFloat(amount.toString())
     if (isNaN(numAmount) || numAmount <= 0) {
-      return NextResponse.json(
-        { error: "Amount must be a positive number" },
-        { status: 400 }
-      )
+      return errorResponse(400, "Amount must be a positive number")
     }
 
     const user = await db.user.findUnique({
@@ -48,10 +38,7 @@ export async function POST(req: NextRequest) {
     })
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      )
+      return errorResponse(404, "User not found")
     }
 
     // Create transaction
@@ -100,35 +87,26 @@ export async function POST(req: NextRequest) {
         where: { id: transaction.id }
       }).catch(delErr => console.error("[TRANSACTION_ROLLBACK_FAILED]", delErr))
       
-      return NextResponse.json(
-        { error: "Failed to update wallet. Transaction rolled back. Please try again." },
-        { status: 500 }
-      )
+      return errorResponse(500, "Failed to update wallet. Transaction rolled back. Please try again.")
     }
 
-    return NextResponse.json(
+    return successResponse(
       {
-        success: true,
-        data: {
-          transaction: {
-            id: transaction.id,
-            type: transaction.type,
-            amount: transaction.amount.toString(),
-            status: transaction.status,
-            description: transaction.description,
-            createdAt: transaction.createdAt,
-          },
+        transaction: {
+          id: transaction.id,
+          type: transaction.type,
+          amount: toSafeNumber(transaction.amount),
+          status: transaction.status,
+          description: transaction.description,
+          createdAt: transaction.createdAt,
         },
-        message: "Transaction created successfully",
       },
-      { status: 201 }
+      201,
+      "Transaction created successfully"
     )
   } catch (error: any) {
     console.error("[TRANSACTION_POST_ERROR]", error?.message || error)
-    return NextResponse.json(
-      { error: error?.message || "An error occurred while creating the transaction" },
-      { status: 500 }
-    )
+    return errorResponse(500, error?.message || "An error occurred while creating the transaction")
   }
 }
 
@@ -137,10 +115,7 @@ export async function GET(req: NextRequest) {
     const session = await getAuthSession()
 
     if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: "Unauthorized - Please log in first" },
-        { status: 401 }
-      )
+      return errorResponse(401, "Unauthorized - Please log in first")
     }
 
     const normalizedEmail = session.user.email.toLowerCase().trim()
@@ -155,10 +130,7 @@ export async function GET(req: NextRequest) {
     })
 
     if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      )
+      return errorResponse(404, "User not found")
     }
 
     // Build where clause
@@ -191,38 +163,32 @@ export async function GET(req: NextRequest) {
 
     const total = await db.transaction.count({ where })
 
-    return NextResponse.json(
+    return successResponse(
       {
-        success: true,
-        data: {
-          transactions: transactions.map((t) => ({
-            id: t.id,
-            type: t.type,
-            amount: t.amount?.toString(),
-            netAmount: t.netAmount?.toString() || null,
-            commission: t.commission?.toString() || null,
-            status: t.status,
-            description: t.description,
-            createdAt: t.createdAt,
-            projectId: t.projectId,
-            templateId: t.templateId,
-          })),
-          pagination: {
-            page,
-            limit,
-            total,
-            hasMore: offset + limit < total,
-          },
+        transactions: transactions.map((t) => ({
+          id: t.id,
+          type: t.type,
+          amount: toSafeNumber(t.amount),
+          netAmount: toSafeNumber(t.netAmount),
+          commission: toSafeNumber(t.commission),
+          status: t.status,
+          description: t.description,
+          createdAt: t.createdAt,
+          projectId: t.projectId,
+          templateId: t.templateId,
+        })),
+        pagination: {
+          page,
+          limit,
+          total,
+          hasMore: offset + limit < total,
         },
-        message: "Transactions retrieved successfully",
       },
-      { status: 200 }
+      200,
+      "Transactions retrieved successfully"
     )
   } catch (error: any) {
     console.error("[TRANSACTION_GET_ERROR]", error?.message || error)
-    return NextResponse.json(
-      { error: error?.message || "An error occurred while fetching transactions" },
-      { status: 500 }
-    )
+    return errorResponse(500, error?.message || "An error occurred while fetching transactions")
   }
 }

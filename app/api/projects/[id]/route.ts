@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { db } from '@/lib/db'
 import { requireAuth, handleApiError } from '@/lib/auth-middleware'
 import { successResponse, errorResponse } from '@/lib/api-utils'
+import { toSafeNumber } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,14 +72,17 @@ export async function GET(
         id: project.id,
         title: project.title,
         description: project.description,
-        budget: project.budget?.toNumber() || 0,
+        budget: toSafeNumber(project.budget),
         status: project.status,
         category: project.category,
         deadline: project.deadline,
         creator: project.creator,
         submitter: project.submitter,
         userHasApplied: !!userRequest,
-        userApplication: userRequest || null,
+        userApplication: userRequest ? {
+          ...userRequest,
+          amount: toSafeNumber(userRequest.amount)
+        } : null,
         createdAt: project.createdAt,
         updatedAt: project.updatedAt,
       },

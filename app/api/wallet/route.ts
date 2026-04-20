@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { requireAuth, handleApiError } from '@/lib/auth-middleware'
 import { successResponse, errorResponse, isValidAmount } from '@/lib/api-utils'
 import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
+import { toSafeNumber } from '@/lib/utils'
 
 // Force dynamic rendering - always get fresh data from DB
 export const dynamic = 'force-dynamic'
@@ -76,16 +77,16 @@ export async function GET(req: NextRequest) {
           userId: user.id,
           email: user.email,
           name: user.name,
-          walletBalance: user.walletBalance.toNumber(),
-          totalSpent: user.totalSpent.toNumber(),
-          totalEarned: user.totalEarned.toNumber(),
+          walletBalance: toSafeNumber(user.walletBalance),
+          totalSpent: toSafeNumber(user.totalSpent),
+          totalEarned: toSafeNumber(user.totalEarned),
         },
         transactions: transactions.map((t) => ({
           id: t.id,
           type: t.type,
-          amount: t.amount.toNumber(),
-          netAmount: t.netAmount?.toNumber() || 0,
-          commission: t.commission?.toNumber() || 0,
+          amount: toSafeNumber(t.amount),
+          netAmount: toSafeNumber(t.netAmount),
+          commission: toSafeNumber(t.commission),
           status: t.status,
           description: t.description,
           createdAt: t.createdAt,

@@ -137,22 +137,15 @@ export const authOptions: NextAuthOptions = {
           })
 
           if (!dbUser) {
-            // Create new user
+            // Create new user - NO default role, let them select on /select-role
             await db.user.create({
               data: {
                 email: normalizedEmail,
                 name: user.name || profile?.name || 'User',
                 image: user.image || profile?.image,
-                role: 'CLIENT',
                 username: nanoid(10),
                 isVerified: true, // OAuth users are verified
-                // Create default client profile
-                client: {
-                  create: {},
-                },
-              },
-              include: {
-                client: true,
+                // Don't set a default role - user must select on /select-role
               },
             })
           } else {
@@ -181,7 +174,8 @@ export const authOptions: NextAuthOptions = {
           session.user.name = token.name
           session.user.image = token.picture
           session.user.username = token.username as string | undefined
-          session.user.role = (token.role as string) || 'CLIENT'
+          // Pass through role as-is (can be undefined for users who haven't selected a role yet)
+          session.user.role = (token.role as string) || undefined
         }
       } catch (error) {
         console.error('[SESSION] Error in session callback:', error)
@@ -197,7 +191,8 @@ export const authOptions: NextAuthOptions = {
         if (user) {
           token.id = user.id
           token.email = user.email
-          token.role = (user as any).role || 'CLIENT'
+          // Pass through role as-is (can be null for users who haven't selected a role yet)
+          token.role = (user as any).role || null
           console.log('[JWT] New JWT issued for user:', user.email, 'role:', token.role)
         }
 
@@ -231,7 +226,9 @@ export const authOptions: NextAuthOptions = {
           token.id = dbUser.id
           token.email = dbUser.email
           token.username = dbUser.username || ''
-          token.role = dbUser.role || 'CLIENT'
+          
+          // Pass through role as-is (can be undefined)
+          token.role = dbUser.role || undefined
           token.isSuspended = false
           
           if (dbUser.role !== token.role) {

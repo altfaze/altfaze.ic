@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { requireAuthWithRole, handleApiError } from '@/lib/auth-middleware'
 import { successResponse, errorResponse, ValidationError, isValidAmount } from '@/lib/api-utils'
 import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
+import { toSafeNumber } from '@/lib/utils'
 
 // Force dynamic rendering - always get fresh data from DB
 export const dynamic = 'force-dynamic'
@@ -68,7 +69,7 @@ export async function GET(req: NextRequest) {
           id: p.id,
           title: p.title,
           description: p.description,
-          budget: p.budget?.toNumber() || 0,
+          budget: toSafeNumber(p.budget),
           status: p.status,
           category: p.category,
           deadline: p.deadline,

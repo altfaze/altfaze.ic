@@ -4,6 +4,7 @@ import { requireAuthWithRole, handleApiError } from '@/lib/auth-middleware'
 import { successResponse, errorResponse } from '@/lib/api-utils'
 import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
 import { emitRequestSent } from '@/lib/realtime'
+import { toSafeNumber } from '@/lib/utils'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -116,7 +117,7 @@ export async function POST(
         id: newRequest.id,
         title: newRequest.title,
         description: newRequest.description,
-        amount: newRequest.amount?.toNumber() || 0,
+        amount: toSafeNumber(newRequest.amount),
         status: newRequest.status,
         sender: newRequest.sender,
         receiver: newRequest.receiver,

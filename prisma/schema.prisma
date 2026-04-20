@@ -54,7 +54,7 @@ model User {
   isVerified             Boolean            @default(false)
   isSuspended            Boolean            @default(false)
   lastLogin              DateTime?
-  role                   String?            @default("CLIENT")
+  role                   String?
   walletBalance          Decimal            @default(0) @db.Decimal(12, 2)
   totalSpent             Decimal            @default(0) @db.Decimal(12, 2)
   totalEarned            Decimal            @default(0) @db.Decimal(12, 2)
@@ -92,18 +92,22 @@ model User {
 }
 
 model Freelancer {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  title       String?
-  bio         String?
-  skills      String[]
-  portfolio   String?
-  hourlyRate  Decimal? @db.Decimal(10, 2)
-  rating      Decimal  @default(0) @db.Decimal(3, 2)
-  reviewCount Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  title               String?
+  bio                 String?
+  skills              String[]
+  portfolio           String?
+  hourlyRate          Decimal? @db.Decimal(10, 2)
+  rating              Decimal  @default(0) @db.Decimal(3, 2)
+  reviewCount         Int      @default(0)
+  minimumHourlyRate   Decimal? @default(0) @db.Decimal(10, 2)
+  preferredCategories String[] @default([])
+  isAvailable         Boolean  @default(false)
+  status              String   @default("OFFLINE") // OFFLINE | ONLINE | BUSY
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("freelancers")
 }

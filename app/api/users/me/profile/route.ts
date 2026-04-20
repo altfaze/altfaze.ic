@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { successResponse, errorResponse } from '@/lib/api-utils'
+import { toSafeNumber } from '@/lib/utils'
 
 /**
  * GET /api/users/me/profile
@@ -35,7 +36,10 @@ export async function GET(req: NextRequest) {
       role: user.role,
       isVerified: user.isVerified,
       username: user.username,
-      freelancer: user.freelancer,
+      freelancer: user.freelancer ? {
+        ...user.freelancer,
+        hourlyRate: toSafeNumber(user.freelancer.hourlyRate)
+      } : null,
       client: user.client,
     })
   } catch (error) {
@@ -162,7 +166,10 @@ export async function PATCH(req: NextRequest) {
       role: updatedUser!.role,
       isVerified: updatedUser!.isVerified,
       username: updatedUser!.username,
-      freelancer: updatedUser!.freelancer,
+      freelancer: updatedUser!.freelancer ? {
+        ...updatedUser!.freelancer,
+        hourlyRate: toSafeNumber(updatedUser!.freelancer.hourlyRate)
+      } : null,
       client: updatedUser!.client,
     }, 200, 'Profile updated successfully')
   } catch (error: any) {

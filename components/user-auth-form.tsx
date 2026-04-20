@@ -23,7 +23,6 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [mobile, setMobile] = React.useState<string>('');
-  const [role, setRole] = React.useState<'CLIENT' | 'FREELANCER'>('CLIENT');
   const [error, setError] = React.useState<string>('');
 
   async function onSubmit(event: React.SyntheticEvent) {
@@ -59,7 +58,6 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
             email: email.trim(),
             password,
             mobile: mobile.trim() || null,
-            role,
           }),
         });
 
@@ -94,11 +92,11 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
 
           toast({
             title: 'Welcome!',
-            description: 'Redirecting to setup...',
+            description: 'Redirecting to role selection...',
           });
 
-          // Redirect to onboard (don't wait, let the redirect handler authenticate)
-          router.push('/onboard');
+          // Redirect to select-role (don't wait, let the redirect handler authenticate)
+          router.push('/select-role');
         } else {
           // If auto-login fails, redirect to login page
           setEmail('');
@@ -143,9 +141,10 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
         setMobile('');
         setIsLoading(false);
 
-        // Replace history and redirect to onboard
+        // Replace history and redirect based on role
+        // Middleware will handle redirects, but start with a neutral page
         setTimeout(() => {
-          router.replace('/onboard');
+          router.replace('/select-role');
         }, 500);
       }
     } catch (error: any) {
@@ -254,44 +253,6 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
               />
-            </div>
-          )}
-
-          {isSignUp && (
-            <div className="grid gap-2">
-              <Label>I want to sign up as:</Label>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    id="client"
-                    name="role"
-                    value="CLIENT"
-                    checked={role === 'CLIENT'}
-                    onChange={(e) => setRole(e.target.value as 'CLIENT' | 'FREELANCER')}
-                    disabled={isLoading}
-                    className="h-4 w-4"
-                  />
-                  <Label htmlFor="client" className="font-normal cursor-pointer">
-                    Client (Hire freelancers)
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="radio"
-                    id="freelancer"
-                    name="role"
-                    value="FREELANCER"
-                    checked={role === 'FREELANCER'}
-                    onChange={(e) => setRole(e.target.value as 'CLIENT' | 'FREELANCER')}
-                    disabled={isLoading}
-                    className="h-4 w-4"
-                  />
-                  <Label htmlFor="freelancer" className="font-normal cursor-pointer">
-                    Freelancer (Offer services)
-                  </Label>
-                </div>
-              </div>
             </div>
           )}
 

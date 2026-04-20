@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { handleApiError } from '@/lib/auth-middleware'
 import { successResponse, errorResponse } from '@/lib/api-utils'
 import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
+import { toSafeNumber } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -90,14 +91,14 @@ export async function GET(
       bio: user.freelancer?.bio,
       skills: user.freelancer?.skills || [],
       portfolio: user.freelancer?.portfolio || [],
-      hourlyRate: user.freelancer?.hourlyRate || 0,
-      rating: user.freelancer?.rating || 0,
+      hourlyRate: toSafeNumber(user.freelancer?.hourlyRate),
+      rating: toSafeNumber(user.freelancer?.rating),
       reviewCount: user.freelancer?.reviewCount || 0,
       templates,
       reviews,
       stats: {
         totalReviews: reviews.length,
-        averageRating: user.freelancer?.rating || 0,
+        averageRating: toSafeNumber(user.freelancer?.rating),
         totalProjects: templates.length,
         activeProjects,
         completedProjects,

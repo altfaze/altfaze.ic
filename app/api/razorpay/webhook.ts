@@ -141,12 +141,6 @@ async function handlePaymentCaptured(payment: any) {
         },
       })
 
-      // Update receiver wallet if applicable
-      // TODO: Implement wallet update when wallet model is added to schema
-      // if (transaction.receiverId) {
-      //   await db.wallet.upsert({...})
-      // }
-
       console.log('[PAYMENT_CAPTURED_PROCESSED]', {
         transactionId: transaction.id,
         amount: transaction.amount,

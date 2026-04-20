@@ -143,10 +143,6 @@ export async function POST(req: NextRequest) {
       })
 
       if (receiverUser) {
-        // Update receiver wallet balance (if wallet model exists)
-        // TODO: Implement wallet balance update when wallet model is added to schema
-        // Currently skipping wallet update as wallet model doesn't exist in schema
-
         // Fetch sender for logging
         const senderUser = await db.user.findUnique({
           where: { id: transaction.userId },

@@ -34,18 +34,44 @@ export default withAuth(
     const isAuthPage =
       req.nextUrl.pathname.startsWith("/login") ||
       req.nextUrl.pathname.startsWith("/register") ||
+      req.nextUrl.pathname.startsWith("/select-role") ||
       req.nextUrl.pathname.startsWith("/onboard")
 
     if (isAuthPage) {
       if (isAuth) {
+        // If user is authenticated and on login/register, redirect appropriately
         if (req.nextUrl.pathname.startsWith("/login") || req.nextUrl.pathname.startsWith("/register")) {
-          return NextResponse.redirect(new URL("/onboard", req.url))
+          // If they have a role, send to dashboard; if not, send to select-role
+          if (!userRole) {
+            return NextResponse.redirect(new URL("/select-role", req.url))
+          }
+          if (userRole === "FREELANCER") {
+            return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
+          } else {
+            return NextResponse.redirect(new URL("/client/dashboard", req.url))
+          }
         }
-        // Allow access to /onboard if authenticated
+        
+        // If user is on /select-role but already has a role, redirect to dashboard
+        if (req.nextUrl.pathname.startsWith("/select-role")) {
+          if (userRole) {
+            console.log('[MIDDLEWARE] User already has role - redirecting from /select-role to dashboard', { role: userRole })
+            if (userRole === "FREELANCER") {
+              return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
+            } else {
+              return NextResponse.redirect(new URL("/client/dashboard", req.url))
+            }
+          }
+          // Allow authenticated users without role to access /select-role
+          return NextResponse.next()
+        }
+        
+        // Allow access to /onboard if authenticated (legacy support)
         return NextResponse.next()
       }
-      // Redirect unauthenticated users to login from onboard
-      if (req.nextUrl.pathname.startsWith("/onboard")) {
+      
+      // Unauthenticated users
+      if (req.nextUrl.pathname.startsWith("/select-role") || req.nextUrl.pathname.startsWith("/onboard")) {
         return NextResponse.redirect(new URL("/login", req.url))
       }
       return NextResponse.next()
@@ -82,8 +108,8 @@ export default withAuth(
       }
       
       if (!userRole) {
-        console.log('[MIDDLEWARE] No role set for authenticated user - redirecting to onboard')
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        console.log('[MIDDLEWARE] No role set for authenticated user - redirecting to select-role')
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       
       if (userRole !== "CLIENT") {
@@ -91,7 +117,7 @@ export default withAuth(
         if (userRole === "FREELANCER") {
           return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
         }
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       
       console.log('[MIDDLEWARE] ✅ CLIENT role verified for /client/dashboard route')
@@ -106,8 +132,8 @@ export default withAuth(
       }
       
       if (!userRole) {
-        console.log('[MIDDLEWARE] No role set for authenticated user - redirecting to onboard')
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        console.log('[MIDDLEWARE] No role set for authenticated user - redirecting to select-role')
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       
       if (userRole !== "CLIENT") {
@@ -115,7 +141,7 @@ export default withAuth(
         if (userRole === "FREELANCER") {
           return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
         }
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       
       console.log('[MIDDLEWARE] ✅ CLIENT role verified for /client route')
@@ -130,8 +156,8 @@ export default withAuth(
       }
       
       if (!userRole) {
-        console.log('[MIDDLEWARE] No role set for authenticated user - redirecting to onboard')
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        console.log('[MIDDLEWARE] No role set for authenticated user - redirecting to select-role')
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       
       if (userRole !== "FREELANCER") {
@@ -139,7 +165,7 @@ export default withAuth(
         if (userRole === "CLIENT") {
           return NextResponse.redirect(new URL("/client/dashboard", req.url))
         }
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       
       console.log('[MIDDLEWARE] ✅ FREELANCER role verified for /freelancer/my-dashboard route')
@@ -154,8 +180,8 @@ export default withAuth(
       }
       
       if (!userRole) {
-        console.log('[MIDDLEWARE] No role set for authenticated user - redirecting to onboard')
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        console.log('[MIDDLEWARE] No role set for authenticated user - redirecting to select-role')
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       
       if (userRole !== "FREELANCER") {
@@ -163,7 +189,7 @@ export default withAuth(
         if (userRole === "CLIENT") {
           return NextResponse.redirect(new URL("/client/dashboard", req.url))
         }
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       
       console.log('[MIDDLEWARE] ✅ FREELANCER role verified for /freelancer route')
@@ -179,7 +205,7 @@ export default withAuth(
         return NextResponse.redirect(new URL("/login", req.url))
       }
       if (!userRole) {
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       if (userRole !== "CLIENT") {
         return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
@@ -195,7 +221,7 @@ export default withAuth(
         return NextResponse.redirect(new URL("/login", req.url))
       }
       if (!userRole) {
-        return NextResponse.redirect(new URL("/onboard", req.url))
+        return NextResponse.redirect(new URL("/select-role", req.url))
       }
       if (userRole !== "FREELANCER") {
         return NextResponse.redirect(new URL("/client/dashboard", req.url))
@@ -259,6 +285,7 @@ export const config = {
     '/freelancer/:path*',
     '/login',
     '/register',
+    '/select-role',
     '/onboard',
   ]
 }

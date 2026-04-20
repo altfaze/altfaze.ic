@@ -4,6 +4,7 @@
 
 import { db } from '@/lib/db'
 import { Decimal } from '@prisma/client/runtime/library'
+import { toSafeNumber, convertDecimalFields } from '@/lib/utils'
 
 export interface CreateOfferInput {
   senderId: string // Freelancer
@@ -50,7 +51,14 @@ export async function createOffer(input: CreateOfferInput) {
       relatedResourceId: offer.id,
     }).catch((err: any) => console.error('[OFFER_NOTIFICATION]', err))
 
-    return { success: true, offer }
+    // Convert decimal amount to number for JSON serialization
+    return { 
+      success: true, 
+      offer: {
+        ...offer,
+        amount: toSafeNumber(offer.amount)
+      }
+    }
   } catch (error: any) {
     console.error('[OFFER_CREATE]', error.message)
     throw error
@@ -114,7 +122,18 @@ export async function acceptOffer(offerId: string, clientId: string) {
       return { offer: updatedOffer, order }
     })
 
-    return { success: true, ...result }
+    // Convert decimal amounts to numbers for JSON serialization
+    return { 
+      success: true,
+      offer: {
+        ...result.offer,
+        amount: toSafeNumber(result.offer.amount)
+      },
+      order: {
+        ...result.order,
+        amount: toSafeNumber(result.order.amount)
+      }
+    }
   } catch (error: any) {
     console.error('[OFFER_ACCEPT]', error.message)
     throw error
@@ -174,7 +193,13 @@ export async function getUserOffers(userId: string, type: 'sent' | 'received' | 
       orderBy: { createdAt: 'desc' },
     })
 
-    return { success: true, offers }
+    // Convert all decimal amounts to numbers for JSON serialization
+    const convertedOffers = offers.map(offer => ({
+      ...offer,
+      amount: toSafeNumber(offer.amount)
+    }))
+
+    return { success: true, offers: convertedOffers }
   } catch (error: any) {
     console.error('[GET_OFFERS]', error.message)
     throw error

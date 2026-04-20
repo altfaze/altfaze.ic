@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { handleApiError } from '@/lib/auth-middleware'
 import { successResponse, errorResponse } from '@/lib/api-utils'
 import { rateLimit, API_RATE_LIMIT } from '@/lib/rate-limit'
+import { toSafeNumber } from '@/lib/utils'
 
 // Force dynamic rendering - always get fresh data from DB
 export const dynamic = 'force-dynamic'
@@ -130,8 +131,8 @@ export async function GET(req: NextRequest) {
           title: f.freelancer?.title,
           bio: f.freelancer?.bio,
           skills: f.freelancer?.skills || [],
-          hourlyRate: f.freelancer?.hourlyRate || 0,
-          rating: f.freelancer?.rating || 0,
+          hourlyRate: toSafeNumber(f.freelancer?.hourlyRate),
+          rating: toSafeNumber(f.freelancer?.rating),
           reviewCount: f.freelancer?.reviewCount || 0,
           portfolio: f.freelancer?.portfolio || [],
           joinedAt: f.createdAt,
