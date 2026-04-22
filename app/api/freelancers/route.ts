@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 
     const searchParams = req.nextUrl.searchParams
     const search = searchParams.get('search') || ''
-    const skill = searchParams.get('skill')
+    const skill = searchParams.get('skill') || searchParams.get('skills') // Support both 'skill' and 'skills' params
     const minRate = searchParams.get('minRate') ? parseFloat(searchParams.get('minRate')!) : 0
     const maxRate = searchParams.get('maxRate') ? parseFloat(searchParams.get('maxRate')!) : 10000
     const minRating = searchParams.get('minRating') ? parseFloat(searchParams.get('minRating')!) : 0
@@ -44,7 +44,9 @@ export async function GET(req: NextRequest) {
     let where: any = {
       role: 'FREELANCER',
       freelancer: {
-        isNot: null,
+        is: {
+          isAvailable: true, // Only show available freelancers
+        },
       },
     }
 
@@ -52,17 +54,19 @@ export async function GET(req: NextRequest) {
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
-        { freelancer: { bio: { contains: search, mode: 'insensitive' } } },
-        { freelancer: { title: { contains: search, mode: 'insensitive' } } },
+        { freelancer: { is: { bio: { contains: search, mode: 'insensitive' } } } },
+        { freelancer: { is: { title: { contains: search, mode: 'insensitive' } } } },
       ]
     }
 
     // Filter by skill
     if (skill) {
       where.freelancer = {
-        ...where.freelancer,
-        skills: {
-          hasSome: [skill],
+        is: {
+          ...where.freelancer.is,
+          skills: {
+            hasSome: [skill],
+          },
         },
       }
     }
@@ -70,9 +74,11 @@ export async function GET(req: NextRequest) {
     // Filter by rating
     if (minRating > 0) {
       where.freelancer = {
-        ...where.freelancer,
-        rating: {
-          gte: minRating,
+        is: {
+          ...where.freelancer.is,
+          rating: {
+            gte: minRating,
+          },
         },
       }
     }
@@ -80,20 +86,31 @@ export async function GET(req: NextRequest) {
     // Filter by hourly rate
     if (maxRate < 10000 || minRate > 0) {
       where.freelancer = {
-        ...where.freelancer,
-        hourlyRate: {
-          gte: minRate,
-          lte: maxRate,
+        is: {
+          ...where.freelancer.is,
+          hourlyRate: {
+            gte: minRate,
+            lte: maxRate,
+          },
         },
       }
     }
 
-    // Build order by
-    let orderBy: any = { freelancer: { rating: 'desc' } }
+    // Build order by - prioritize online freelancers, then by selected sort
+    let orderBy: any = [
+      { freelancer: { status: 'desc' } }, // ONLINE first (alphabetically after OFFLINE)
+      { freelancer: { rating: 'desc' } }, // Then by rating
+    ]
     if (sort === 'rate') {
-      orderBy = { freelancer: { hourlyRate: 'asc' } }
+      orderBy = [
+        { freelancer: { status: 'desc' } },
+        { freelancer: { hourlyRate: 'asc' } },
+      ]
     } else if (sort === 'recent') {
-      orderBy = { createdAt: 'desc' }
+      orderBy = [
+        { freelancer: { status: 'desc' } },
+        { createdAt: 'desc' },
+      ]
     }
 
     // Fetch freelancers

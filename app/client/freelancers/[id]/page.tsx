@@ -66,9 +66,10 @@ export default function FreelancerDetailPage({ params }: { params: { id: string 
       const res = await fetch(`/api/freelancers/${params.id}`)
       if (!res.ok) throw new Error('Failed to fetch freelancer')
 
-      const json: FreelancerDetailResponse = await res.json()
-      setFreelancer(json.data.freelancer)
-      setProjects(json.data.projects)
+      const json = await res.json()
+      const data = json?.data || json
+      setFreelancer(data.freelancer || data.profile)
+      setProjects(data.projects || data.templates || [])
     } catch (error) {
       toast({
         title: 'Error',

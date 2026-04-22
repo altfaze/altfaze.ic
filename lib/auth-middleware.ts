@@ -14,6 +14,10 @@ export class UnauthorizedError extends Error {
 export async function getAuthenticatedUserId(req?: NextRequest): Promise<string | null> {
   try {
     const session = await getServerSession(authOptions)
+    // ✅ SECURITY: Also check suspension status here
+    if ((session?.user as any)?.isSuspended) {
+      return null
+    }
     return session?.user?.id || null
   } catch (error) {
     return null
@@ -36,6 +40,11 @@ export async function requireAuthWithRole(
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       throw new UnauthorizedError('You must be logged in to access this resource')
+    }
+
+    // ✅ SECURITY: Check if user is suspended
+    if ((session.user as any).isSuspended) {
+      throw new UnauthorizedError('Your account has been suspended. Please contact support.')
     }
 
     if (requiredRole && (session.user as any).role !== requiredRole) {

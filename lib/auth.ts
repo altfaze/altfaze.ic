@@ -102,12 +102,14 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      allowDangerousEmailAccountLinking: true,
+      // ✅ SECURITY: Disabled account linking to prevent takeover
+      allowDangerousEmailAccountLinking: false,
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID || '',
       clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
-      allowDangerousEmailAccountLinking: true,
+      // ✅ SECURITY: Disabled account linking to prevent takeover
+      allowDangerousEmailAccountLinking: false,
     }),
   ],
   callbacks: {
@@ -173,9 +175,11 @@ export const authOptions: NextAuthOptions = {
           session.user.email = token.email || ''
           session.user.name = token.name
           session.user.image = token.picture
-          session.user.username = token.username as string | undefined
+          session.user.username = token.username as string | undefined;
           // Pass through role as-is (can be undefined for users who haven't selected a role yet)
-          session.user.role = (token.role as string) || undefined
+          session.user.role = (token.role as string) || undefined;
+          // ✅ SECURITY: Pass suspension flag from token
+          (session.user as any).isSuspended = token.isSuspended || false;
         }
       } catch (error) {
         console.error('[SESSION] Error in session callback:', error)

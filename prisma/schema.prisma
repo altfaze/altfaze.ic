@@ -273,7 +273,7 @@ model Order {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   receiver    User      @relation("OrderReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
-  request     Request?  @relation(fields: [requestId], references: [id])
+  request     Request?  @relation(fields: [requestId], references: [id], onDelete: Cascade)
   sender      User      @relation("OrderSender", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([senderId])
@@ -417,4 +417,16 @@ model Message {
   @@index([senderId])
   @@index([receiverId])
   @@map("messages")
+}
+
+model IdempotencyKey {
+  key       String   @id
+  method    String
+  path      String
+  response  Json
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@map("idempotency_keys")
 }

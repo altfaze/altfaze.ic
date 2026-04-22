@@ -229,14 +229,13 @@ export default withAuth(
       return NextResponse.next()
     }
 
-    // ✅ SHARED routes (both roles): /client/templates, /client/ai-help, /client/wallet, /client/offers, /client/settings, /client/profile
-    // and /freelancer/templates, /freelancer/ai-help, /freelancer/wallet, /freelancer/offers, /freelancer/settings, /freelancer/profile
+    // ✅ CLIENT routes: /client/templates, /client/ai-help, /client/wallet, /client/offers, /client/settings
+    // ✅ FREELANCER routes: /freelancer/templates, /freelancer/ai-help, /freelancer/wallet, /freelancer/offers, /freelancer/settings, /freelancer/profile
     if ((req.nextUrl.pathname.startsWith("/client/templates") ||
         req.nextUrl.pathname.startsWith("/client/ai-help") ||
         req.nextUrl.pathname.startsWith("/client/wallet") ||
         req.nextUrl.pathname.startsWith("/client/offers") ||
-        req.nextUrl.pathname.startsWith("/client/settings") ||
-        req.nextUrl.pathname.startsWith("/client/profile")) ||
+        req.nextUrl.pathname.startsWith("/client/settings")) ||
         (req.nextUrl.pathname.startsWith("/freelancer/templates") ||
         req.nextUrl.pathname.startsWith("/freelancer/ai-help") ||
         req.nextUrl.pathname.startsWith("/freelancer/wallet") ||

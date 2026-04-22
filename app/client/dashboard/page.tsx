@@ -313,7 +313,7 @@ export default function ClientDashboard() {
                 <Link href="/client/freelancers">Browse Freelancers</Link>
               </Button>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/client/profile">My Profile</Link>
+                <Link href="/client/settings">Settings</Link>
               </Button>
             </div>
           </CardContent>

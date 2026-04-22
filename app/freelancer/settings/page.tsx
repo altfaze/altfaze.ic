@@ -23,6 +23,7 @@ interface Settings {
   minHourlyRate: number
   bio: string
   preferredCategories: string[]
+  isAvailable?: boolean
 }
 
 export default function FreelancerSettingsPage() {
@@ -40,6 +41,7 @@ export default function FreelancerSettingsPage() {
     minHourlyRate: 0,
     bio: '',
     preferredCategories: [],
+    isAvailable: false,
   })
 
   const [loading, setLoading] = useState(true)
@@ -67,25 +69,60 @@ export default function FreelancerSettingsPage() {
 
   useEffect(() => {
     if (isClient && status === 'authenticated') {
-      // Simulate loading settings
-      setTimeout(() => setLoading(false), 500)
+      fetchSettings()
     }
   }, [isClient, status])
+
+  const fetchSettings = async () => {
+    try {
+      setLoading(true)
+      const res = await fetch('/api/settings', { cache: 'no-store' })
+      if (!res.ok) throw new Error('Failed to fetch settings')
+      
+      const json = await res.json()
+      const fetchedSettings = json.data?.settings || json.settings || {}
+      setSettings({
+        emailNotifications: fetchedSettings.emailNotifications ?? true,
+        smsNotifications: fetchedSettings.smsNotifications ?? false,
+        projectNotifications: fetchedSettings.projectNotifications ?? true,
+        messageNotifications: fetchedSettings.messageNotifications ?? true,
+        visibility: fetchedSettings.visibility ?? 'public',
+        autoAcceptOffers: fetchedSettings.autoAcceptOffers ?? false,
+        minHourlyRate: fetchedSettings.minHourlyRate ?? 0,
+        bio: fetchedSettings.bio ?? '',
+        preferredCategories: fetchedSettings.preferredCategories ?? [],
+      })
+      setLoading(false)
+    } catch (error) {
+      console.error('Failed to load settings:', error)
+      setLoading(false)
+    }
+  }
 
   const handleSaveSettings = async () => {
     setSaving(true)
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings),
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to save settings')
+      }
 
       toast({
         title: 'Success',
         description: 'Settings saved successfully',
       })
+      
+      // Reload settings to confirm
+      await fetchSettings()
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to save settings',
+        description: error instanceof Error ? error.message : 'Failed to save settings',
         variant: 'destructive',
       })
     } finally {
@@ -307,6 +344,25 @@ export default function FreelancerSettingsPage() {
                   </label>
                 ))}
               </div>
+            </div>
+
+            <div className="border-t pt-4" />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Available for Work</p>
+                <p className="text-sm text-muted-foreground">
+                  Show your profile to clients looking for freelancers
+                </p>
+              </div>
+              <Toggle
+                pressed={settings.isAvailable ?? false}
+                onPressedChange={(pressed) => {
+                  setSettings({ ...settings, isAvailable: pressed })
+                }}
+              >
+                {(settings.isAvailable ?? false) ? 'Available' : 'Unavailable'}
+              </Toggle>
             </div>
 
             <div className="border-t pt-4" />

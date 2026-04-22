@@ -17,20 +17,27 @@ export const dynamic = 'force-dynamic'
  */
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, name, mobile } = await req.json()
+    const { email, password, name, mobile, role } = await req.json()
 
     // Validation
-    if (!email || !password || !name) {
-      return errorResponse(400, 'Missing required fields: email, password, name')
+    if (!email || !password || !name || !role) {
+      return errorResponse(400, 'Missing required fields: email, password, name, role')
+    }
+
+    if (!['CLIENT', 'FREELANCER'].includes(role)) {
+      return errorResponse(400, 'Role must be either CLIENT or FREELANCER')
     }
 
     if (password.length < 6) {
       return errorResponse(400, 'Password must be at least 6 characters')
     }
 
+    // Normalize email
+    const normalizedEmail = email.toLowerCase().trim()
+
     // Check if user already exists
     const existingUser = await db.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     })
 
     if (existingUser) {
@@ -40,12 +47,13 @@ export async function POST(req: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create user
+    // Create user with role
     const user = await db.user.create({
       data: {
-        email,
+        email: normalizedEmail,
         password: hashedPassword,
-        name,
+        name: name.trim(),
+        role: role as 'CLIENT' | 'FREELANCER',
       },
     })
 
@@ -55,6 +63,7 @@ export async function POST(req: NextRequest) {
           id: user.id,
           email: user.email,
           name: user.name,
+          role: user.role,
         },
       },
       201,

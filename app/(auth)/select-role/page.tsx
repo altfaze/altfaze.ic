@@ -49,6 +49,9 @@ export default function SelectRolePage() {
       }
       return
     }
+
+    // User is authenticated but doesn't have role - can proceed with role selection
+    console.log('[SELECT_ROLE] User authenticated without role - showing role selection')
   }, [session, status, router])
 
   const handleRoleSelect = async (role: 'CLIENT' | 'FREELANCER') => {

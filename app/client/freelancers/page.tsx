@@ -60,9 +60,12 @@ export default function FreelancersPage() {
       })
       if (!res.ok) throw new Error('Failed to fetch freelancers')
 
-      const json: FreelancersResponse = await res.json()
-      setFreelancers(json.data.freelancers)
-      setTotal(json.data.pagination.total)
+      const json = await res.json()
+      // Handle both response formats
+      const freelancersData = json.data?.freelancers || json.freelancers || []
+      const paginationData = json.data?.pagination || json.pagination || { total: 0 }
+      setFreelancers(freelancersData)
+      setTotal(paginationData.total)
     } catch (error) {
       console.error('Error fetching freelancers:', error)
     } finally {

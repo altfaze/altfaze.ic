@@ -24,13 +24,7 @@ interface ProfileData {
     skills: string[]
     hourlyRate: number
     rating: number
-    completedProjects: number
-    portfolio: Array<{
-      id: string
-      name: string
-      description: string
-      image: string | null
-    }>
+    reviewCount: number
   }
 }
 
@@ -78,8 +72,8 @@ export default function FreelancerProfilePage() {
         throw new Error('Failed to fetch profile')
       }
 
-      const json: ProfileResponse = await res.json()
-      const user = json?.data?.user
+      const json = await res.json()
+      const user = json?.data?.user || json?.user
       if (user) {
         setProfile(user)
         setFormData({
@@ -245,8 +239,8 @@ export default function FreelancerProfilePage() {
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <p className="text-3xl font-bold">{profile.freelancer?.completedProjects || 0}</p>
-              <p className="text-sm text-muted-foreground">Completed Projects</p>
+              <p className="text-3xl font-bold">{profile.freelancer?.reviewCount || 0}</p>
+              <p className="text-sm text-muted-foreground">Reviews</p>
             </CardContent>
           </Card>
           <Card>
@@ -373,32 +367,6 @@ export default function FreelancerProfilePage() {
           <Button onClick={handleSave} disabled={saving} className="w-full">
             {saving ? 'Saving...' : 'Save Profile'}
           </Button>
-        )}
-
-        {/* Portfolio Section */}
-        {profile.freelancer?.portfolio && profile.freelancer.portfolio.length > 0 && (
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Portfolio</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-2">
-                {profile.freelancer.portfolio.map((item) => (
-                  <div key={item.id} className="border rounded-lg overflow-hidden">
-                    {item.image && (
-                      <div className="h-32 bg-muted flex items-center justify-center">
-                        <Icons.image className="h-8 w-8 text-muted-foreground" />
-                      </div>
-                    )}
-                    <div className="p-4">
-                      <h4 className="font-semibold">{item.name}</h4>
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         )}
       </div>
     </div>

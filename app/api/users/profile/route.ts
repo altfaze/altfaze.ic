@@ -48,18 +48,20 @@ export async function GET(req: NextRequest) {
 
     return successResponse(
       {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        image: user.image,
-        role: user.role,
-        walletBalance: user.walletBalance?.toNumber() || 0,
-        totalSpent: user.totalSpent?.toNumber() || 0,
-        totalEarned: user.totalEarned?.toNumber() || 0,
-        razorpayCustomerId: user.razorpayCustomerId,
-        razorpayContactId: user.razorpayContactId,
-        razorpayFundAccountId: user.razorpayFundAccountId,
-        freelancer: user.freelancer,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          role: user.role,
+          walletBalance: user.walletBalance?.toNumber() || 0,
+          totalSpent: user.totalSpent?.toNumber() || 0,
+          totalEarned: user.totalEarned?.toNumber() || 0,
+          razorpayCustomerId: user.razorpayCustomerId,
+          razorpayContactId: user.razorpayContactId,
+          razorpayFundAccountId: user.razorpayFundAccountId,
+          freelancer: user.freelancer,
+        },
       },
       200,
       'Profile retrieved successfully'
@@ -135,16 +137,18 @@ export async function PUT(req: NextRequest) {
 
     return successResponse(
       {
-        id: updated.id,
-        name: updated.name,
-        email: updated.email,
-        image: updated.image,
-        role: updated.role,
-        walletBalance: updated.walletBalance?.toNumber() || 0,
-        razorpayCustomerId: updated.razorpayCustomerId,
-        razorpayContactId: updated.razorpayContactId,
-        razorpayFundAccountId: updated.razorpayFundAccountId,
-        freelancer: updated.freelancer,
+        user: {
+          id: updated.id,
+          name: updated.name,
+          email: updated.email,
+          image: updated.image,
+          role: updated.role,
+          walletBalance: updated.walletBalance?.toNumber() || 0,
+          razorpayCustomerId: updated.razorpayCustomerId,
+          razorpayContactId: updated.razorpayContactId,
+          razorpayFundAccountId: updated.razorpayFundAccountId,
+          freelancer: updated.freelancer,
+        },
       },
       200,
       'Profile updated successfully'

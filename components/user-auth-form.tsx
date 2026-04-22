@@ -10,10 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from 'next-auth/react';
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   isSignUp?: boolean;
 }
+
+type UserRole = 'CLIENT' | 'FREELANCER' | null;
 
 export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuthFormProps) {
   const router = useRouter();
@@ -24,6 +27,7 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
   const [password, setPassword] = React.useState<string>('');
   const [mobile, setMobile] = React.useState<string>('');
   const [error, setError] = React.useState<string>('');
+  const [selectedRole, setSelectedRole] = React.useState<UserRole>(null);
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -48,8 +52,13 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
           setIsLoading(false);
           return;
         }
+        if (!selectedRole) {
+          setError('Please select your role (Client or Freelancer)');
+          setIsLoading(false);
+          return;
+        }
 
-        // Signup - Send form data in body
+        // Signup - Send form data in body with role
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -58,6 +67,7 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
             email: email.trim(),
             password,
             mobile: mobile.trim() || null,
+            role: selectedRole,
           }),
         });
 
@@ -88,21 +98,29 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
           setPassword('');
           setName('');
           setMobile('');
+          setSelectedRole(null);
           setIsLoading(false);
 
           toast({
             title: 'Welcome!',
-            description: 'Redirecting to role selection...',
+            description: `Redirecting to your ${selectedRole === 'CLIENT' ? 'client' : 'freelancer'} dashboard...`,
           });
 
-          // Redirect to select-role (don't wait, let the redirect handler authenticate)
-          router.push('/select-role');
+          // Direct redirect to dashboard (role already set during registration)
+          setTimeout(() => {
+            if (selectedRole === 'FREELANCER') {
+              router.push('/freelancer/my-dashboard');
+            } else {
+              router.push('/client/dashboard');
+            }
+          }, 500);
         } else {
           // If auto-login fails, redirect to login page
           setEmail('');
           setPassword('');
           setName('');
           setMobile('');
+          setSelectedRole(null);
           setIsLoading(false);
 
           router.replace('/login');
@@ -253,6 +271,42 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
               />
+            </div>
+          )}
+
+          {isSignUp && (
+            <div className="grid gap-3">
+              <Label>Choose Your Role</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('CLIENT')}
+                  disabled={isLoading}
+                  className={cn(
+                    "p-3 rounded-lg border-2 transition-all",
+                    selectedRole === 'CLIENT'
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  )}
+                >
+                  <div className="font-semibold text-sm">👔 Client</div>
+                  <div className="text-xs text-gray-500 mt-1">Hire freelancers</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('FREELANCER')}
+                  disabled={isLoading}
+                  className={cn(
+                    "p-3 rounded-lg border-2 transition-all",
+                    selectedRole === 'FREELANCER'
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  )}
+                >
+                  <div className="font-semibold text-sm">💼 Freelancer</div>
+                  <div className="text-xs text-gray-500 mt-1">Find work & earn</div>
+                </button>
+              </div>
             </div>
           )}
 

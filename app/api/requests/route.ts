@@ -171,6 +171,24 @@ export async function POST(req: NextRequest) {
       },
     }).catch((err: any) => console.error('[ACTIVITY_LOG_ERROR]', err))
 
+    // Create notification for freelancer
+    try {
+      await db.notification.create({
+        data: {
+          userId: receiverId,
+          type: 'NEW_REQUEST',
+          title: `New request from ${newRequest.sender.name}`,
+          message: `${newRequest.sender.name} sent you a request: ${title}`,
+          relatedResourceType: 'REQUEST',
+          relatedResourceId: newRequest.id,
+          read: false,
+        },
+      })
+    } catch (notifyErr) {
+      console.error('[REQUEST_NOTIFICATION_ERROR]', notifyErr)
+      // Don't fail request if notification creation fails
+    }
+
     return successResponse(
       {
         id: newRequest.id,
