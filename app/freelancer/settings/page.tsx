@@ -357,8 +357,33 @@ export default function FreelancerSettingsPage() {
               </div>
               <Toggle
                 pressed={settings.isAvailable ?? false}
-                onPressedChange={(pressed) => {
-                  setSettings({ ...settings, isAvailable: pressed })
+                onPressedChange={async (pressed) => {
+                  const newSettings = { ...settings, isAvailable: pressed }
+                  setSettings(newSettings)
+                  // Immediately save to DB
+                  try {
+                    setSaving(true)
+                    const res = await fetch('/api/settings', {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(newSettings),
+                    })
+                    if (!res.ok) throw new Error('Failed to update')
+                    toast({
+                      title: 'Success',
+                      description: `You are now ${pressed ? 'available' : 'unavailable'} for work`,
+                    })
+                  } catch (error) {
+                    toast({
+                      title: 'Error',
+                      description: 'Failed to update availability',
+                      variant: 'destructive',
+                    })
+                    // Revert on error
+                    setSettings(settings)
+                  } finally {
+                    setSaving(false)
+                  }
                 }}
               >
                 {(settings.isAvailable ?? false) ? 'Available' : 'Unavailable'}

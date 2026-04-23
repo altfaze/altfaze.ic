@@ -119,6 +119,20 @@ export default function FreelancerProfilePage() {
     })
   }
 
+  const [imageFile, setImageFile] = useState<File | null>(null)
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setProfile(profile ? { ...profile, image: reader.result as string } : null)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleSave = async () => {
     if (!formData.name || !formData.title) {
       toast({
@@ -131,18 +145,21 @@ export default function FreelancerProfilePage() {
 
     setSaving(true)
     try {
-      const res = await fetch('/api/users/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          freelancer: {
-            title: formData.title,
-            bio: formData.bio,
-            hourlyRate: Number(formData.hourlyRate),
-            skills: formData.skills,
-          },
-        }),
+      const formData_ = new FormData()
+      formData_.append('name', formData.name)
+      formData_.append('freelancer', JSON.stringify({
+        title: formData.title,
+        bio: formData.bio,
+        hourlyRate: Number(formData.hourlyRate),
+        skills: formData.skills,
+      }))
+      if (imageFile) {
+        formData_.append('image', imageFile)
+      }
+
+      const res = await fetch('/api/users/me/profile', {
+        method: 'PATCH',
+        body: formData_,
       })
 
       if (!res.ok) {
@@ -154,6 +171,7 @@ export default function FreelancerProfilePage() {
         description: 'Profile updated successfully',
       })
 
+      setImageFile(null)
       setEditing(false)
       fetchProfile()
     } catch (error) {
@@ -257,11 +275,24 @@ export default function FreelancerProfilePage() {
             <CardTitle>Basic Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex justify-center mb-6">
+            <div className="flex flex-col items-center mb-6">
               <Avatar className="h-20 w-20">
                 <AvatarImage src={profile.image || undefined} />
                 <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
               </Avatar>
+              {editing && (
+                <div className="mt-3">
+                  <label className="text-sm font-medium cursor-pointer text-primary hover:underline">
+                    Change Profile Picture
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              )}
             </div>
 
             <div>

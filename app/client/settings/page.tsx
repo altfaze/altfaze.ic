@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -24,13 +23,6 @@ interface UserProfile {
   role: string
   isVerified: boolean
   username: string | null
-  freelancer: {
-    title: string | null
-    bio: string | null
-    skills: string[]
-    portfolio: string | null
-    hourlyRate: number | null
-  } | null
   client: {
     company: string | null
     description: string | null
@@ -42,15 +34,22 @@ interface ProfileResponse {
   data: UserProfile
 }
 
-export default function SettingsPage() {
-  const { data: session, update } = useSession()
+export default function ClientSettingsPage() {
+  const { data: session, status } = useSession()
   const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<UserProfile | null>(null)
 
-  // Form states
+  // Check if user is a freelancer, redirect them
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.role !== 'CLIENT') {
+      router.replace('/freelancer/settings')
+    }
+  }, [status, session, router])
+
+  // Form states - Basic Info
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -59,19 +58,9 @@ export default function SettingsPage() {
   const [image, setImage] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
 
-  // Freelancer-specific
-  const [title, setTitle] = useState('')
-  const [bio, setBio] = useState('')
-  const [skills, setSkills] = useState<string[]>([])
-  const [skillInput, setSkillInput] = useState('')
-  const [portfolio, setPortfolio] = useState('')
-  const [hourlyRate, setHourlyRate] = useState('')
-  const [availability, setAvailability] = useState('full-time')
-
-  // Client-specific
+  // Client-specific fields
   const [company, setCompany] = useState('')
   const [companyDescription, setCompanyDescription] = useState('')
-  const [preferredCategories, setPreferredCategories] = useState<string[]>([])
   const [maxBudget, setMaxBudget] = useState('')
 
   // Notification settings
@@ -99,14 +88,7 @@ export default function SettingsPage() {
       setUsername(data.username || '')
       setImage(data.image)
 
-      if (data.freelancer) {
-        setTitle(data.freelancer.title || '')
-        setBio(data.freelancer.bio || '')
-        setSkills(data.freelancer.skills || [])
-        setPortfolio(data.freelancer.portfolio || '')
-        setHourlyRate(data.freelancer.hourlyRate?.toString() || '')
-      }
-
+      // Load client-specific data
       if (data.client) {
         setCompany(data.client.company || '')
         setCompanyDescription(data.client.description || '')
@@ -130,6 +112,14 @@ export default function SettingsPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: 'Error',
+          description: 'Image must be less than 5MB',
+          variant: 'destructive',
+        })
+        return
+      }
       setImageFile(file)
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -137,17 +127,6 @@ export default function SettingsPage() {
       }
       reader.readAsDataURL(file)
     }
-  }
-
-  const handleAddSkill = () => {
-    if (skillInput.trim() && !skills.includes(skillInput.trim())) {
-      setSkills([...skills, skillInput.trim()])
-      setSkillInput('')
-    }
-  }
-
-  const handleRemoveSkill = (skill: string) => {
-    setSkills(skills.filter(s => s !== skill))
   }
 
   const handleSaveProfile = async () => {
@@ -161,24 +140,11 @@ export default function SettingsPage() {
         formData.append('image', imageFile)
       }
 
-      // Freelancer data
-      if (profile?.role === 'FREELANCER') {
-        formData.append('freelancer', JSON.stringify({
-          title,
-          bio,
-          skills,
-          portfolio,
-          hourlyRate: hourlyRate ? parseFloat(hourlyRate) : null,
-        }))
-      }
-
-      // Client data
-      if (profile?.role === 'CLIENT') {
-        formData.append('client', JSON.stringify({
-          company,
-          description: companyDescription,
-        }))
-      }
+      // Client-only data
+      formData.append('client', JSON.stringify({
+        company,
+        description: companyDescription,
+      }))
 
       const res = await fetch('/api/users/me/profile', {
         method: 'PATCH',
@@ -192,7 +158,6 @@ export default function SettingsPage() {
         description: 'Profile updated successfully',
       })
 
-      await update()
       await fetchProfile()
     } catch (error) {
       console.error('Error saving profile:', error)
@@ -311,8 +276,6 @@ export default function SettingsPage() {
         body: JSON.stringify({
           privacy: {
             profileVisibility,
-            showRating,
-            showEarnings,
           },
         }),
       })
@@ -421,160 +384,48 @@ export default function SettingsPage() {
               <div>
                 <Label>Email Address</Label>
                 <Input value={profile?.email || ''} disabled className="bg-muted" />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {profile?.isVerified ? (
-                    <span className="flex items-center gap-1">
-                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                        ✓ Verified
-                      </Badge>
-                    </span>
-                  ) : (
-                    <span>Not verified</span>
-                  )}
-                </p>
               </div>
 
-              {/* Role-specific sections */}
-              {profile?.role === 'FREELANCER' && (
-                <>
-                  <hr />
+              {/* Company Information */}
+              <hr />
+              <div>
+                <h3 className="font-semibold mb-4">Company Information</h3>
+                <div className="space-y-4">
                   <div>
-                    <h3 className="font-semibold mb-4">Professional Information</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="title">Professional Title</Label>
-                        <Input
-                          id="title"
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                          placeholder="e.g., Full Stack Developer"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="bio">Bio</Label>
-                        <Textarea
-                          id="bio"
-                          value={bio}
-                          onChange={(e) => setBio(e.target.value)}
-                          placeholder="Tell us about yourself, your experience, and what you specialize in"
-                          rows={4}
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">{bio.length}/500 characters</p>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="hourlyRate">Hourly Rate ($)</Label>
-                        <Input
-                          id="hourlyRate"
-                          type="number"
-                          value={hourlyRate}
-                          onChange={(e) => setHourlyRate(e.target.value)}
-                          placeholder="0.00"
-                          min="0"
-                          step="0.01"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="availability">Availability</Label>
-                        <Select value={availability} onValueChange={setAvailability}>
-                          <SelectTrigger id="availability">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="full-time">Full-time (40+ hours/week)</SelectItem>
-                            <SelectItem value="part-time">Part-time (20-39 hours/week)</SelectItem>
-                            <SelectItem value="flexible">Flexible (as-needed)</SelectItem>
-                            <SelectItem value="unavailable">Currently unavailable</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="portfolio">Portfolio URL</Label>
-                        <Input
-                          id="portfolio"
-                          value={portfolio}
-                          onChange={(e) => setPortfolio(e.target.value)}
-                          placeholder="https://yourportfolio.com"
-                          type="url"
-                        />
-                      </div>
-
-                      <div>
-                        <Label>Skills</Label>
-                        <div className="flex gap-2 mb-3">
-                          <Input
-                            value={skillInput}
-                            onChange={(e) => setSkillInput(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
-                            placeholder="Add a skill and press Enter"
-                          />
-                          <Button onClick={handleAddSkill} variant="outline">Add</Button>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {skills.map((skill) => (
-                            <Badge key={skill} variant="secondary" className="cursor-pointer">
-                              {skill}
-                              <button
-                                onClick={() => handleRemoveSkill(skill)}
-                                className="ml-2 hover:text-red-600"
-                              >
-                                ×
-                              </button>
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                    <Label htmlFor="company">Company Name</Label>
+                    <Input
+                      id="company"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                      placeholder="Your company name"
+                    />
                   </div>
-                </>
-              )}
 
-              {profile?.role === 'CLIENT' && (
-                <>
-                  <hr />
                   <div>
-                    <h3 className="font-semibold mb-4">Company Information</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="company">Company Name</Label>
-                        <Input
-                          id="company"
-                          value={company}
-                          onChange={(e) => setCompany(e.target.value)}
-                          placeholder="Your company name"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="companyDescription">Company Description</Label>
-                        <Textarea
-                          id="companyDescription"
-                          value={companyDescription}
-                          onChange={(e) => setCompanyDescription(e.target.value)}
-                          placeholder="Tell us about your company"
-                          rows={4}
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="maxBudget">Typical Project Budget Range ($)</Label>
-                        <Input
-                          id="maxBudget"
-                          type="number"
-                          value={maxBudget}
-                          onChange={(e) => setMaxBudget(e.target.value)}
-                          placeholder="e.g., 5000"
-                          min="0"
-                          step="100"
-                        />
-                      </div>
-                    </div>
+                    <Label htmlFor="companyDescription">Company Description</Label>
+                    <Textarea
+                      id="companyDescription"
+                      value={companyDescription}
+                      onChange={(e) => setCompanyDescription(e.target.value)}
+                      placeholder="Tell us about your company"
+                      rows={4}
+                    />
                   </div>
-                </>
-              )}
+
+                  <div>
+                    <Label htmlFor="maxBudget">Typical Project Budget Range ($)</Label>
+                    <Input
+                      id="maxBudget"
+                      type="number"
+                      value={maxBudget}
+                      onChange={(e) => setMaxBudget(e.target.value)}
+                      placeholder="e.g., 5000"
+                      min="0"
+                      step="100"
+                    />
+                  </div>
+                </div>
+              </div>
 
               <Button onClick={handleSaveProfile} disabled={saving} className="w-full">
                 {saving ? 'Saving...' : 'Save Profile Changes'}
@@ -742,22 +593,7 @@ export default function SettingsPage() {
                     <SelectItem value="private">Private - No one can see</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="font-medium">Show Rating & Reviews</Label>
-                  <p className="text-sm text-muted-foreground">Allow others to see your ratings</p>
-                </div>
-                <Switch checked={showRating} onCheckedChange={setShowRating} />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="font-medium">Show Earnings</Label>
-                  <p className="text-sm text-muted-foreground">Display your total earnings publicly</p>
-                </div>
-                <Switch checked={showEarnings} onCheckedChange={setShowEarnings} />
+                <p className="text-xs text-muted-foreground mt-2">Choose who can view your company profile and projects</p>
               </div>
 
               <Button onClick={handleSavePrivacy} disabled={saving} className="w-full">

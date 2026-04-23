@@ -43,9 +43,10 @@ export async function GET(req: NextRequest) {
     // Build where clause
     let where: any = {
       role: 'FREELANCER',
+      isSuspended: false,
       freelancer: {
         is: {
-          isAvailable: true, // Only show available freelancers
+          isAvailable: true,
         },
       },
     }

@@ -123,9 +123,10 @@ export function DashboardSidebar() {
       icon: <Icons.settings className="h-4 w-4" />,
     },
     {
-      href: routePrefix + "/profile",
+      href: "/freelancer/profile",
       title: "Profile",
       icon: <Icons.user className="h-4 w-4" />,
+      roles: ["FREELANCER"],
     },
   ]
 

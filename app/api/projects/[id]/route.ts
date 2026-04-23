@@ -69,22 +69,24 @@ export async function GET(
 
     return successResponse(
       {
-        id: project.id,
-        title: project.title,
-        description: project.description,
-        budget: toSafeNumber(project.budget),
-        status: project.status,
-        category: project.category,
-        deadline: project.deadline,
-        creator: project.creator,
-        submitter: project.submitter,
-        userHasApplied: !!userRequest,
-        userApplication: userRequest ? {
-          ...userRequest,
-          amount: toSafeNumber(userRequest.amount)
-        } : null,
-        createdAt: project.createdAt,
-        updatedAt: project.updatedAt,
+        project: {
+          id: project.id,
+          title: project.title,
+          description: project.description,
+          budget: toSafeNumber(project.budget),
+          status: project.status,
+          category: project.category,
+          deadline: project.deadline,
+          creator: project.creator,
+          submitter: project.submitter,
+          userHasApplied: !!userRequest,
+          userApplication: userRequest ? {
+            ...userRequest,
+            amount: toSafeNumber(userRequest.amount)
+          } : null,
+          createdAt: project.createdAt,
+          updatedAt: project.updatedAt,
+        },
       },
       200,
       'Project details retrieved successfully'

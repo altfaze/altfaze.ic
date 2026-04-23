@@ -106,7 +106,7 @@ export async function GET(
       },
     }
 
-    return successResponse(profile, 200, 'Freelancer profile retrieved successfully')
+    return successResponse({ freelancer: profile }, 200, 'Freelancer profile retrieved successfully')
   } catch (error) {
     console.error('[GET_FREELANCER_ERROR]', error)
     return handleApiError(error)

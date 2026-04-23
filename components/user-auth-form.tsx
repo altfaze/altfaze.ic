@@ -160,9 +160,20 @@ export function UserAuthForm({ className, isSignUp = false, ...props }: UserAuth
         setIsLoading(false);
 
         // Replace history and redirect based on role
-        // Middleware will handle redirects, but start with a neutral page
+        // Fetch session to get updated role
+        const sessionRes = await fetch('/api/auth/session')
+        const updatedSession = await sessionRes.json()
+        const userRole = updatedSession?.user?.role
+
         setTimeout(() => {
-          router.replace('/select-role');
+          if (userRole === 'FREELANCER') {
+            router.replace('/freelancer/my-dashboard')
+          } else if (userRole === 'CLIENT') {
+            router.replace('/client/dashboard')
+          } else {
+            // Fallback: if role not set, show select-role
+            router.replace('/select-role')
+          }
         }, 500);
       }
     } catch (error: any) {

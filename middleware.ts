@@ -78,26 +78,26 @@ export default withAuth(
     }
 
     // ✅ FIXED: Direct bare path redirects to client/freelancer paths
-    if (req.nextUrl.pathname === "/client") {
+    if (req.nextUrl.pathname.startsWith("/client")) {
       if (!isAuth) {
         return NextResponse.redirect(new URL("/login", req.url))
       }
       if (userRole !== "CLIENT") {
+        console.log('[MIDDLEWARE_SECURITY] Non-client trying to access client routes', { role: userRole, path: req.nextUrl.pathname })
         return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
       }
-      // Redirect bare /client to /client/dashboard
-      return NextResponse.redirect(new URL("/client/dashboard", req.url))
+      return NextResponse.next()
     }
 
-    if (req.nextUrl.pathname === "/freelancer") {
+    if (req.nextUrl.pathname.startsWith("/freelancer")) {
       if (!isAuth) {
         return NextResponse.redirect(new URL("/login", req.url))
       }
       if (userRole !== "FREELANCER") {
+        console.log('[MIDDLEWARE_SECURITY] Non-freelancer trying to access freelancer routes', { role: userRole, path: req.nextUrl.pathname })
         return NextResponse.redirect(new URL("/client/dashboard", req.url))
       }
-      // Redirect bare /freelancer to /freelancer/my-dashboard
-      return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
+      return NextResponse.next()
     }
 
     // ✅ FIXED: Proper role validation for CLIENT dashboard routes
