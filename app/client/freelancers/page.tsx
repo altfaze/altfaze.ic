@@ -121,56 +121,94 @@ export default function FreelancersPage() {
           </div>
         ) : freelancers.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-            {freelancers.map((freelancer) => (
-              <Card key={freelancer.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start gap-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={freelancer.image || undefined} />
-                      <AvatarFallback>{freelancer.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="truncate">{freelancer.name}</CardTitle>
-                      <CardDescription>{freelancer.freelancer.title}</CardDescription>
+            {freelancers.map((freelancer) => {
+              // Safety checks to prevent undefined errors
+              if (!freelancer) return null
+              if (!freelancer.freelancer) return null
+
+              const {
+                name = 'Unknown',
+                image,
+                freelancer: {
+                  title = 'Freelancer',
+                  bio = '',
+                  skills = [],
+                  rating = 0,
+                  completedProjects = 0,
+                  hourlyRate = 0,
+                },
+              } = freelancer
+
+              return (
+                <Card
+                  key={freelancer.id}
+                  className="overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start gap-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={image || undefined} />
+                        <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="truncate">{name}</CardTitle>
+                        <CardDescription>{title}</CardDescription>
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Bio */}
-                  <p className="text-sm text-muted-foreground line-clamp-2">{freelancer.freelancer.bio}</p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Bio */}
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {bio || 'No bio provided'}
+                    </p>
 
-                  {/* Skills */}
-                  <div className="flex flex-wrap gap-1">
-                    {freelancer.freelancer.skills.slice(0, 3).map((skill) => (
-                      <Badge key={skill} variant="secondary" className="text-xs">
-                        {skill}
-                      </Badge>
-                    ))}
-                    {freelancer.freelancer.skills.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{freelancer.freelancer.skills.length - 3}
-                      </Badge>
-                    )}
-                  </div>
-
-                  {/* Stats */}
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{freelancer.freelancer.rating}⭐ • {freelancer.freelancer.completedProjects} projects</span>
-                  </div>
-
-                  {/* Rate */}
-                  <div className="flex items-center justify-between pt-2 border-t">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Hourly Rate</p>
-                      <p className="text-lg font-bold">${freelancer.freelancer.hourlyRate}/hr</p>
+                    {/* Skills */}
+                    <div className="flex flex-wrap gap-1">
+                      {skills && skills.length > 0 ? (
+                        <>
+                          {skills.slice(0, 3).map((skill) => (
+                            <Badge key={skill} variant="secondary" className="text-xs">
+                              {skill}
+                            </Badge>
+                          ))}
+                          {skills.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{skills.length - 3}
+                            </Badge>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">
+                          No skills listed
+                        </span>
+                      )}
                     </div>
-                    <Button asChild size="sm">
-                      <Link href={`/client/freelancers/${freelancer.id}`}>View Profile</Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+
+                    {/* Stats */}
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        {rating}⭐ • {completedProjects} projects
+                      </span>
+                    </div>
+
+                    {/* Rate */}
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Hourly Rate</p>
+                        <p className="text-lg font-bold">
+                          ${hourlyRate ? hourlyRate.toLocaleString() : '0'}/hr
+                        </p>
+                      </div>
+                      <Button asChild size="sm">
+                        <Link href={`/client/freelancers/${freelancer.id}`}>
+                          View Profile
+                        </Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         ) : (
           <div className="text-center py-12">

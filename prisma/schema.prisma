@@ -79,6 +79,7 @@ model User {
   reviewsReceived        Review[]           @relation("ReviewTarget")
   sessions               Session[]
   templatePurchases      TemplatePurchase[]
+  templates              Template[]         @relation("TemplateUploader")
   transactions           Transaction[]
   messagesSent           Message[]          @relation("MessageSender")
   messagesReceived       Message[]          @relation("MessageReceiver")
@@ -137,6 +138,7 @@ model Template {
   updatedAt   DateTime           @updatedAt
   activities  ActivityLog[]
   purchases   TemplatePurchase[]
+  uploader    User?              @relation("TemplateUploader", fields: [uploaderId], references: [id], onDelete: SetNull)
 
   @@index([uploaderId])
   @@map("templates")

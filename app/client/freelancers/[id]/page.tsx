@@ -145,6 +145,20 @@ export default function FreelancerDetailPage({ params }: { params: { id: string 
     )
   }
 
+  // Safety check for freelancer profile data
+  if (!freelancer.freelancer) {
+    return (
+      <div className="container py-12 text-center">
+        <p className="text-muted-foreground">Freelancer profile data is incomplete</p>
+        <Button asChild className="mt-4">
+          <Link href="/client/freelancers">Back to Freelancers</Link>
+        </Button>
+      </div>
+    )
+  }
+
+  const { name, image, freelancer: freelancerData } = freelancer
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container py-12 max-w-4xl">
@@ -155,16 +169,16 @@ export default function FreelancerDetailPage({ params }: { params: { id: string 
         {/* Header */}
         <div className="flex items-center gap-6 mb-8 pb-8 border-b">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={freelancer.image || undefined} />
-            <AvatarFallback>{freelancer.name.charAt(0)}</AvatarFallback>
+            <AvatarImage src={image || undefined} />
+            <AvatarFallback>{name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold mb-1">{freelancer.name}</h1>
-            <p className="text-xl text-muted-foreground mb-3">{freelancer.freelancer.title}</p>
+            <h1 className="text-3xl font-bold mb-1">{name}</h1>
+            <p className="text-xl text-muted-foreground mb-3">{freelancerData.title}</p>
             <div className="flex gap-4 text-sm">
-              <span className="font-semibold">{freelancer.freelancer.rating}⭐ Rating</span>
-              <span className="font-semibold">{freelancer.freelancer.completedProjects} Completed</span>
-              <span className="font-semibold">${freelancer.freelancer.hourlyRate}/hr</span>
+              <span className="font-semibold">{freelancerData.rating}⭐ Rating</span>
+              <span className="font-semibold">{freelancerData.completedProjects} Completed</span>
+              <span className="font-semibold">${freelancerData.hourlyRate}/hr</span>
             </div>
           </div>
           {session?.user?.id !== freelancer.id && (
@@ -186,7 +200,7 @@ export default function FreelancerDetailPage({ params }: { params: { id: string 
                 <CardTitle>About</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground leading-7">{freelancer.freelancer.bio}</p>
+                <p className="text-muted-foreground leading-7">{freelancerData.bio}</p>
               </CardContent>
             </Card>
 
@@ -197,7 +211,7 @@ export default function FreelancerDetailPage({ params }: { params: { id: string 
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {freelancer.freelancer.skills.map((skill) => (
+                  {freelancerData.skills.map((skill) => (
                     <Badge key={skill} variant="secondary">{skill}</Badge>
                   ))}
                 </div>

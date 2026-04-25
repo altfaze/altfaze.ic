@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { User } from "next-auth"
-import { signOut } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
+import { useState } from "react"
 
 import {
   DropdownMenu,
@@ -13,12 +14,49 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { UserAvatar } from "./UserAvatar"
 import { Icons } from "./icons"
+import { useToast } from "@/hooks/use-toast"
 
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
   user: Pick<User, "name" | "image" | "email">
 }
 
 export function UserAccountNav({ user }: UserAccountNavProps) {
+  const { data: session } = useSession()
+  const { toast } = useToast()
+  const [isAvailable, setIsAvailable] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const isFreelancer = session?.user?.role === "FREELANCER"
+
+  const toggleAvailability = async () => {
+    try {
+      setIsUpdating(true)
+      const response = await fetch("/api/freelancers/me", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isAvailable: !isAvailable }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to update availability")
+      }
+
+      setIsAvailable(!isAvailable)
+      toast({
+        title: "Success",
+        description: `You are now ${!isAvailable ? "visible" : "hidden"} to clients`,
+      })
+    } catch (error) {
+      console.error("Error updating availability:", error)
+      toast({
+        title: "Error",
+        description: "Failed to update availability status",
+        variant: "destructive",
+      })
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -39,16 +77,20 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
           </div>
         </div>
         <DropdownMenuSeparator />
-        {/* <DropdownMenuItem asChild>
-          <Link href="/dashboard">Dashboard</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/dashboard/billing">Follow me on Twitter</Link>
-        </DropdownMenuItem> */}
-        {/* <DropdownMenuItem asChild>
-          <Link href="/dashboard/settings">Settings</Link>
-        </DropdownMenuItem> */}
-        {/* <DropdownMenuSeparator /> */}
+        
+        {/* Availability Toggle for Freelancers */}
+        {isFreelancer && (
+          <>
+            <DropdownMenuItem onClick={toggleAvailability} disabled={isUpdating}>
+              <div className="flex items-center gap-2 w-full">
+                <div className={`h-2 w-2 rounded-full ${isAvailable ? "bg-green-500" : "bg-gray-400"}`}></div>
+                <span>{isAvailable ? "Visible to Clients" : "Hidden from Clients"}</span>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
+
         <DropdownMenuItem
           className="cursor-pointer"
           onSelect={(event) => {
