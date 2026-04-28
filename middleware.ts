@@ -38,6 +38,16 @@ export default withAuth(
       req.nextUrl.pathname.startsWith("/select-role") ||
       req.nextUrl.pathname.startsWith("/onboard")
 
+    // ✅ FIXED: Handle root path for authenticated users without role after OAuth
+    if (req.nextUrl.pathname === "/") {
+      if (isAuth && !userRole) {
+        console.log('[MIDDLEWARE] Authenticated user without role landed on homepage - redirecting to select-role')
+        return NextResponse.redirect(new URL("/select-role", req.url))
+      }
+      // Allow unauthenticated users and authenticated users with role to view homepage
+      return NextResponse.next()
+    }
+
     if (isAuthPage) {
       if (isAuth) {
         // If user is authenticated and on login/register pages, redirect appropriately
@@ -284,6 +294,7 @@ export default withAuth(
 
 export const config = {
   matcher: [
+    '/',
     '/client/:path*',
     '/freelancer/:path*',
     '/auth/:path*',

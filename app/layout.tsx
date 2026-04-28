@@ -6,7 +6,10 @@ import { AuthProvider } from "@/components/providers";
 import { ModeToggle } from "@/components/toggle";
 import MobileNav from "@/components/mobile-nav";
 import { Toaster } from "@/components/ui/toaster";
+import { SiteFooter } from "@/components/site-footer";
 import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 import { OrganizationSchema, LocalBusinessSchema, ServiceSchema, MarketplaceProductSchema, FAQSchema, BreadcrumbSchema, WebsiteSchema } from "@/app/schema-markup";
 import "./globals.css";
 
@@ -108,35 +111,33 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-          {/* <div className="flex min-h-screen flex-col">
-            <header className="h-16 container sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-              <div className="flex h-16 items-center justify-between py-6 w-full">
-              <MobileNav />
-                <MainNav />
-                <nav>
-                  <div className="md:flex">
-                    <div className="flex gap-4">
-                      <ModeToggle />
-                      <Link
-                        href="/login"
-                        className={cn(
-                          buttonVariants({ variant: "secondary", size: "sm" }),
-                          "px-4"
-                        )}
-                      >
-                        Get Started
-                      </Link>
+            <div className="flex min-h-screen flex-col">
+              <header className="h-16 container sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="flex h-16 items-center justify-between py-6 w-full">
+                  <MobileNav />
+                  <MainNav />
+                  <nav>
+                    <div className="md:flex">
+                      <div className="flex gap-4">
+                        <ModeToggle />
+                        <Link
+                          href="/login"
+                          className={cn(
+                            buttonVariants({ variant: "default", size: "sm" }),
+                            "px-4"
+                          )}
+                        >
+                          Get Started
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                </nav>
-              </div>
-            </header> */}
-          {/* <HeroPage /> */}
-
-          <main className="flex-1">{children}</main>
-          {/* Removed SpeedInsights and Analytics to fix performance monitoring issues */}
-          {/* <SiteFooter /> */}
-          <Toaster />
+                  </nav>
+                </div>
+              </header>
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+            </div>
+            <Toaster />
           </ThemeProvider>
         </AuthProvider>
       </body>
