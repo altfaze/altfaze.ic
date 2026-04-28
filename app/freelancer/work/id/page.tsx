@@ -188,7 +188,7 @@ export default function ProjectDetailPage() {
     )
   }
 
-  const isCreator = session?.user?.id === project.creator.id
+  const isCreator = session?.user?.id === project?.creator?.id
 
   return (
     <div className="container max-w-4xl py-12">
@@ -259,9 +259,9 @@ export default function ProjectDetailPage() {
             <CardContent>
               <div className="flex items-center gap-4">
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={project.creator.image || ''} />
+                  <AvatarImage src={project?.creator?.image || ''} />
                   <AvatarFallback>
-                    {project.creator.name
+                    {(project?.creator?.name || 'C')
                       .split(' ')
                       .map((n: string) => n[0])
                       .join('')}
@@ -269,12 +269,12 @@ export default function ProjectDetailPage() {
                 </Avatar>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold">{project.creator.name}</p>
-                    {project.creator.isVerified && (
+                    <p className="font-semibold">{project?.creator?.name || 'Unknown Client'}</p>
+                    {project?.creator?.isVerified && (
                       <Badge className="bg-blue-100 text-blue-800">Verified</Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">@{project.creator.username}</p>
+                  <p className="text-sm text-muted-foreground">@{project?.creator?.username || 'N/A'}</p>
                 </div>
               </div>
             </CardContent>

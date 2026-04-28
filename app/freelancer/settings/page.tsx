@@ -5,24 +5,24 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { Toggle } from '@/components/ui/toggle'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
+import { Toggle } from '@/components/ui/toggle'
+import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
 import { Icons } from '@/components/icons'
+import Link from 'next/link'
 
 interface Settings {
   emailNotifications: boolean
   smsNotifications: boolean
   projectNotifications: boolean
   messageNotifications: boolean
-  visibility: 'public' | 'private'
-  autoAcceptOffers: boolean
-  minHourlyRate: number
-  bio: string
-  preferredCategories: string[]
+  visibility?: 'public' | 'private'
+  autoAcceptOffers?: boolean
+  minHourlyRate?: number
+  bio?: string
+  preferredCategories?: string[]
   isAvailable?: boolean
 }
 
@@ -131,11 +131,12 @@ export default function FreelancerSettingsPage() {
   }
 
   const handleToggleCategory = (category: string) => {
+    const categories = settings.preferredCategories || []
     setSettings({
       ...settings,
-      preferredCategories: settings.preferredCategories.includes(category)
-        ? settings.preferredCategories.filter((c) => c !== category)
-        : [...settings.preferredCategories, category],
+      preferredCategories: categories.includes(category)
+        ? categories.filter((c) => c !== category)
+        : [...categories, category],
     })
   }
 
@@ -336,7 +337,7 @@ export default function FreelancerSettingsPage() {
                   <label key={category} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={settings.preferredCategories.includes(category)}
+                      checked={(settings.preferredCategories || []).includes(category)}
                       onChange={() => handleToggleCategory(category)}
                       className="rounded"
                     />

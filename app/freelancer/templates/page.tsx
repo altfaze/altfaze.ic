@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
-import { Icons } from '@/components/icons'
+import { Icons } from '@/components/more-icons'
 
 interface Template {
   id: string
@@ -175,7 +175,7 @@ export default function FreelancerTemplatesPage() {
           </div>
           <Link href="/freelancer/upload">
             <Button>
-              <Icons.plus className="h-4 w-4 mr-2" />
+              <Icons.add className="h-4 w-4 mr-2" />
               Upload Template
             </Button>
           </Link>
@@ -218,7 +218,7 @@ export default function FreelancerTemplatesPage() {
                         className="object-cover"
                       />
                     ) : (
-                      <Icons.image className="h-12 w-12 text-muted-foreground" />
+                      <Icons.media className="h-12 w-12 text-muted-foreground" />
                     )}
                     <StatusBadge status={template.status} />
                   </div>
@@ -299,7 +299,7 @@ export default function FreelancerTemplatesPage() {
             </p>
             <Link href="/freelancer/upload">
               <Button>
-                <Icons.plus className="h-4 w-4 mr-2" />
+                <Icons.add className="h-4 w-4 mr-2" />
                 Upload Your First Template
               </Button>
             </Link>

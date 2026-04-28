@@ -73,14 +73,14 @@ export default function ClientDashboard() {
 
   const fetchData = useCallback(async () => {
     try {
-      console.log('🔄 [CLIENT_DASHBOARD] Fetching data...')
+      console.log('[CLIENT_DASHBOARD] Fetching dashboard data...')
       setLoading(true)
       setError(null)
 
       const res = await fetch('/api/requests?type=sent&limit=50', {
         cache: 'no-store',
       })
-      console.log('📡 [CLIENT_DASHBOARD] API Response status:', res.status)
+      console.log('[CLIENT_DASHBOARD] API response received')
       
       if (!res.ok) {
         const errorText = await res.text()
@@ -89,7 +89,7 @@ export default function ClientDashboard() {
       }
 
       const result = await res.json()
-      console.log('✅ [CLIENT_DASHBOARD] Data fetched successfully:', result)
+      console.log('[CLIENT_DASHBOARD] Dashboard data loaded')
       const requests = result.data?.requests || []
 
       const stats = {
@@ -118,7 +118,7 @@ export default function ClientDashboard() {
     if (!mounted) return
     
     if (status === 'loading') {
-      console.log('⏳ [CLIENT_DASHBOARD] Session loading...')
+      console.log('[CLIENT_DASHBOARD] Session loading...')
       return
     }
 
@@ -129,7 +129,7 @@ export default function ClientDashboard() {
     }
 
     if (status === 'authenticated') {
-      console.log('✅ [CLIENT_DASHBOARD] Authenticated as:', session?.user?.email, 'Role:', session?.user?.role)
+      console.log('[CLIENT_DASHBOARD] User authenticated:', session?.user?.email)
       fetchData()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

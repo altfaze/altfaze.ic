@@ -38,12 +38,14 @@ interface RazorpayPaymentProps {
  * - Handles all edge cases
  * 
  * Usage:
+ * import { RazorpayPayment } from '@/components/razorpay-payment'
+ * 
  * <RazorpayPayment
  *   freelancerId="user-id"
  *   amount={1000}
  *   description="Payment for project"
  *   onSuccess={(transactionId, paymentId, orderId) => {
- *     console.log('Payment successful')
+ *     // Handle success
  *   }}
  * >
  *   Pay Now

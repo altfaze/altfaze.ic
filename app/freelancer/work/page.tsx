@@ -130,7 +130,15 @@ export default function FreelancerWorkPage() {
     return matchesSearch && matchesBudget
   })
 
-  const handleApply = (projectId: string) => {
+  const handleApply = (projectId?: string) => {
+    if (!projectId) {
+      toast({
+        title: 'Error',
+        description: 'Invalid project ID',
+        variant: 'destructive',
+      })
+      return
+    }
     router.push(`/freelancer/work/${projectId}`)
   }
 
@@ -230,18 +238,18 @@ export default function FreelancerWorkPage() {
                       <div>
                         <p className="text-xs text-muted-foreground">Budget</p>
                         <p className="text-2xl font-bold text-green-600">
-                          ${project.budget.toFixed(2)}
+                          ${(project?.budget || 0).toFixed(2)}
                         </p>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
                           <p className="text-muted-foreground">Posted by</p>
-                          <p className="font-medium truncate">{project.creator.name}</p>
+                          <p className="font-medium truncate">{project?.creator?.name || 'Unknown'}</p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Deadline</p>
                           <p className="font-medium">
-                            {project.deadline
+                            {project?.deadline
                               ? new Date(project.deadline).toLocaleDateString()
                               : 'Open'}
                           </p>
@@ -249,7 +257,7 @@ export default function FreelancerWorkPage() {
                       </div>
                     </div>
                     <Button
-                      onClick={() => handleApply(project.id)}
+                      onClick={() => handleApply(project?.id)}
                       className="w-full"
                     >
                       View & Apply

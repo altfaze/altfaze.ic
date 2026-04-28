@@ -6,23 +6,47 @@ import { getToken } from 'next-auth/jwt'
 /**
  * Debug endpoint to test routing and authentication
  * URL: /api/debug/route-test
+ * 
+ * ⚠️  DEVELOPMENT ONLY - Requires authentication
+ * This endpoint is for internal debugging and diagnostics only.
  */
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
   try {
-    console.log('🔧 [ROUTE_TEST] DEBUG endpoint called')
-
-    // Get session
+    // Security: Verify authentication before exposing debug info
     const session = await getAuthSession()
-    console.log('📋 [ROUTE_TEST] Session:', session ? '✅ Present' : '❌ Missing')
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        {
+          error: 'Unauthorized',
+          message: 'This debug endpoint requires authentication. Please log in first.',
+          code: 'DEBUG_REQUIRES_AUTH'
+        },
+        { status: 401 }
+      )
+    }
+
+    // Only allow admin/development users in production
+    // In development, any authenticated user can access
+    if (process.env.NODE_ENV === 'production' && (session.user as any).role !== 'ADMIN') {
+      return NextResponse.json(
+        {
+          error: 'Forbidden',
+          message: 'Debug endpoints are only available to administrators in production.',
+          code: 'DEBUG_ADMIN_ONLY'
+        },
+        { status: 403 }
+      )
+    }
+
+    // Session already verified above, safe to use
 
     // Get JWT token
     let token
     try {
       // @ts-ignore
       token = await getToken({ req })
-      console.log('🎫 [ROUTE_TEST] JWT Token:', token ? '✅ Present' : '❌ Missing')
     } catch (tokenErr) {
       console.error('❌ [ROUTE_TEST] JWT Error:', tokenErr)
     }
@@ -42,7 +66,6 @@ export async function GET(req: Request) {
           updatedAt: true,
         },
       })
-      console.log('🗄️  [ROUTE_TEST] DB User:', dbUser ? '✅ Found' : '❌ Not found')
     }
 
     // Test redirect paths

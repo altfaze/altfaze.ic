@@ -17,7 +17,7 @@ export default withAuth(
     } catch (error) {
       console.error('[MIDDLEWARE] JWT Error:', error)
       // If JWT fails, redirect to login to force re-authentication
-      return NextResponse.redirect(new URL("/login?error=jwt_error", req.url))
+      return NextResponse.redirect(new URL("/auth/login?error=jwt_error", req.url))
     }
 
     const isAuth = !!token
@@ -28,19 +28,23 @@ export default withAuth(
     // ✅ SECURITY: Reject suspended users immediately
     if (isSuspended) {
       console.warn(`[MIDDLEWARE_SECURITY] Suspended user attempt: ${userId}`)
-      return NextResponse.redirect(new URL("/login?error=suspended", req.url))
+      return NextResponse.redirect(new URL("/auth/login?error=suspended", req.url))
     }
 
     const isAuthPage =
       req.nextUrl.pathname.startsWith("/login") ||
       req.nextUrl.pathname.startsWith("/register") ||
+      req.nextUrl.pathname.startsWith("/auth/") ||
       req.nextUrl.pathname.startsWith("/select-role") ||
       req.nextUrl.pathname.startsWith("/onboard")
 
     if (isAuthPage) {
       if (isAuth) {
-        // If user is authenticated and on login/register, redirect appropriately
-        if (req.nextUrl.pathname.startsWith("/login") || req.nextUrl.pathname.startsWith("/register")) {
+        // If user is authenticated and on login/register pages, redirect appropriately
+        if (req.nextUrl.pathname.startsWith("/login") || 
+            req.nextUrl.pathname.startsWith("/register") ||
+            req.nextUrl.pathname.startsWith("/auth/login") ||
+            req.nextUrl.pathname.startsWith("/auth/register")) {
           // If they have a role, send to dashboard; if not, send to select-role
           if (!userRole) {
             return NextResponse.redirect(new URL("/select-role", req.url))
@@ -55,7 +59,7 @@ export default withAuth(
         // If user is on /select-role but already has a role, redirect to dashboard
         if (req.nextUrl.pathname.startsWith("/select-role")) {
           if (userRole) {
-            console.log('[MIDDLEWARE] User already has role - redirecting from /select-role to dashboard', { role: userRole })
+            // User already has role - redirect from /select-role to dashboard
             if (userRole === "FREELANCER") {
               return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
             } else {
@@ -66,13 +70,13 @@ export default withAuth(
           return NextResponse.next()
         }
         
-        // Allow access to /onboard if authenticated (legacy support)
+        // Allow access to /onboard and /auth/ if authenticated (legacy support)
         return NextResponse.next()
       }
       
       // Unauthenticated users
       if (req.nextUrl.pathname.startsWith("/select-role") || req.nextUrl.pathname.startsWith("/onboard")) {
-        return NextResponse.redirect(new URL("/login", req.url))
+        return NextResponse.redirect(new URL("/auth/login", req.url))
       }
       return NextResponse.next()
     }
@@ -80,10 +84,10 @@ export default withAuth(
     // ✅ FIXED: Direct bare path redirects to client/freelancer paths
     if (req.nextUrl.pathname.startsWith("/client")) {
       if (!isAuth) {
-        return NextResponse.redirect(new URL("/login", req.url))
+        return NextResponse.redirect(new URL("/auth/login", req.url))
       }
       if (userRole !== "CLIENT") {
-        console.log('[MIDDLEWARE_SECURITY] Non-client trying to access client routes', { role: userRole, path: req.nextUrl.pathname })
+        // Non-client trying to access client routes
         return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
       }
       return NextResponse.next()
@@ -91,10 +95,10 @@ export default withAuth(
 
     if (req.nextUrl.pathname.startsWith("/freelancer")) {
       if (!isAuth) {
-        return NextResponse.redirect(new URL("/login", req.url))
+        return NextResponse.redirect(new URL("/auth/login", req.url))
       }
       if (userRole !== "FREELANCER") {
-        console.log('[MIDDLEWARE_SECURITY] Non-freelancer trying to access freelancer routes', { role: userRole, path: req.nextUrl.pathname })
+        // Non-freelancer trying to access freelancer routes
         return NextResponse.redirect(new URL("/client/dashboard", req.url))
       }
       return NextResponse.next()
@@ -103,8 +107,8 @@ export default withAuth(
     // ✅ FIXED: Proper role validation for CLIENT dashboard routes
     if (req.nextUrl.pathname.startsWith("/client/dashboard")) {
       if (!isAuth) {
-        console.log('[MIDDLEWARE] Unauthenticated /client/dashboard access - redirecting to login')
-        return NextResponse.redirect(new URL("/login", req.url))
+        // Unauthenticated /client/dashboard access - redirect to login
+        return NextResponse.redirect(new URL("/auth/login", req.url))
       }
       
       if (!userRole) {
@@ -113,14 +117,14 @@ export default withAuth(
       }
       
       if (userRole !== "CLIENT") {
-        console.log('[MIDDLEWARE] Non-client user attempted access to /client/dashboard', { role: userRole })
+        // Non-client user attempted access to /client/dashboard
         if (userRole === "FREELANCER") {
           return NextResponse.redirect(new URL("/freelancer/my-dashboard", req.url))
         }
         return NextResponse.redirect(new URL("/select-role", req.url))
       }
       
-      console.log('[MIDDLEWARE] ✅ CLIENT role verified for /client/dashboard route')
+      // CLIENT role verified for /client/dashboard route
       return NextResponse.next()
     }
 
@@ -128,7 +132,7 @@ export default withAuth(
     if (req.nextUrl.pathname.startsWith("/client/")) {
       if (!isAuth) {
         console.log('[MIDDLEWARE] Unauthenticated /client/ access - redirecting to login')
-        return NextResponse.redirect(new URL("/login", req.url))
+        return NextResponse.redirect(new URL("/auth/login", req.url))
       }
       
       if (!userRole) {
@@ -152,7 +156,7 @@ export default withAuth(
     if (req.nextUrl.pathname.startsWith("/freelancer/my-dashboard")) {
       if (!isAuth) {
         console.log('[MIDDLEWARE] Unauthenticated /freelancer/my-dashboard access - redirecting to login')
-        return NextResponse.redirect(new URL("/login", req.url))
+        return NextResponse.redirect(new URL("/auth/login", req.url))
       }
       
       if (!userRole) {
@@ -176,7 +180,7 @@ export default withAuth(
     if (req.nextUrl.pathname.startsWith("/freelancer/")) {
       if (!isAuth) {
         console.log('[MIDDLEWARE] Unauthenticated /freelancer/ access - redirecting to login')
-        return NextResponse.redirect(new URL("/login", req.url))
+        return NextResponse.redirect(new URL("/auth/login", req.url))
       }
       
       if (!userRole) {
@@ -259,7 +263,7 @@ export default withAuth(
       }
 
       return NextResponse.redirect(
-        new URL(`/login?from=${encodeURIComponent(from)}`, req.url)
+        new URL(`/auth/login?from=${encodeURIComponent(from)}`, req.url)
       );
     }
 
@@ -282,6 +286,7 @@ export const config = {
   matcher: [
     '/client/:path*',
     '/freelancer/:path*',
+    '/auth/:path*',
     '/login',
     '/register',
     '/select-role',

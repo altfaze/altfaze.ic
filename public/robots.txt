@@ -1,27 +1,45 @@
+# AltFaze SEO-Optimized Robots.txt
+# Production-Grade Crawlability Configuration
+
+# Allow all bots by default
 User-agent: *
 Allow: /
-Allow: /login
-Allow: /register
-Allow: /services
-Allow: /projects
-Allow: /hire
-Allow: /pricing
-Allow: /templates
-Allow: /faq
-Allow: /keywords
-Disallow: /api
-Disallow: /admin
-Disallow: /client
-Disallow: /freelancer/dashboard
-Disallow: /freelancer/messages
-Disallow: /onboard
-Disallow: /profile
-Disallow: /wallet
-Disallow: /_next
-Disallow: *.json$
 
+# ✅ ALLOW: All public pages (for Googlebot and other search engines)
+Allow: /marketing
+Allow: /hire
+Allow: /projects  
+Allow: /templates
+Allow: /services
+Allow: /faq
+Allow: /pricing
+Allow: /about
+Allow: /contact
+Allow: /terms
+Allow: /privacy
+Allow: /keywords
+
+# ❌ DISALLOW: Internal/private/authentication routes
+Disallow: /api/
+Disallow: /admin/
+Disallow: /client/
+Disallow: /freelancer/
+Disallow: /auth/
+Disallow: /login/
+Disallow: /register/
+Disallow: /select-role/
+Disallow: /onboard/
+Disallow: /dashboard/
+Disallow: /profile/
+Disallow: /wallet/
+Disallow: /_next/
+Disallow: *.json$
+Disallow: *.css$
+Disallow: *.js$
+
+# Crawler optimization
 Crawl-delay: 0
 Request-rate: 1/0.5s
 
-# Main sitemaps
+# Sitemap location
 Sitemap: https://altfaze.in/sitemap.xml

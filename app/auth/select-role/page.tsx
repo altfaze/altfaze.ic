@@ -41,7 +41,7 @@ export default function SelectRolePage() {
 
     // If user already has a role set, they shouldn't be on this page
     if (session?.user?.role && session.user.role !== 'null') {
-      console.log('[SELECT_ROLE] User already has role set - redirecting to dashboard', { role: session.user.role })
+      // User already has role set - redirect to dashboard
       if (session.user.role === 'FREELANCER') {
         router.replace('/freelancer/my-dashboard')
       } else {

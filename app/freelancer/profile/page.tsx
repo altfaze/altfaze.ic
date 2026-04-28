@@ -11,21 +11,23 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Switch } from '@/components/ui/switch'
 import { Icons } from '@/components/icons'
 
 interface ProfileData {
   id: string
-  name: string
-  email: string
+  name?: string | null
+  email?: string | null
   image: string | null
-  freelancer: {
-    title: string
-    bio: string
-    skills: string[]
-    hourlyRate: number
-    rating: number
-    reviewCount: number
-  }
+  freelancer?: {
+    title?: string | null
+    bio?: string | null
+    skills?: string[]
+    hourlyRate?: number | null
+    rating?: number
+    reviewCount?: number
+    isAvailable?: boolean
+  } | null
 }
 
 interface ProfileResponse {
@@ -44,6 +46,8 @@ export default function FreelancerProfilePage() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [togglingAvailability, setTogglingAvailability] = useState(false)
+  const [isAvailable, setIsAvailable] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -76,6 +80,7 @@ export default function FreelancerProfilePage() {
       const user = json?.data?.user || json?.user
       if (user) {
         setProfile(user)
+        setIsAvailable(user?.freelancer?.isAvailable ?? false)
         setFormData({
           name: user.name || '',
           title: user.freelancer?.title || '',
@@ -117,6 +122,39 @@ export default function FreelancerProfilePage() {
       ...formData,
       skills: formData.skills.filter((s) => s !== skill),
     })
+  }
+
+  const toggleAvailability = async () => {
+    setTogglingAvailability(true)
+    try {
+      const res = await fetch('/api/user/availability', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isAvailable: !isAvailable }),
+      })
+
+      if (!res.ok) {
+        const error = await res.json()
+        throw new Error(error.message || 'Failed to update availability')
+      }
+
+      setIsAvailable(!isAvailable)
+      toast({
+        title: 'Success',
+        description: isAvailable
+          ? 'You are now hidden from client searches'
+          : 'You are now available for hire',
+      })
+    } catch (error) {
+      console.error('[TOGGLE_AVAILABILITY_ERROR]', error)
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to update availability',
+        variant: 'destructive',
+      })
+    } finally {
+      setTogglingAvailability(false)
+    }
   }
 
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -229,7 +267,7 @@ export default function FreelancerProfilePage() {
               onClick={() => {
                 if (editing) {
                   setFormData({
-                    name: profile.name,
+                    name: profile.name || '',
                     title: profile.freelancer?.title || '',
                     bio: profile.freelancer?.bio || '',
                     hourlyRate: profile.freelancer?.hourlyRate || 0,
@@ -278,7 +316,7 @@ export default function FreelancerProfilePage() {
             <div className="flex flex-col items-center mb-6">
               <Avatar className="h-20 w-20">
                 <AvatarImage src={profile.image || undefined} />
-                <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{(profile.name || '?').charAt(0)}</AvatarFallback>
               </Avatar>
               {editing && (
                 <div className="mt-3">
@@ -340,11 +378,44 @@ export default function FreelancerProfilePage() {
           </CardContent>
         </Card>
 
+        {/* Availability Toggle */}
+        <Card className="mb-8 border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              ✨ Available for Hire
+            </CardTitle>
+            <CardDescription>
+              Toggle your profile visibility to clients looking for freelancers
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-lg border">
+              <div className="flex-1">
+                <p className="font-semibold mb-1">
+                  {isAvailable ? '✅ Profile Visible' : '❌ Profile Hidden'}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {isAvailable
+                    ? 'Your profile is visible to clients and they can send you offers'
+                    : 'Your profile is not visible to clients searching for freelancers'}
+                </p>
+              </div>
+              <div className="flex items-center gap-4 ml-4">
+                <Switch
+                  checked={isAvailable}
+                  onCheckedChange={toggleAvailability}
+                  disabled={togglingAvailability}
+                  aria-label="Toggle availability"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Skills */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Skills</CardTitle>
-            <CardDescription>Add your expertise areas</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {editing && (

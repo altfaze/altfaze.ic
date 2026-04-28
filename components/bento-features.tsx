@@ -18,7 +18,7 @@ const features = [
     description: "Browse and hire from thousands of vetted freelancers.",
     href: "/login",
     cta: "Learn more",
-    background: <Image src="" alt="" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
+    background: <Image src="/images/feature-hire.svg" alt="Hire top talent" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
     className: "lg:row-start-1 lg:row-end-4 lg:col-start-2 lg:col-end-3",
   },
   {
@@ -27,7 +27,7 @@ const features = [
     description: "Explore premium templates for your next project.",
     href: "/login",
     cta: "Learn more",
-    background: <Image src="" alt="" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
+    background: <Image src="/images/feature-templates.svg" alt="Find templates" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
     className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
   },
   {
@@ -36,7 +36,7 @@ const features = [
     description: "Manage your projects and collaborate with teams seamlessly.",
     href: "/login",
     cta: "Learn more",
-    background: <Image src="" alt="" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
+    background: <Image src="/images/feature-projects.svg" alt="Build projects" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
     className: "lg:col-start-1 lg:col-end-2 lg:row-start-3 lg:row-end-4",
   },
   {
@@ -45,7 +45,7 @@ const features = [
     description: "24/7 support from experienced professionals.",
     href: "/login",
     cta: "Learn more",
-    background: <Image src="" alt="" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
+    background: <Image src="/images/feature-support.svg" alt="Expert support" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
     className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
   },
   {
@@ -55,12 +55,12 @@ const features = [
       "Advanced verification system to protect buyers and sellers.",
     href: "/login",
     cta: "Learn more",
-    background: <Image src="" alt="" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
+    background: <Image src="/images/feature-security.svg" alt="Secure profiles" width={200} height={200} className="absolute -right-20 -top-20 opacity-60" />,
     className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
   },
 ];
 
-export async function BentoDemo() {
+export function BentoDemo() {
   return (
     <BentoGrid className="lg:grid-rows-3">
       {features.map((feature) => (

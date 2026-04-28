@@ -6,18 +6,28 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
   try {
+    // Security: Verify authentication before exposing debug info
     const session = await getAuthSession()
-
     if (!session?.user?.email) {
       return NextResponse.json(
         {
-          authenticated: false,
-          message: "No authenticated session",
-          sessionUser: null,
-          dbUser: null,
-          recommendations: ["Go to /login to authenticate"]
+          error: 'Unauthorized',
+          message: 'This debug endpoint requires authentication. Please log in first.',
+          code: 'DEBUG_REQUIRES_AUTH'
         },
         { status: 401 }
+      )
+    }
+
+    // Only allow admin/development users in production
+    if (process.env.NODE_ENV === 'production' && (session.user as any).role !== 'ADMIN') {
+      return NextResponse.json(
+        {
+          error: 'Forbidden',
+          message: 'Debug endpoints are only available to administrators in production.',
+          code: 'DEBUG_ADMIN_ONLY'
+        },
+        { status: 403 }
       )
     }
 

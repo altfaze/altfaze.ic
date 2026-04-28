@@ -7,6 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
+/**
+ * Development-only diagnostics page
+ * ⚠️  Requires authentication to access
+ * Helps debug routing and session issues
+ */
 export default function RoutingDiagnostics() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -14,13 +19,22 @@ export default function RoutingDiagnostics() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Protect page - require authentication
+    if (status === 'unauthenticated') {
+      // Redirect to login after a short delay
+      const timer = setTimeout(() => {
+        router.push('/auth/login?callbackUrl=/diagnostics')
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+
     const fetchDiagnostics = async () => {
       try {
         const res = await fetch('/api/debug/route-test', { cache: 'no-store' })
         const data = await res.json()
         setDiagnostics(data)
       } catch (err) {
-        console.error('Failed to fetch diagnostics:', err)
+        console.error('[DIAGNOSTICS] Failed to fetch diagnostics:', err)
       } finally {
         setLoading(false)
       }
@@ -31,7 +45,7 @@ export default function RoutingDiagnostics() {
     } else {
       setLoading(false)
     }
-  }, [status])
+  }, [status, router])
 
   return (
     <div className="min-h-screen bg-background p-6">

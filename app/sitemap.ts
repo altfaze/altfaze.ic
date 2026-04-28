@@ -1,30 +1,89 @@
-// app/sitemap.ts
+// app/sitemap.ts - Production-Grade SEO Sitemap
 import { MetadataRoute } from 'next'
-import { KEYWORDS_DATABASE } from '@/lib/seo/keywords'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://altfaze.in'
   const currentDate = new Date().toISOString().split('T')[0]
 
-  // Main pages
-  const mainPages: MetadataRoute.Sitemap = [
+  // ✅ CRITICAL: Homepage - Highest Priority
+  const homepage: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 1.0,
     },
+  ]
+
+  // ✅ CORE MARKETPLACE PAGES - Very High Priority
+  const corePages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/marketing`,
+      lastModified: currentDate,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
     {
       url: `${baseUrl}/hire`,
+      lastModified: currentDate,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/projects`,
+      lastModified: currentDate,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/templates`,
+      lastModified: currentDate,
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/services`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+  ]
+
+  // ✅ SEO LANDING PAGES - High Priority (These drive organic traffic)
+  const landingPages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/hire-freelance-developers-india`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/templates`,
+      url: `${baseUrl}/freelance-jobs-india`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/hire-mern-stack-developer`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/react-developer-india`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+  ]
+
+  // ✅ INFORMATIONAL PAGES - Medium Priority
+  const infoPages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/faq`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/pricing`,
@@ -33,42 +92,42 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/keywords`,
+      url: `${baseUrl}/about`,
       lastModified: currentDate,
-      changeFrequency: 'weekly',
+      changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/faq`,
+      url: `${baseUrl}/contact`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
-      priority: 0.7,
+      priority: 0.8,
     },
   ]
 
-  // Keyword category pages
-  const keywordPages: MetadataRoute.Sitemap = Object.keys(KEYWORDS_DATABASE).map((category) => ({
-    url: `${baseUrl}/keywords/${category}`,
-    lastModified: currentDate,
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }))
-
-  // Auth pages
-  const authPages: MetadataRoute.Sitemap = [
+  // ✅ LEGAL PAGES - Low Priority (Required but not for ranking)
+  const legalPages: MetadataRoute.Sitemap = [
     {
-      url: `${baseUrl}/login`,
+      url: `${baseUrl}/terms`,
       lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
+      changeFrequency: 'yearly',
+      priority: 0.5,
     },
     {
-      url: `${baseUrl}/register`,
+      url: `${baseUrl}/privacy`,
       lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
+      changeFrequency: 'yearly',
+      priority: 0.5,
     },
   ]
 
-  return [...mainPages, ...keywordPages, ...authPages]
+  // ✅ COMBINE ALL PAGES
+  // ❌ EXCLUDE: /keywords (thin content), /login, /register, /auth, /client, /freelancer, /admin, /api
+  return [
+    ...homepage,
+    ...corePages,
+    ...landingPages,
+    ...infoPages,
+    ...legalPages,
+  ]
 }
